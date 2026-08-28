@@ -1,0 +1,383 @@
+<div class="admin-product-page">
+  <div class="container py-4 py-lg-5">
+    <!-- HEADER -->
+
+    <div class="row align-items-end mb-4">
+      <div class="col-lg-8">
+        <div class="section-label">ADMINISTRATION</div>
+
+        <h1 class="page-title">Product Management</h1>
+
+        <p class="page-description">Manage your products, inventory and availability.</p>
+      </div>
+
+      <div class="col-lg-4 mt-4 mt-lg-0 text-lg-end">
+        <a routerLink="/admin/products/new" class="add-product-btn">
+          <i class="bi bi-plus-lg me-2"></i>
+
+          Add Product
+        </a>
+      </div>
+    </div>
+
+    <!-- STATISTICS -->
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <span class="stat-label"> Total Products </span>
+
+          <strong class="stat-value">
+            {{ totalItems() }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <span class="stat-label"> Active </span>
+
+          <strong class="stat-value">
+            {{ activeProducts() }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <span class="stat-label"> Inactive </span>
+
+          <strong class="stat-value">
+            {{ inactiveProducts() }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <span class="stat-label"> Out of Stock </span>
+
+          <strong class="stat-value">
+            {{ outOfStockProducts() }}
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+
+    <div class="filter-card mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-4">
+          <label class="filter-label"> Search </label>
+
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+
+            <input
+              type="text"
+              class="form-control search-input"
+              placeholder="Search products..."
+              [value]="searchTerm()"
+              (input)="onSearch($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 col-lg-2">
+          <label class="filter-label"> Category </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="selectedCategory()"
+            (change)="changeCategory($any($event.target).value)"
+          >
+            <option value="ALL">All Categories</option>
+
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">
+                {{ category.name }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="col-12 col-md-4 col-lg-2">
+          <label class="filter-label"> Status </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="selectedStatus()"
+            (change)="changeStatus($any($event.target).value)"
+          >
+            <option value="ALL">All Status</option>
+
+            <option value="ACTIVE">Active</option>
+
+            <option value="INACTIVE">Inactive</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-4 col-lg-2">
+          <label class="filter-label"> Stock </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="selectedStock()"
+            (change)="changeStock($any($event.target).value)"
+          >
+            <option value="ALL">All Stock</option>
+
+            <option value="AVAILABLE">In Stock</option>
+
+            <option value="OUT_OF_STOCK">Out of Stock</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-lg-2">
+          <button
+            type="button"
+            class="clear-filter-btn w-100"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+          >
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+
+    @if (errorMessage()) {
+      <div class="alert error-alert">
+        <i class="bi bi-exclamation-circle-fill"></i>
+
+        <span>
+          {{ errorMessage() }}
+        </span>
+
+        <button type="button" class="retry-btn" (click)="loadProducts()">Try Again</button>
+      </div>
+    }
+
+    <!-- LOADING -->
+
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner-border"></div>
+
+        <span> Loading products... </span>
+      </div>
+    }
+
+    <!-- TABLE -->
+
+    @if (!loading() && !errorMessage()) {
+      @if (paginatedProducts().length > 0) {
+        <div class="product-table-card">
+          <div class="table-responsive">
+            <table class="table product-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Product</th>
+
+                  <th>Category</th>
+
+                  <th>Price</th>
+
+                  <th>Stock</th>
+
+                  <th>Status</th>
+
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (product of paginatedProducts(); track product.id) {
+                  <tr>
+                    <!-- PRODUCT -->
+
+                    <td>
+                      <div class="product-info">
+                        <div class="product-image">
+                          @if (product.images && product.images.length > 0) {
+                            <img [src]="product.images[0]" [alt]="product.name" />
+                          } @else {
+                            <i class="bi bi-image"></i>
+                          }
+                        </div>
+
+                        <div>
+                          <div class="product-name">
+                            {{ product.name }}
+                          </div>
+
+                          <div class="product-id">ID #{{ product.id }}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- CATEGORY -->
+
+                    <td>
+                      <span class="category-badge">
+                        {{ product.categoryName || 'Uncategorized' }}
+                      </span>
+                    </td>
+
+                    <!-- PRICE -->
+
+                    <td>
+                      <strong class="product-price">
+                        {{ product.price | number: '1.0-0' }}
+
+                        <small> CFA </small>
+                      </strong>
+                    </td>
+
+                    <!-- STOCK -->
+
+                    <td>
+                      @if (product.stockQuantity === 0) {
+                        <span class="stock-badge out"> Out of stock </span>
+                      } @else if (product.stockQuantity <= 5) {
+                        <span class="stock-badge low"> {{ product.stockQuantity }} left </span>
+                      } @else {
+                        <span class="stock-badge available">
+                          {{ product.stockQuantity }}
+                        </span>
+                      }
+                    </td>
+
+                    <!-- STATUS -->
+
+                    <td>
+                      @if (product.active) {
+                        <span class="status-badge active">
+                          <span class="status-dot"></span>
+
+                          Active
+                        </span>
+                      } @else {
+                        <span class="status-badge inactive">
+                          <span class="status-dot"></span>
+
+                          Inactive
+                        </span>
+                      }
+                    </td>
+
+                    <!-- ACTIONS -->
+
+                    <td class="text-end">
+                      <div class="action-buttons">
+                        <a
+                          [routerLink]="['/products', product.id]"
+                          class="action-btn view"
+                          title="View product"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+
+                        <a
+                          [routerLink]="['/admin/products/edit', product.id]"
+                          class="action-btn edit"
+                          title="Edit product"
+                        >
+                          <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <button
+                          type="button"
+                          class="action-btn delete"
+                          title="Delete product"
+                          (click)="deleteProduct(product)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PAGINATION -->
+
+          @if (totalPages() > 1) {
+            <div class="pagination-section">
+              <div class="pagination-info">
+                Showing
+
+                <strong>
+                  {{ resultStart() }}
+                </strong>
+
+                –
+
+                <strong>
+                  {{ resultEnd() }}
+                </strong>
+
+                of
+
+                <strong>
+                  {{ filteredProducts().length }}
+                </strong>
+              </div>
+
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="currentPage() === 1">
+                  <button
+                    class="page-link"
+                    [disabled]="currentPage() === 1"
+                    (click)="previousPage()"
+                  >
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                </li>
+
+                @for (page of pageNumbers(); track page) {
+                  <li class="page-item" [class.active]="currentPage() === page">
+                    <button class="page-link" (click)="goToPage(page)">
+                      {{ page }}
+                    </button>
+                  </li>
+                }
+
+                <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                  <button
+                    class="page-link"
+                    [disabled]="currentPage() === totalPages()"
+                    (click)="nextPage()"
+                  >
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-products">
+          <div class="empty-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+
+          <h3>No products found</h3>
+
+          <p>No products match your current filters.</p>
+
+          <button type="button" class="clear-empty-btn" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>

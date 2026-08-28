@@ -1,0 +1,564 @@
+<div class="admin-product-form-page">
+  <div class="container py-4 py-lg-5">
+    ```
+    <!-- =====================================================
+     HEADER
+====================================================== -->
+
+    <div class="row align-items-end mb-4 mb-lg-5">
+      <div class="col-lg-8">
+        <div class="section-label">ADMINISTRATION</div>
+
+        <h1 class="page-title">
+          {{ isEditMode() ? 'Edit Product' : 'Add Product' }}
+        </h1>
+
+        <p class="page-description">
+          {{
+            isEditMode()
+              ? 'Update your product information, inventory and images.'
+              : 'Create a new product and add it to your collection.'
+          }}
+        </p>
+      </div>
+
+      <div class="col-lg-4 mt-4 mt-lg-0 text-lg-end">
+        <button type="button" class="back-btn" (click)="cancel()" [disabled]="saving()">
+          <i class="bi bi-arrow-left me-2"></i>
+          Back to Products
+        </button>
+      </div>
+    </div>
+
+    <!-- =====================================================
+     SUCCESS
+====================================================== -->
+
+    @if (successMessage()) {
+      <div class="alert success-alert mb-4">
+        <i class="bi bi-check-circle-fill"></i>
+
+        <span>
+          {{ successMessage() }}
+        </span>
+      </div>
+    }
+
+    <!-- =====================================================
+     WARNING
+====================================================== -->
+
+    <!-- =====================================================
+     ERROR
+====================================================== -->
+
+    @if (errorMessage()) {
+      <div class="alert error-alert mb-4">
+        <i class="bi bi-exclamation-circle-fill"></i>
+
+        <span>
+          {{ errorMessage() }}
+        </span>
+      </div>
+    }
+
+    <!-- =====================================================
+     LOADING PRODUCT
+====================================================== -->
+
+    @if (loading()) {
+      <div class="form-loading">
+        <div class="spinner-border"></div>
+
+        <span> Loading product... </span>
+      </div>
+    } @else {
+      <form [formGroup]="productForm" (ngSubmit)="save()" novalidate>
+        <!-- =================================================
+         BASIC INFORMATION
+    ================================================== -->
+
+        <div class="form-card mb-4">
+          <div class="form-card-header">
+            <div class="form-section-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div>
+              <h2>Product Information</h2>
+
+              <p>Enter the basic information about your product.</p>
+            </div>
+          </div>
+
+          <div class="form-card-body">
+            <div class="row g-4">
+              <!-- PRODUCT NAME -->
+
+              <div class="col-12">
+                <label for="name" class="form-label">
+                  Product Name
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="name"
+                  type="text"
+                  class="form-control form-input"
+                  placeholder="Enter product name"
+                  formControlName="name"
+                  [class.is-invalid]="isInvalid('name')"
+                />
+
+                @if (isInvalid('name')) {
+                  <div class="invalid-feedback">
+                    @if (productForm.get('name')?.hasError('required')) {
+                      Product name is required.
+                    } @else if (productForm.get('name')?.hasError('minlength')) {
+                      Product name must be at least 2 characters.
+                    } @else if (productForm.get('name')?.hasError('maxlength')) {
+                      Product name cannot exceed 150 characters.
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- DESCRIPTION -->
+
+              <div class="col-12">
+                <label for="description" class="form-label"> Description </label>
+
+                <textarea
+                  id="description"
+                  rows="5"
+                  class="form-control form-input"
+                  placeholder="Describe your product..."
+                  formControlName="description"
+                  [class.is-invalid]="isInvalid('description')"
+                ></textarea>
+
+                @if (isInvalid('description')) {
+                  <div class="invalid-feedback">Description cannot exceed 1000 characters.</div>
+                }
+              </div>
+
+              <!-- CATEGORY -->
+
+              <div class="col-12 col-md-6">
+                <label for="categoryId" class="form-label">
+                  Category
+                  <span class="required">*</span>
+                </label>
+
+                <!-- CATEGORY SELECT + ADD BUTTON -->
+
+                <div class="d-flex gap-2">
+                  <select
+                    id="categoryId"
+                    class="form-select form-input"
+                    formControlName="categoryId"
+                    [class.is-invalid]="isInvalid('categoryId')"
+                    [disabled]="loadingCategories()"
+                  >
+                    <option [ngValue]="null">
+                      {{ loadingCategories() ? 'Loading categories...' : 'Select category' }}
+                    </option>
+
+                    @for (category of categories(); track category.id) {
+                      <option [ngValue]="category.id">
+                        {{ category.name }}
+                      </option>
+                    }
+                  </select>
+
+                  <button
+                    type="button"
+                    class="add-category-btn"
+                    title="Add Category"
+                    (click)="openCategoryForm()"
+                    [disabled]="loadingCategories() || creatingCategory()"
+                  >
+                    <i class="bi bi-plus-lg"></i>
+                  </button>
+                </div>
+
+                @if (isInvalid('categoryId')) {
+                  <div class="invalid-feedback d-block">Please select a category.</div>
+                }
+
+                <!-- =================================================
+                 CREATE CATEGORY
+            ================================================== -->
+
+                @if (showCategoryForm()) {
+                  <div class="category-create-box mt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <div>
+                        <div class="category-create-title">Add Category</div>
+
+                        <small class="text-muted">
+                          Create a category without leaving this form.
+                        </small>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="btn-close"
+                        title="Close"
+                        (click)="closeCategoryForm()"
+                        [disabled]="creatingCategory()"
+                      ></button>
+                    </div>
+
+                    <!-- CATEGORY SUCCESS -->
+
+                    @if (categorySuccess()) {
+                      <div class="alert alert-success py-2 mb-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+
+                        {{ categorySuccess() }}
+                      </div>
+                    }
+
+                    <!-- CATEGORY ERROR -->
+
+                    @if (categoryError()) {
+                      <div class="alert alert-danger py-2 mb-3">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+                        {{ categoryError() }}
+                      </div>
+                    }
+
+                    <form [formGroup]="categoryForm" (ngSubmit)="createCategory()">
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          class="form-control form-input"
+                          placeholder="Enter category name"
+                          formControlName="name"
+                          [class.is-invalid]="isCategoryInvalid()"
+                        />
+
+                        <button type="submit" class="btn btn-dark" [disabled]="creatingCategory()">
+                          @if (creatingCategory()) {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+
+                            Creating...
+                          } @else {
+                            <i class="bi bi-plus-lg me-1"></i>
+
+                            Create
+                          }
+                        </button>
+                      </div>
+
+                      @if (isCategoryInvalid()) {
+                        <div class="field-error mt-1">
+                          @if (categoryForm.get('name')?.hasError('required')) {
+                            Category name is required.
+                          } @else if (categoryForm.get('name')?.hasError('minlength')) {
+                            Category name must be at least 2 characters.
+                          } @else if (categoryForm.get('name')?.hasError('maxlength')) {
+                            Category name cannot exceed 100 characters.
+                          }
+                        </div>
+                      }
+                    </form>
+                  </div>
+                }
+              </div>
+
+              <!-- ACTIVE -->
+
+              <div class="col-12 col-md-6">
+                <label class="form-label"> Product Status </label>
+
+                <div class="status-control">
+                  <label
+                    class="status-option"
+                    [class.selected]="productForm.get('active')?.value === true"
+                  >
+                    <input type="radio" formControlName="active" [value]="true" />
+
+                    <span class="status-option-content">
+                      <span class="status-indicator active"></span>
+
+                      <span>
+                        <strong> Active </strong>
+
+                        <small> Product is visible and available. </small>
+                      </span>
+                    </span>
+                  </label>
+
+                  <label
+                    class="status-option"
+                    [class.selected]="productForm.get('active')?.value === false"
+                  >
+                    <input type="radio" formControlName="active" [value]="false" />
+
+                    <span class="status-option-content">
+                      <span class="status-indicator inactive"></span>
+
+                      <span>
+                        <strong> Inactive </strong>
+
+                        <small> Product is currently unavailable. </small>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================
+         PRICING & INVENTORY
+    ================================================== -->
+
+        <div class="form-card mb-4">
+          <div class="form-card-header">
+            <div class="form-section-icon">
+              <i class="bi bi-currency-exchange"></i>
+            </div>
+
+            <div>
+              <h2>Pricing & Inventory</h2>
+
+              <p>Set the product price and available stock.</p>
+            </div>
+          </div>
+
+          <div class="form-card-body">
+            <div class="row g-4">
+              <!-- PRICE -->
+
+              <div class="col-12 col-md-6">
+                <label for="price" class="form-label">
+                  Price
+                  <span class="required">*</span>
+                </label>
+
+                <div class="input-with-suffix">
+                  <input
+                    id="price"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control form-input"
+                    placeholder="0"
+                    formControlName="price"
+                    [class.is-invalid]="isInvalid('price')"
+                  />
+
+                  <span class="input-suffix"> CFA </span>
+                </div>
+
+                @if (isInvalid('price')) {
+                  <div class="field-error">
+                    @if (productForm.get('price')?.hasError('required')) {
+                      Price is required.
+                    } @else if (productForm.get('price')?.hasError('min')) {
+                      Price cannot be negative.
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- STOCK -->
+
+              <div class="col-12 col-md-6">
+                <label for="stockQuantity" class="form-label">
+                  Stock Quantity
+                  <span class="required">*</span>
+                </label>
+
+                <div class="input-with-suffix">
+                  <input
+                    id="stockQuantity"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control form-input"
+                    placeholder="0"
+                    formControlName="stockQuantity"
+                    [class.is-invalid]="isInvalid('stockQuantity')"
+                  />
+
+                  <span class="input-suffix"> Units </span>
+                </div>
+
+                @if (isInvalid('stockQuantity')) {
+                  <div class="field-error">
+                    @if (productForm.get('stockQuantity')?.hasError('required')) {
+                      Stock quantity is required.
+                    } @else if (productForm.get('stockQuantity')?.hasError('min')) {
+                      Stock quantity cannot be negative.
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================
+         PRODUCT IMAGES
+    ================================================== -->
+
+        <div class="form-card mb-4">
+          <div class="form-card-header">
+            <div class="form-section-icon">
+              <i class="bi bi-images"></i>
+            </div>
+
+            <div>
+              <h2>Product Images</h2>
+
+              <p>Add images that will be displayed with your product.</p>
+            </div>
+          </div>
+
+          <div class="form-card-body">
+            <!-- UPLOAD AREA -->
+
+            <label for="productImages" class="image-upload-area">
+              <div class="upload-icon">
+                <i class="bi bi-cloud-arrow-up"></i>
+              </div>
+
+              <div class="upload-title">Choose product images</div>
+
+              <div class="upload-description">Select one or more images from your device.</div>
+
+              <div class="upload-hint">JPG, JPEG or PNG</div>
+            </label>
+
+            <input
+              id="productImages"
+              type="file"
+              class="d-none"
+              accept="image/png,image/jpeg,image/jpg"
+              multiple
+              (change)="onFilesSelected($event)"
+            />
+
+            <!-- =================================================
+             EXISTING IMAGES
+        ================================================== -->
+
+            @if (existingImages().length > 0) {
+              <div class="image-preview-section mt-4">
+                <div class="preview-header">
+                  <span class="preview-title"> Existing Images </span>
+
+                  <span class="preview-count">
+                    {{ existingImages().length }}
+                  </span>
+                </div>
+
+                <div class="row g-3">
+                  @for (image of existingImages(); track image.id) {
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <div class="image-preview-card">
+                        <img [src]="image.imageUrl" [alt]="image.originalFileName" />
+
+                        <button
+                          type="button"
+                          class="remove-image-btn"
+                          title="Remove image"
+                          (click)="removeExistingImage(image)"
+                        >
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+
+                        @if (image.primaryImage) {
+                          <span class="primary-image-badge"> Primary </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- =================================================
+             NEW IMAGE PREVIEWS
+        ================================================== -->
+
+            @if (imagePreviews().length > 0) {
+              <div class="image-preview-section mt-4">
+                <div class="preview-header">
+                  <span class="preview-title"> New Images </span>
+
+                  <span class="preview-count">
+                    {{ imagePreviews().length }}
+                  </span>
+                </div>
+
+                <div class="row g-3">
+                  @for (preview of imagePreviews(); track $index) {
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <div class="image-preview-card">
+                        <img [src]="preview" alt="Product image preview" />
+
+                        <button
+                          type="button"
+                          class="remove-image-btn"
+                          title="Remove image"
+                          (click)="removeSelectedImage($index)"
+                        >
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+
+                        @if (existingImages().length === 0 && $index === 0) {
+                          <span class="primary-image-badge"> Primary </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- =================================================
+             NO IMAGES
+        ================================================== -->
+
+            @if (existingImages().length === 0 && imagePreviews().length === 0) {
+              <div class="no-images-selected">
+                <i class="bi bi-image"></i>
+
+                <span> No images selected </span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- =================================================
+         FORM ACTIONS
+    ================================================== -->
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="saving()">
+            Cancel
+          </button>
+
+          <button type="submit" class="save-btn" [disabled]="saving() || loadingCategories()">
+            @if (saving()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+
+              {{ isEditMode() ? 'Updating...' : 'Creating...' }}
+            } @else {
+              <i class="bi bi-check-lg me-2"></i>
+
+              {{ isEditMode() ? 'Update Product' : 'Create Product' }}
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

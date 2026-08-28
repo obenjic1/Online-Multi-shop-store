@@ -1,0 +1,494 @@
+<div class="container py-3 py-lg-5">
+  @if (orderState.order(); as order) {
+    <div class="receipt-wrapper" style="max-width: 720px; margin: 0 auto">
+      <!-- ====== SUCCESS HEADER ====== -->
+      <div class="text-center mb-4 no-print">
+        <div
+          class="d-inline-flex align-items-center justify-content-center mb-3"
+          style="width: 72px; height: 72px; background: rgba(40, 167, 69, 0.08); border-radius: 50%"
+        >
+          <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28a745"></i>
+        </div>
+
+        <h2
+          class="mb-2"
+          style="font-size: 1.5rem; font-weight: 500; color: #1a1a1a; letter-spacing: -0.3px"
+        >
+          Order Confirmed
+        </h2>
+
+        <p
+          class="mb-0"
+          style="
+            font-size: 0.95rem;
+            color: #888;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          Thank you for shopping with Kelly's Bag Shop. We've received your order and will process
+          it shortly.
+        </p>
+      </div>
+
+      <!-- ====== RECEIPT CARD ====== -->
+      <div
+        class="card border-0"
+        style="
+          background: #fff;
+          border-radius: 16px;
+          box-shadow: 0 2px 24px rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        "
+        id="receipt"
+      >
+        <!-- Receipt Header -->
+        <div
+          class="text-center p-4 p-md-5"
+          style="background: #faf9f7; border-bottom: 1px dashed #e8e8e8"
+        >
+          <div
+            class="d-inline-flex align-items-center justify-content-center mb-2"
+            style="width: 48px; height: 48px; background: #1a1a1a; border-radius: 50%"
+          >
+            <i class="bi bi-handbag-fill" style="font-size: 1.3rem; color: #c9a96e"></i>
+          </div>
+          <h2
+            class="mb-1"
+            style="
+              font-size: 1.4rem;
+              font-weight: 500;
+              color: #1a1a1a;
+              letter-spacing: 2px;
+              text-transform: uppercase;
+            "
+          >
+            Kelly's Bag Shop
+          </h2>
+          <p
+            class="mb-0"
+            style="font-size: 0.8rem; color: #888; letter-spacing: 1px; text-transform: uppercase"
+          >
+            Order Confirmation
+          </p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <!-- Order Info -->
+          <div class="row mb-4">
+            <div class="col-6">
+              <small
+                class="d-block mb-1"
+                style="
+                  font-size: 0.7rem;
+                  color: #aaa;
+                  text-transform: uppercase;
+                  letter-spacing: 1px;
+                "
+              >
+                Order Number
+              </small>
+              <div style="font-size: 1rem; font-weight: 500; color: #1a1a1a">
+                #{{ order.orderNumber }}
+              </div>
+            </div>
+            <div class="col-6 text-end">
+              <small
+                class="d-block mb-1"
+                style="
+                  font-size: 0.7rem;
+                  color: #aaa;
+                  text-transform: uppercase;
+                  letter-spacing: 1px;
+                "
+              >
+                Date
+              </small>
+              <div style="font-size: 0.95rem; color: #666">
+                {{ order.createdAt | date: 'mediumDate' }}
+              </div>
+              <div style="font-size: 0.8rem; color: #aaa">
+                {{ order.createdAt | date: 'shortTime' }}
+              </div>
+            </div>
+          </div>
+
+          <hr style="border-style: dashed; border-color: #e8e8e8; opacity: 1; margin: 1.5rem 0" />
+
+          <!-- Customer -->
+          <div class="mb-4">
+            <h5
+              class="mb-3"
+              style="
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: #1a1a1a;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Customer Information
+            </h5>
+            <div style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500">
+              {{ order.customerName }}
+            </div>
+            <div style="font-size: 0.9rem; color: #666">
+              {{ order.customerPhone }}
+            </div>
+            @if (order.customerEmail) {
+              <div style="font-size: 0.9rem; color: #666">
+                {{ order.customerEmail }}
+              </div>
+            }
+          </div>
+
+          <!-- Fulfillment -->
+          <div class="mb-4">
+            <h5
+              class="mb-3"
+              style="
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: #1a1a1a;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Fulfillment
+            </h5>
+
+            @if (order.fulfillmentType === 'PICKUP') {
+              <div
+                class="d-inline-flex align-items-center gap-2 px-3 py-2"
+                style="background: rgba(26, 26, 26, 0.06); border-radius: 8px"
+              >
+                <i class="bi bi-shop" style="font-size: 1rem; color: #1a1a1a"></i>
+                <span style="font-size: 0.9rem; font-weight: 500; color: #1a1a1a"
+                  >In-Store Pickup</span
+                >
+              </div>
+              <p class="mt-2 mb-0" style="font-size: 0.85rem; color: #888">
+                We'll notify you when your order is ready for collection.
+              </p>
+            } @else {
+              <div
+                class="d-inline-flex align-items-center gap-2 px-3 py-2"
+                style="background: rgba(201, 169, 110, 0.08); border-radius: 8px"
+              >
+                <i class="bi bi-truck" style="font-size: 1rem; color: #c9a96e"></i>
+                <span style="font-size: 0.9rem; font-weight: 500; color: #1a1a1a">Delivery</span>
+              </div>
+              <div class="mt-2" style="font-size: 0.9rem; color: #666; line-height: 1.6">
+                {{ order.deliveryAddress }}<br />
+                {{ order.deliveryCity }}
+              </div>
+            }
+          </div>
+
+          <!-- Items -->
+          <div class="mb-4">
+            <h5
+              class="mb-3"
+              style="
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: #1a1a1a;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Order Items
+            </h5>
+
+            <!-- Desktop: Table -->
+            <div class="d-none d-md-block">
+              <div style="border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden">
+                <table class="table mb-0" style="font-size: 0.9rem">
+                  <thead>
+                    <tr style="background: #faf9f7">
+                      <th
+                        style="
+                          border: none;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          color: #888;
+                          font-weight: 500;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        Product
+                      </th>
+                      <th
+                        class="text-center"
+                        style="
+                          border: none;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          color: #888;
+                          font-weight: 500;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        Qty
+                      </th>
+                      <th
+                        class="text-end"
+                        style="
+                          border: none;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          color: #888;
+                          font-weight: 500;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        Unit Price
+                      </th>
+                      <th
+                        class="text-end"
+                        style="
+                          border: none;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          color: #888;
+                          font-weight: 500;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        Subtotal
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of order.items; track item.productId) {
+                      <tr>
+                        <td
+                          style="
+                            border-color: #f5f5f5;
+                            padding: 0.875rem 1rem;
+                            color: #1a1a1a;
+                            font-weight: 500;
+                          "
+                        >
+                          {{ item.productName }}
+                        </td>
+                        <td
+                          class="text-center"
+                          style="border-color: #f5f5f5; padding: 0.875rem 1rem; color: #666"
+                        >
+                          {{ item.quantity }}
+                        </td>
+                        <td
+                          class="text-end"
+                          style="border-color: #f5f5f5; padding: 0.875rem 1rem; color: #666"
+                        >
+                          {{ item.unitPrice | number: '1.0-0' }} FCFA
+                        </td>
+                        <td
+                          class="text-end"
+                          style="
+                            border-color: #f5f5f5;
+                            padding: 0.875rem 1rem;
+                            color: #1a1a1a;
+                            font-weight: 500;
+                          "
+                        >
+                          {{ item.subtotal | number: '1.0-0' }} FCFA
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Mobile: Card List -->
+            <div class="d-md-none">
+              @for (item of order.items; track item.productId) {
+                <div
+                  class="d-flex justify-content-between align-items-center py-3"
+                  style="border-bottom: 1px solid #f5f5f5"
+                >
+                  <div>
+                    <div style="font-size: 0.9rem; font-weight: 500; color: #1a1a1a">
+                      {{ item.productName }}
+                    </div>
+                    <div style="font-size: 0.8rem; color: #888">
+                      {{ item.quantity }} × {{ item.unitPrice | number: '1.0-0' }} FCFA
+                    </div>
+                  </div>
+                  <div style="font-size: 0.95rem; font-weight: 500; color: #1a1a1a">
+                    {{ item.subtotal | number: '1.0-0' }} FCFA
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <hr style="border-style: dashed; border-color: #e8e8e8; opacity: 1; margin: 1.5rem 0" />
+
+          <!-- Totals -->
+          <div class="d-flex justify-content-end">
+            <div class="w-100" style="max-width: 300px">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span style="font-size: 0.9rem; color: #666">Subtotal</span>
+                <span style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500">
+                  {{ order.subtotal | number: '1.0-0' }} FCFA
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span style="font-size: 0.9rem; color: #666">Shipping</span>
+                <span style="font-size: 0.85rem; color: #888">Calculated separately</span>
+              </div>
+              <div
+                class="d-flex justify-content-between align-items-center pt-3"
+                style="border-top: 2px solid #1a1a1a"
+              >
+                <span style="font-size: 1.05rem; font-weight: 500; color: #1a1a1a">Total</span>
+                <span style="font-size: 1.4rem; font-weight: 500; color: #1a1a1a">
+                  {{ order.totalAmount | number: '1.0-0' }} FCFA
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <hr style="border-style: dashed; border-color: #e8e8e8; opacity: 1; margin: 1.5rem 0" />
+
+          <!-- Footer Note -->
+          <div class="text-center">
+            <p class="mb-1" style="font-size: 0.85rem; color: #888">
+              <i class="bi bi-heart me-1" style="font-size: 0.8rem; color: #c9a96e"></i>
+              Thank you for your business.
+            </p>
+            <p class="mb-0" style="font-size: 0.75rem; color: #aaa">
+              Delivery charges are handled separately. Please keep this receipt for your records.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== ACTION BUTTONS ====== -->
+      <div class="text-center mt-4 no-print">
+        <button
+          type="button"
+          class="btn d-inline-flex align-items-center gap-2 me-2 mb-2"
+          (click)="printReceipt()"
+          style="
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: none;
+            transition: all 0.2s ease;
+          "
+        >
+          <i class="bi bi-printer" style="font-size: 1rem"></i>
+          Print Receipt
+        </button>
+
+        <a
+          routerLink="/products"
+          class="btn d-inline-flex align-items-center gap-2 mb-2"
+          style="
+            background: transparent;
+            color: #1a1a1a;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+          "
+        >
+          <i class="bi bi-bag" style="font-size: 1rem"></i>
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+  } @else {
+    <!-- ====== NO ORDER FOUND ====== -->
+    <div class="text-center py-5">
+      <div
+        class="d-inline-flex align-items-center justify-content-center mb-4"
+        style="width: 100px; height: 100px; background: #f5f5f5; border-radius: 50%"
+      >
+        <i class="bi bi-receipt" style="font-size: 2.5rem; color: #ccc"></i>
+      </div>
+
+      <h3 class="mb-2" style="font-size: 1.3rem; font-weight: 500; color: #1a1a1a">
+        No order found
+      </h3>
+
+      <p class="mb-4" style="font-size: 0.9rem; color: #888">
+        We couldn't find any order details. Start shopping to place your first order.
+      </p>
+
+      <a
+        routerLink="/products"
+        class="btn d-inline-flex align-items-center gap-2"
+        style="
+          background: #1a1a1a;
+          color: #fff;
+          border-radius: 12px;
+          padding: 0.8rem 2rem;
+          font-size: 0.95rem;
+          font-weight: 500;
+          border: none;
+        "
+      >
+        <i class="bi bi-bag" style="font-size: 1rem"></i>
+        Start Shopping
+      </a>
+    </div>
+  }
+</div>
+
+<!-- ====== PRINT STYLES ====== -->
+<style>
+  @media print {
+    body {
+      background: #fff !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    .container {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+
+    .card {
+      box-shadow: none !important;
+      border: 1px solid #ddd !important;
+      border-radius: 0 !important;
+    }
+
+    .receipt-wrapper {
+      max-width: 100% !important;
+    }
+
+    hr {
+      border-style: dashed !important;
+      border-color: #ccc !important;
+    }
+  }
+
+  /* Button hover states */
+  .btn:hover {
+    opacity: 0.9;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+</style>

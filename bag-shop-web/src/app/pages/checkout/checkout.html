@@ -1,0 +1,463 @@
+<div class="checkout-page">
+  <div class="container py-4 py-lg-5">
+    <!-- ================================================= -->
+    <!-- HEADER                                            -->
+    <!-- ================================================= -->
+
+    <div class="checkout-header mb-4 mb-lg-5">
+      <div class="checkout-eyebrow">
+        <i class="bi bi-shield-check me-1"></i>
+        SECURE CHECKOUT
+      </div>
+
+      <h1>Complete your order</h1>
+
+      <p>Review your details and choose how you'd like to receive your order.</p>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- ERROR                                             -->
+    <!-- ================================================= -->
+
+    @if (errorMessage) {
+      <div class="checkout-alert mb-4">
+        <div class="alert-icon">
+          <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+
+        <div>
+          <strong>Unable to place order</strong>
+
+          <div>
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="row g-4 g-xl-5">
+      <!-- ================================================= -->
+      <!-- LEFT                                             -->
+      <!-- ================================================= -->
+
+      <div class="col-lg-7">
+        <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
+          <!-- ============================================= -->
+          <!-- STEP 1                                        -->
+          <!-- ============================================= -->
+
+          <div class="checkout-card mb-4">
+            <div class="checkout-card-body">
+              <div class="section-heading">
+                <span class="step-number"> 1 </span>
+
+                <div>
+                  <h2>How would you like to receive your order?</h2>
+
+                  <p>Choose pickup or delivery.</p>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <!-- PICKUP -->
+
+                <div class="col-md-6">
+                  <label
+                    class="fulfillment-option"
+                    [class.selected]="checkoutForm.get('fulfillmentType')?.value === 'PICKUP'"
+                  >
+                    <input type="radio" formControlName="fulfillmentType" value="PICKUP" />
+
+                    <div class="fulfillment-content">
+                      <div class="fulfillment-icon">
+                        <i class="bi bi-shop"></i>
+                      </div>
+
+                      <div>
+                        <h3>Pickup</h3>
+
+                        <p>Collect your order from our store.</p>
+
+                        <span class="free-label">
+                          <i class="bi bi-check-circle-fill"></i>
+                          Free
+                        </span>
+                      </div>
+                    </div>
+
+                    <i class="bi bi-check-circle-fill selected-check"></i>
+                  </label>
+                </div>
+
+                <!-- DELIVERY -->
+
+                <div class="col-md-6">
+                  <label
+                    class="fulfillment-option"
+                    [class.selected]="checkoutForm.get('fulfillmentType')?.value === 'DELIVERY'"
+                  >
+                    <input type="radio" formControlName="fulfillmentType" value="DELIVERY" />
+
+                    <div class="fulfillment-content">
+                      <div class="fulfillment-icon">
+                        <i class="bi bi-truck"></i>
+                      </div>
+
+                      <div>
+                        <h3>Delivery</h3>
+
+                        <p>We'll deliver your order to your address.</p>
+
+                        <span class="delivery-label">
+                          <i class="bi bi-info-circle"></i>
+                          Delivery charges apply
+                        </span>
+                      </div>
+                    </div>
+
+                    <i class="bi bi-check-circle-fill selected-check"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================= -->
+          <!-- STEP 2                                        -->
+          <!-- ============================================= -->
+
+          <div class="checkout-card mb-4">
+            <div class="checkout-card-body">
+              <div class="section-heading">
+                <span class="step-number"> 2 </span>
+
+                <div>
+                  <h2>Your information</h2>
+
+                  <p>We'll use these details to contact you about your order.</p>
+                </div>
+              </div>
+
+              <!-- NAME -->
+
+              <div class="form-field">
+                <label> Full Name </label>
+
+                <div class="input-wrapper">
+                  <i class="bi bi-person"></i>
+
+                  <input
+                    type="text"
+                    formControlName="customerName"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                @if (
+                  checkoutForm.get('customerName')?.touched &&
+                  checkoutForm.get('customerName')?.invalid
+                ) {
+                  <div class="validation-message">
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    Please enter your full name.
+                  </div>
+                }
+              </div>
+
+              <!-- PHONE -->
+
+              <div class="form-field">
+                <label> Phone Number </label>
+
+                <div class="input-wrapper">
+                  <i class="bi bi-telephone"></i>
+
+                  <input
+                    type="tel"
+                    formControlName="customerPhone"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                @if (
+                  checkoutForm.get('customerPhone')?.touched &&
+                  checkoutForm.get('customerPhone')?.invalid
+                ) {
+                  <div class="validation-message">
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    Please enter your phone number.
+                  </div>
+                }
+              </div>
+
+              <!-- EMAIL -->
+
+              <div class="form-field mb-0">
+                <label>
+                  Email Address
+
+                  <span> Optional </span>
+                </label>
+
+                <div class="input-wrapper">
+                  <i class="bi bi-envelope"></i>
+
+                  <input
+                    type="email"
+                    formControlName="customerEmail"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+
+                <small> We'll send your order updates here if provided. </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================= -->
+          <!-- STEP 3 DELIVERY                                -->
+          <!-- ============================================= -->
+
+          @if (checkoutForm.get('fulfillmentType')?.value === 'DELIVERY') {
+            <div class="checkout-card mb-4">
+              <div class="checkout-card-body">
+                <div class="section-heading">
+                  <span class="step-number"> 3 </span>
+
+                  <div>
+                    <h2>Delivery information</h2>
+
+                    <p>Tell us where you'd like your order delivered.</p>
+                  </div>
+                </div>
+
+                <!-- ADDRESS -->
+
+                <div class="form-field">
+                  <label> Delivery Address </label>
+
+                  <div class="input-wrapper textarea-wrapper">
+                    <i class="bi bi-geo-alt"></i>
+
+                    <textarea
+                      rows="3"
+                      formControlName="deliveryAddress"
+                      placeholder="Street, building, neighborhood, landmark..."
+                    ></textarea>
+                  </div>
+
+                  @if (
+                    checkoutForm.get('deliveryAddress')?.touched &&
+                    checkoutForm.get('deliveryAddress')?.invalid
+                  ) {
+                    <div class="validation-message">
+                      <i class="bi bi-exclamation-circle"></i>
+
+                      Delivery address is required.
+                    </div>
+                  }
+                </div>
+
+                <!-- CITY -->
+
+                <div class="form-field mb-0">
+                  <label> City </label>
+
+                  <div class="input-wrapper">
+                    <i class="bi bi-buildings"></i>
+
+                    <input
+                      type="text"
+                      formControlName="deliveryCity"
+                      placeholder="Enter your city"
+                    />
+                  </div>
+
+                  @if (
+                    checkoutForm.get('deliveryCity')?.touched &&
+                    checkoutForm.get('deliveryCity')?.invalid
+                  ) {
+                    <div class="validation-message">
+                      <i class="bi bi-exclamation-circle"></i>
+
+                      Delivery city is required.
+                    </div>
+                  }
+                </div>
+
+                <!-- DELIVERY NOTE -->
+
+                <div class="checkout-info mt-4">
+                  <i class="bi bi-info-circle-fill"></i>
+
+                  <div>
+                    <strong> Delivery charges </strong>
+
+                    <p>
+                      Delivery fees will be calculated separately and communicated to you after your
+                      order is placed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- ============================================= -->
+          <!-- PLACE ORDER                                    -->
+          <!-- ============================================= -->
+
+          <button type="submit" class="place-order-btn" [disabled]="submitting">
+            @if (submitting) {
+              <span class="spinner-border spinner-border-sm"></span>
+
+              <span> Placing your order... </span>
+            } @else {
+              <i class="bi bi-bag-check"></i>
+
+              <span> Place Secure Order </span>
+
+              <i class="bi bi-arrow-right"></i>
+            }
+          </button>
+
+          <div class="secure-note">
+            <i class="bi bi-shield-lock-fill"></i>
+
+            Your information is kept secure and private.
+          </div>
+        </form>
+      </div>
+
+      <!-- ================================================= -->
+      <!-- RIGHT ORDER SUMMARY                               -->
+      <!-- ================================================= -->
+
+      <div class="col-lg-5">
+        <div class="order-summary">
+          <div class="summary-header">
+            <div>
+              <span> YOUR ORDER </span>
+
+              <h2>Order Summary</h2>
+            </div>
+
+            <div class="summary-count">
+              {{ cartItems().length }}
+            </div>
+          </div>
+
+          <!-- ITEMS -->
+
+          <div class="summary-items">
+            @for (item of cartItems(); track item.product.id) {
+              <div class="summary-item">
+                <div class="summary-image">
+                  @if (item.product.images?.length) {
+                    <img [src]="item.product.images[0]" [alt]="item.product.name" />
+                  } @else {
+                    <i class="bi bi-image"></i>
+                  }
+
+                  <span>
+                    {{ item.quantity }}
+                  </span>
+                </div>
+
+                <div class="summary-product">
+                  <h3>
+                    {{ item.product.name }}
+                  </h3>
+
+                  <p>${{ item.product.price | number: '1.0-0' }}</p>
+                </div>
+
+                <strong> ${{ item.product.price * item.quantity | number: '1.0-0' }} </strong>
+              </div>
+            } @empty {
+              <div class="empty-summary">
+                <i class="bi bi-bag-x"></i>
+
+                <p>Your cart is empty.</p>
+              </div>
+            }
+          </div>
+
+          <!-- TOTALS -->
+
+          <div class="summary-totals">
+            <div>
+              <span> Subtotal </span>
+
+              <strong> ${{ cartTotal() | number: '1.0-0' }} </strong>
+            </div>
+
+            <div>
+              <span> Shipping </span>
+
+              <span class="shipping-value"> Calculated later </span>
+            </div>
+          </div>
+
+          <!-- GRAND TOTAL -->
+
+          <div class="grand-total">
+            <span> Total </span>
+
+            <strong> ${{ cartTotal() | number: '1.0-0' }} </strong>
+          </div>
+
+          <!-- BENEFITS -->
+
+          <div class="checkout-benefits">
+            <div>
+              <span>
+                <i class="bi bi-shield-check"></i>
+              </span>
+
+              <div>
+                <strong> Secure ordering </strong>
+
+                <small> Your information is protected </small>
+              </div>
+            </div>
+
+            <div>
+              <span>
+                <i class="bi bi-truck"></i>
+              </span>
+
+              <div>
+                <strong> Reliable delivery </strong>
+
+                <small> Convenient delivery options </small>
+              </div>
+            </div>
+
+            <div>
+              <span>
+                <i class="bi bi-headset"></i>
+              </span>
+
+              <div>
+                <strong> Order support </strong>
+
+                <small> We're here to help </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- BACK TO CART -->
+
+          <a routerLink="/cart" class="back-cart">
+            <i class="bi bi-arrow-left"></i>
+
+            Back to cart
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+<div class="cart-page">
+  <div class="container py-4 py-lg-5">
+    <!-- ================= PAGE HEADER ================= -->
+
+    <div class="cart-header mb-4 mb-lg-5">
+      <div>
+        <span class="section-label">YOUR BAG</span>
+
+        <h1 class="cart-title">Shopping Cart</h1>
+
+        @if (cartItems().length > 0) {
+          <p class="cart-subtitle">
+            {{ cartCount() }}
+            {{ cartCount() === 1 ? 'item' : 'items' }}
+            ready for checkout
+          </p>
+        }
+      </div>
+
+      <a routerLink="/products" class="continue-shopping">
+        <i class="bi bi-arrow-left"></i>
+        <span>Continue Shopping</span>
+      </a>
+    </div>
+
+    <!-- ================= CART ================= -->
+
+    @if (cartItems().length > 0) {
+      <div class="row g-4 g-xl-5">
+        <!-- ================================================= -->
+        <!-- CART ITEMS                                        -->
+        <!-- ================================================= -->
+
+        <div class="col-lg-8">
+          <div class="cart-items-wrapper">
+            @for (item of cartItems(); track item.product.id) {
+              <div class="cart-item">
+                <!-- PRODUCT IMAGE -->
+
+                <div class="cart-product-image">
+                  @if (item.product.images?.length) {
+                    <img [src]="item.product.images[0]" [alt]="item.product.name" loading="lazy" />
+                  } @else {
+                    <div class="no-image">
+                      <i class="bi bi-image"></i>
+                      <span>No image</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- PRODUCT INFORMATION -->
+
+                <div class="cart-product-info">
+                  <div class="product-category">
+                    {{ item.product.categoryName || 'Product' }}
+                  </div>
+
+                  <h3 class="product-name">
+                    {{ item.product.name }}
+                  </h3>
+
+                  <div class="product-price">{{ item.product.price | number: '1.0-0' }} CFA</div>
+
+                  <div class="stock-info">
+                    @if (item.product.stockQuantity > 0) {
+                      <i class="bi bi-check-circle-fill"></i>
+
+                      <span> {{ item.product.stockQuantity }} available </span>
+                    } @else {
+                      <i class="bi bi-x-circle-fill"></i>
+
+                      <span>Out of stock</span>
+                    }
+                  </div>
+                </div>
+
+                <!-- QUANTITY -->
+
+                <div class="quantity-section">
+                  <span class="quantity-label"> Quantity </span>
+
+                  <div class="quantity-control">
+                    <button
+                      type="button"
+                      (click)="decrease(item.product.id)"
+                      [disabled]="item.quantity <= 1"
+                      aria-label="Decrease quantity"
+                    >
+                      <i class="bi bi-dash"></i>
+                    </button>
+
+                    <span class="quantity-value">
+                      {{ item.quantity }}
+                    </span>
+
+                    <button
+                      type="button"
+                      (click)="increase(item.product.id)"
+                      [disabled]="item.quantity >= item.product.stockQuantity"
+                      aria-label="Increase quantity"
+                    >
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+
+                  @if (item.quantity >= item.product.stockQuantity) {
+                    <span class="maximum-stock"> Maximum available </span>
+                  }
+                </div>
+
+                <!-- SUBTOTAL -->
+
+                <div class="subtotal-section">
+                  <span class="subtotal-label"> Subtotal </span>
+
+                  <strong>
+                    {{ item.product.price * item.quantity | number: '1.0-0' }}
+                    CFA
+                  </strong>
+                </div>
+
+                <!-- REMOVE -->
+
+                <button
+                  type="button"
+                  class="remove-button"
+                  (click)="remove(item.product.id)"
+                  aria-label="Remove product"
+                  title="Remove product"
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- CLEAR CART -->
+
+          <div class="cart-actions mt-4">
+            <button type="button" class="clear-cart-button" (click)="clear()">
+              <i class="bi bi-trash3"></i>
+              Clear Cart
+            </button>
+
+            <a routerLink="/products" class="mobile-shopping-link">
+              Continue shopping
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- ORDER SUMMARY                                     -->
+        <!-- ================================================= -->
+
+        <div class="col-lg-4">
+          <div class="order-summary">
+            <div class="summary-header">
+              <span class="summary-label"> ORDER SUMMARY </span>
+
+              <h2>Your Order</h2>
+            </div>
+
+            <!-- ITEMS -->
+
+            <div class="summary-row">
+              <span>
+                Subtotal
+                <small> ({{ cartCount() }} {{ cartCount() === 1 ? 'item' : 'items' }}) </small>
+              </span>
+
+              <strong> {{ cartTotal() | number: '1.0-0' }} CFA </strong>
+            </div>
+
+            <!-- SHIPPING -->
+
+            <div class="summary-row">
+              <span> Delivery </span>
+
+              <strong class="free-delivery">
+                <i class="bi bi-check-circle-fill"></i>
+                Free
+              </strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <!-- TOTAL -->
+
+            <div class="total-row">
+              <span> Total </span>
+
+              <strong> {{ cartTotal() | number: '1.0-0' }} CFA </strong>
+            </div>
+
+            <!-- CHECKOUT -->
+
+            <a routerLink="/checkout" class="checkout-button">
+              <span> Proceed to Checkout </span>
+
+              <i class="bi bi-arrow-right"></i>
+            </a>
+
+            <!-- EXPRESS -->
+
+            <button type="button" class="express-button">
+              <i class="bi bi-lightning-charge-fill"></i>
+
+              Express Checkout
+            </button>
+
+            <!-- BENEFITS -->
+
+            <div class="summary-benefits">
+              <div class="benefit">
+                <div class="benefit-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+
+                <span> Secure payment </span>
+              </div>
+
+              <div class="benefit">
+                <div class="benefit-icon">
+                  <i class="bi bi-truck"></i>
+                </div>
+
+                <span> Reliable delivery </span>
+              </div>
+
+              <div class="benefit">
+                <div class="benefit-icon">
+                  <i class="bi bi-arrow-repeat"></i>
+                </div>
+
+                <span> Easy returns </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- ================================================= -->
+      <!-- EMPTY CART                                        -->
+      <!-- ================================================= -->
+
+      <div class="empty-cart">
+        <div class="empty-cart-icon">
+          <i class="bi bi-bag-x"></i>
+        </div>
+
+        <span class="section-label"> YOUR BAG IS EMPTY </span>
+
+        <h2>Nothing here yet</h2>
+
+        <p>Discover something beautiful and add it to your collection.</p>
+
+        <a routerLink="/products" class="start-shopping-button">
+          <i class="bi bi-bag"></i>
+          Start Shopping
+        </a>
+      </div>
+    }
+  </div>
+</div>

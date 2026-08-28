@@ -1,0 +1,725 @@
+<div class="product-list-page">
+
+  <div class="container py-4 py-lg-5">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="row align-items-end mb-4 mb-lg-5">
+
+      <div class="col-lg-7">
+
+        <div class="section-label">
+          OUR COLLECTION
+        </div>
+
+        <h1 class="page-title">
+          Discover your next favorite
+        </h1>
+
+        <p class="page-description">
+          Explore our carefully selected collection of
+          stylish products designed for everyday living.
+        </p>
+
+      </div>
+
+      <div class="col-lg-5 mt-4 mt-lg-0">
+
+        <div class="results-summary text-lg-end">
+
+          @if (!loading()) {
+
+            <span class="result-number">
+              {{ totalItems() }}
+            </span>
+
+            <span class="result-text">
+              products available
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTER PANEL
+    ====================================================== -->
+
+    <div class="filter-card mb-4">
+
+      <div class="row g-3 align-items-end">
+
+        <!-- SEARCH -->
+
+        <div class="col-12 col-lg-4">
+
+          <label class="filter-label">
+            Search
+          </label>
+
+          <div class="search-wrapper">
+
+            <i class="bi bi-search search-icon"></i>
+
+            <input
+              type="text"
+              class="form-control search-input"
+              placeholder="Search products..."
+              [value]="searchTerm()"
+              (input)="onSearch($event)"
+            />
+
+            @if (searchTerm()) {
+
+              <button
+                type="button"
+                class="search-clear"
+                (click)="clearFilters()"
+              >
+                <i class="bi bi-x"></i>
+              </button>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="col-12 col-md-4 col-lg-2">
+
+          <label class="filter-label">
+            Category
+          </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="selectedCategory()"
+            (change)="changeCategory($any($event.target).value)"
+          >
+
+            <option value="ALL">
+              All Categories
+            </option>
+
+            @for (
+              category of categories();
+              track category
+            ) {
+
+              <option [value]="category">
+                {{ category }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- STOCK -->
+
+        <div class="col-12 col-md-4 col-lg-2">
+
+          <label class="filter-label">
+            Availability
+          </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="selectedStock()"
+            (change)="changeStock($any($event.target).value)"
+          >
+
+            <option value="ALL">
+              All Products
+            </option>
+
+            <option value="AVAILABLE">
+              In Stock
+            </option>
+
+            <option value="OUT_OF_STOCK">
+              Sold Out
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- SORT -->
+
+        <div class="col-12 col-md-4 col-lg-2">
+
+          <label class="filter-label">
+            Sort By
+          </label>
+
+          <select
+            class="form-select filter-select"
+            [value]="sortBy()"
+            (change)="changeSort($any($event.target).value)"
+          >
+
+            <option value="DEFAULT">
+              Recommended
+            </option>
+
+            <option value="NAME_ASC">
+              Name: A → Z
+            </option>
+
+            <option value="NAME_DESC">
+              Name: Z → A
+            </option>
+
+            <option value="PRICE_LOW">
+              Price: Low → High
+            </option>
+
+            <option value="PRICE_HIGH">
+              Price: High → Low
+            </option>
+
+            <option value="STOCK">
+              Stock Available
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- CLEAR -->
+
+        <div class="col-12 col-lg-2">
+
+          <button
+            type="button"
+            class="clear-filter-btn w-100"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+          >
+
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+
+            Clear Filters
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTIVE FILTER INFORMATION
+    ====================================================== -->
+
+    @if (hasActiveFilters()) {
+
+      <div class="active-filters mb-4">
+
+        <div class="d-flex align-items-center flex-wrap gap-2">
+
+          <span class="filter-result-label">
+            Filters:
+          </span>
+
+          @if (searchTerm()) {
+
+            <span class="filter-badge">
+
+              <i class="bi bi-search"></i>
+
+              {{ searchTerm() }}
+
+            </span>
+
+          }
+
+          @if (selectedCategory() !== 'ALL') {
+
+            <span class="filter-badge">
+
+              <i class="bi bi-grid"></i>
+
+              {{ selectedCategory() }}
+
+            </span>
+
+          }
+
+          @if (selectedStock() !== 'ALL') {
+
+            <span class="filter-badge">
+
+              <i class="bi bi-box-seam"></i>
+
+              {{ selectedStock() === 'AVAILABLE'
+                ? 'In Stock'
+                : 'Sold Out'
+              }}
+
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    @if (errorMessage()) {
+
+      <div class="alert error-alert">
+
+        <i class="bi bi-exclamation-circle-fill"></i>
+
+        <span>
+          {{ errorMessage() }}
+        </span>
+
+        <button
+          type="button"
+          class="btn retry-btn"
+          (click)="loadProducts()"
+        >
+          Try Again
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
+
+    @if (loading()) {
+
+      <div class="row g-4">
+
+        @for (
+          item of [1,2,3,4,5,6,7,8];
+          track item
+        ) {
+
+          <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+
+            <div class="product-skeleton">
+
+              <div class="skeleton-image"></div>
+
+              <div class="skeleton-line large"></div>
+
+              <div class="skeleton-line medium"></div>
+
+              <div class="skeleton-line small"></div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         PRODUCTS
+    ====================================================== -->
+
+    @if (!loading() && !errorMessage()) {
+
+      @if (paginatedProducts().length > 0) {
+
+        <div class="row g-4">
+
+          @for (
+            product of paginatedProducts();
+            track product.id
+          ) {
+
+            <div
+              class="col-12 col-sm-6 col-lg-4 col-xl-3"
+            >
+
+              <div class="product-card">
+
+                <!-- IMAGE -->
+
+                <a
+                  [routerLink]="[
+                    '/products',
+                    product.id
+                  ]"
+                  class="product-image-wrapper"
+                >
+
+                  @if (
+                    product.images &&
+                    product.images.length > 0
+                  ) {
+
+                    <img
+                      [src]="product.images[0]"
+                      [alt]="product.name"
+                      class="product-image"
+                      loading="lazy"
+                    />
+
+                  } @else {
+
+                    <div class="no-product-image">
+
+                      <i class="bi bi-image"></i>
+
+                      <span>
+                        No image
+                      </span>
+
+                    </div>
+
+                  }
+
+
+                  <!-- CATEGORY -->
+
+                  @if (product.categoryName) {
+
+                    <span class="product-category">
+
+                      {{ product.categoryName }}
+
+                    </span>
+
+                  }
+
+
+                  <!-- STOCK -->
+
+                  @if (product.stockQuantity === 0) {
+
+                    <span class="stock-badge sold-out">
+
+                      Sold Out
+
+                    </span>
+
+                  } @else if (
+                    product.stockQuantity <= 5
+                  ) {
+
+                    <span class="stock-badge low-stock">
+
+                      Only {{ product.stockQuantity }} left
+
+                    </span>
+
+                  }
+
+                </a>
+
+
+                <!-- PRODUCT INFORMATION -->
+
+                <div class="product-content">
+
+                  <div class="d-flex justify-content-between gap-2">
+
+                    <h3 class="product-name">
+
+                      {{ product.name }}
+
+                    </h3>
+
+                    <button
+                      type="button"
+                      class="wishlist-button"
+                      aria-label="Add to wishlist"
+                    >
+
+                      <i class="bi bi-heart"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  @if (product.description) {
+
+                    <p class="product-description">
+
+                      {{ product.description }}
+
+                    </p>
+
+                  }
+
+
+                  <div
+                    class="d-flex align-items-center justify-content-between mt-3"
+                  >
+
+                    <div>
+
+                      <span class="product-price">
+
+                        {{ product.price | number:'1.0-0' }}
+
+                        <small>
+                          CFA
+                        </small>
+
+                      </span>
+
+                    </div>
+
+
+                    <a
+                      [routerLink]="[
+                        '/products',
+                        product.id
+                      ]"
+                      class="view-product-btn"
+                    >
+
+                      <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- =================================================
+             PAGINATION
+        ================================================== -->
+
+        @if (totalPages() > 1) {
+
+          <div
+            class="pagination-section mt-5 pt-4"
+          >
+
+            <div
+              class="row align-items-center g-3"
+            >
+
+              <!-- RESULT RANGE -->
+
+              <div
+                class="col-12 col-md-4"
+              >
+
+                <div class="pagination-info">
+
+                  Showing
+
+                  <strong>
+                    {{ resultStart() }}
+                  </strong>
+
+                  –
+
+                  <strong>
+                    {{ resultEnd() }}
+                  </strong>
+
+                  of
+
+                  <strong>
+                    {{ totalItems() }}
+                  </strong>
+
+                  products
+
+                </div>
+
+              </div>
+
+
+              <!-- PAGINATION -->
+
+              <div
+                class="col-12 col-md-8"
+              >
+
+                <nav
+                  aria-label="Product pagination"
+                >
+
+                  <ul
+                    class="pagination justify-content-md-end justify-content-center mb-0"
+                  >
+
+                    <!-- PREVIOUS -->
+
+                    <li
+                      class="page-item"
+                      [class.disabled]="currentPage() === 1"
+                    >
+
+                      <button
+                        type="button"
+                        class="page-link pagination-arrow"
+                        (click)="previousPage()"
+                        [disabled]="currentPage() === 1"
+                      >
+
+                        <i class="bi bi-chevron-left"></i>
+
+                        <span class="d-none d-sm-inline">
+                          Previous
+                        </span>
+
+                      </button>
+
+                    </li>
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    @for (
+                      page of pageNumbers();
+                      track page
+                    ) {
+
+                      <li
+                        class="page-item"
+                        [class.active]="
+                          currentPage() === page
+                        "
+                      >
+
+                        <button
+                          type="button"
+                          class="page-link"
+                          (click)="goToPage(page)"
+                        >
+
+                          {{ page }}
+
+                        </button>
+
+                      </li>
+
+                    }
+
+
+                    <!-- NEXT -->
+
+                    <li
+                      class="page-item"
+                      [class.disabled]="
+                        currentPage() === totalPages()
+                      "
+                    >
+
+                      <button
+                        type="button"
+                        class="page-link pagination-arrow"
+                        (click)="nextPage()"
+                        [disabled]="
+                          currentPage() === totalPages()
+                        "
+                      >
+
+                        <span class="d-none d-sm-inline">
+                          Next
+                        </span>
+
+                        <i class="bi bi-chevron-right"></i>
+
+                      </button>
+
+                    </li>
+
+                  </ul>
+
+                </nav>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      } @else {
+
+        <!-- =================================================
+             NO RESULTS
+        ================================================== -->
+
+        <div class="empty-products">
+
+          <div class="empty-icon">
+
+            <i class="bi bi-search"></i>
+
+          </div>
+
+          <h3>
+            No products found
+          </h3>
+
+          <p>
+            We couldn't find any products matching
+            your current filters.
+          </p>
+
+          <button
+            type="button"
+            class="btn clear-empty-btn"
+            (click)="clearFilters()"
+          >
+
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+
+            Clear Filters
+
+          </button>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</div>
