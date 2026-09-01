@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnDestroy,
@@ -7,16 +8,20 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 
-import { ProductService } from '../../../services/services/product';
+import {
+  ActivatedRoute,
+  RouterLink
+} from '@angular/router';
+
 import { CartService } from '../../../services/cart';
 
 import {
   Product,
   ProductImage
 } from '../../../models/product.model';
+
+import { PublicProductService } from '../../../services/public/public-product-service';
 
 
 @Component({
@@ -35,11 +40,17 @@ import {
 })
 export class ProductDetails implements OnInit, OnDestroy {
 
+  // =========================================================
+  // SERVICES
+  // =========================================================
+
   private route = inject(ActivatedRoute);
 
-  private productService = inject(ProductService);
+  private publicProductService =
+    inject(PublicProductService);
 
-  private cartService = inject(CartService);
+  private cartService =
+    inject(CartService);
 
 
   // =========================================================
@@ -50,12 +61,20 @@ export class ProductDetails implements OnInit, OnDestroy {
 
 
   // =========================================================
+  // SHOP CONTEXT
+  // =========================================================
+
+  shopSlug = signal<string | null>(null);
+
+
+  // =========================================================
   // IMAGES
   // =========================================================
 
   images = signal<ProductImage[]>([]);
 
-  selectedImage = signal<ProductImage | null>(null);
+  selectedImage =
+    signal<ProductImage | null>(null);
 
   currentImageIndex = signal(0);
 
@@ -70,12 +89,15 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   loading = signal(true);
 
+  errorMessage = signal('');
+
 
   // =========================================================
   // AUTO SLIDER
   // =========================================================
 
-  private sliderInterval: ReturnType<typeof setInterval> | null = null;
+  private sliderInterval:
+    ReturnType<typeof setInterval> | null = null;
 
   private readonly sliderDelay = 4500;
 
@@ -90,93 +112,243 @@ export class ProductDetails implements OnInit, OnDestroy {
       this.route.snapshot.paramMap.get('id')
     );
 
+    const slug =
+      this.route.snapshot.paramMap.get('slug');
+
+
+    // ---------------------------------------------------------
+    // VALIDATE PRODUCT ID
+    // ---------------------------------------------------------
+
     if (!id) {
+
+      this.errorMessage.set(
+        'Invalid product.'
+      );
+
       this.loading.set(false);
+
       return;
     }
 
-    this.loadProduct(id);
 
-    this.loadImages(id);
+    // ---------------------------------------------------------
+    // STORE SHOP CONTEXT
+    // ---------------------------------------------------------
+
+    this.shopSlug.set(slug);
+
+
+    // ---------------------------------------------------------
+    // LOAD PRODUCT
+    // ---------------------------------------------------------
+
+    if (slug) {
+
+      // /shop/:slug/products/:id
+
+      this.loadShopProduct(
+        slug,
+        id
+      );
+
+    } else {
+
+      // /products/:id
+
+      this.loadProduct(id);
+
+    }
+
   }
 
 
   // =========================================================
-  // LOAD PRODUCT
+  // LOAD GENERAL PUBLIC PRODUCT
   // =========================================================
 
   private loadProduct(id: number): void {
 
-    this.productService.findById(id).subscribe({
+    this.loading.set(true);
 
-      next: product => {
+    this.publicProductService
+      .findById(id)
+      .subscribe({
 
-        this.product.set(product);
+        next: product => {
 
-        this.loading.set(false);
-      },
+          this.product.set(product);
 
-      error: error => {
+          this.setProductImages(
+            product.images ?? []
+          );
 
-        console.error(
-          'ERROR LOADING PRODUCT:',
-          error
-        );
+          this.loading.set(false);
 
-        this.loading.set(false);
-      }
+        },
 
-    });
+        error: error => {
+
+          console.error(
+            'ERROR LOADING PRODUCT:',
+            error
+          );
+
+          this.errorMessage.set(
+            'Unable to load this product.'
+          );
+
+          this.loading.set(false);
+
+        }
+
+      });
 
   }
 
 
   // =========================================================
-  // LOAD IMAGES
+  // LOAD SHOP PRODUCT
   // =========================================================
 
-  private loadImages(id: number): void {
+  private loadShopProduct(
+    slug: string,
+    productId: number
+  ): void {
 
-    this.productService.findImages(id).subscribe({
+    this.loading.set(true);
 
-      next: images => {
+    this.publicProductService
+      .findShopProduct(
+        slug,
+        productId
+      )
+      .subscribe({
 
-        this.images.set(images);
+        next: product => {
 
-        if (images.length > 0) {
+          this.product.set(product);
 
-          const primaryIndex = images.findIndex(
-            image => image.primaryImage
+          this.setProductImages(
+            product.images ?? []
           );
 
-          const startIndex =
-            primaryIndex >= 0
-              ? primaryIndex
-              : 0;
+          this.loading.set(false);
 
-          this.currentImageIndex.set(
-            startIndex
+        },
+
+        error: error => {
+
+          console.error(
+            'ERROR LOADING SHOP PRODUCT:',
+            error
           );
 
-          this.selectedImage.set(
-            images[startIndex]
+          this.errorMessage.set(
+            'Unable to load this product.'
           );
 
-          this.startAutoSlider();
+          this.loading.set(false);
+
         }
 
-      },
+      });
 
-      error: error => {
+  }
 
-        console.error(
-          'ERROR LOADING PRODUCT IMAGES:',
-          error
-        );
 
-      }
+  // =========================================================
+  // CONVERT STRING URLS → PRODUCT IMAGE OBJECTS
+  // =========================================================
 
-    });
+  private setProductImages(
+    imageUrls: string[]
+  ): void {
+
+    const productImages: ProductImage[] =
+      imageUrls.map(
+        (imageUrl, index) => ({
+
+          id: index + 1,
+
+          imageUrl,
+
+          originalFileName: '',
+
+          primaryImage: index === 0,
+
+          displayOrder: index
+
+        })
+      );
+
+
+    this.setImages(productImages);
+
+  }
+
+
+  // =========================================================
+  // SET IMAGES
+  // =========================================================
+
+  private setImages(
+    productImages: ProductImage[]
+  ): void {
+
+    this.images.set(productImages);
+
+
+    // ---------------------------------------------------------
+    // NO IMAGES
+    // ---------------------------------------------------------
+
+    if (productImages.length === 0) {
+
+      this.selectedImage.set(null);
+
+      this.currentImageIndex.set(0);
+
+      this.stopAutoSlider();
+
+      return;
+    }
+
+
+    // ---------------------------------------------------------
+    // FIND PRIMARY IMAGE
+    // ---------------------------------------------------------
+
+    const primaryIndex =
+      productImages.findIndex(
+        image => image.primaryImage
+      );
+
+
+    const startIndex =
+      primaryIndex >= 0
+        ? primaryIndex
+        : 0;
+
+
+    // ---------------------------------------------------------
+    // SELECT STARTING IMAGE
+    // ---------------------------------------------------------
+
+    this.currentImageIndex.set(
+      startIndex
+    );
+
+    this.selectedImage.set(
+      productImages[startIndex]
+    );
+
+
+    // ---------------------------------------------------------
+    // START SLIDER
+    // ---------------------------------------------------------
+
+    this.startAutoSlider();
 
   }
 
@@ -205,17 +377,24 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   nextImage(): void {
 
-    const productImages = this.images();
+    const productImages =
+      this.images();
+
 
     if (productImages.length <= 1) {
       return;
     }
 
-    const nextIndex =
-      (this.currentImageIndex() + 1)
-      % productImages.length;
 
-    this.currentImageIndex.set(nextIndex);
+    const nextIndex =
+      (
+        this.currentImageIndex() + 1
+      ) % productImages.length;
+
+
+    this.currentImageIndex.set(
+      nextIndex
+    );
 
     this.selectedImage.set(
       productImages[nextIndex]
@@ -230,15 +409,22 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   previousImage(): void {
 
-    const productImages = this.images();
+    const productImages =
+      this.images();
+
 
     if (productImages.length <= 1) {
       return;
     }
 
+
     const previousIndex =
-      (this.currentImageIndex() - 1 + productImages.length)
-      % productImages.length;
+      (
+        this.currentImageIndex() -
+        1 +
+        productImages.length
+      ) % productImages.length;
+
 
     this.currentImageIndex.set(
       previousIndex
@@ -259,18 +445,25 @@ export class ProductDetails implements OnInit, OnDestroy {
 
     this.stopAutoSlider();
 
+
     if (this.images().length <= 1) {
       return;
     }
 
-    this.sliderInterval = setInterval(() => {
 
-      this.nextImage();
+    this.sliderInterval =
+      setInterval(() => {
 
-    }, this.sliderDelay);
+        this.nextImage();
+
+      }, this.sliderDelay);
 
   }
 
+
+  // =========================================================
+  // RESTART AUTO SLIDER
+  // =========================================================
 
   private restartAutoSlider(): void {
 
@@ -279,11 +472,17 @@ export class ProductDetails implements OnInit, OnDestroy {
   }
 
 
+  // =========================================================
+  // STOP AUTO SLIDER
+  // =========================================================
+
   private stopAutoSlider(): void {
 
-    if (this.sliderInterval) {
+    if (this.sliderInterval !== null) {
 
-      clearInterval(this.sliderInterval);
+      clearInterval(
+        this.sliderInterval
+      );
 
       this.sliderInterval = null;
 
@@ -298,15 +497,18 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   increaseQuantity(): void {
 
-    const currentProduct = this.product();
+    const currentProduct =
+      this.product();
+
 
     if (!currentProduct) {
       return;
     }
 
+
     if (
-      this.quantity()
-      < currentProduct.stockQuantity
+      this.quantity() <
+      currentProduct.stockQuantity
     ) {
 
       this.quantity.update(
@@ -317,6 +519,10 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   }
 
+
+  // =========================================================
+  // DECREASE QUANTITY
+  // =========================================================
 
   decreaseQuantity(): void {
 
@@ -337,20 +543,44 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   addToCart(): void {
 
-    const currentProduct = this.product();
+    const currentProduct =
+      this.product();
+
 
     if (!currentProduct) {
       return;
     }
 
+
+    // ---------------------------------------------------------
+    // SHOP CONTEXT
+    // ---------------------------------------------------------
+
+    const currentShopSlug =
+      this.shopSlug() ??
+      currentProduct.shopSlug ??
+      null;
+
+
+    // ---------------------------------------------------------
+    // ADD PRODUCT
+    // ---------------------------------------------------------
+
     this.cartService.addToCart(
       currentProduct,
-      this.quantity()
+      this.quantity(),
+      currentShopSlug
     );
+
+
+    // ---------------------------------------------------------
+    // MESSAGE
+    // ---------------------------------------------------------
 
     this.cartMessage.set(
       `${this.quantity()} × ${currentProduct.name} added to cart`
     );
+
 
     setTimeout(() => {
 
@@ -372,3 +602,4 @@ export class ProductDetails implements OnInit, OnDestroy {
   }
 
 }
+

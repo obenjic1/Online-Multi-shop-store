@@ -1021,3 +1021,205 @@
     padding: 3rem 1.2rem;
   }
 }
+/* =========================================================
+   SHOP / SELLER
+========================================================= */
+
+.cart-shop-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  width: fit-content;
+
+  margin: 0.3rem 0 0.45rem;
+
+  padding: 0.35rem 0.6rem;
+
+  border-radius: 0.5rem;
+
+  background: rgba(110, 59, 94, 0.05);
+  border: 1px solid rgba(110, 59, 94, 0.12);
+
+  color: #2e2430;
+  text-decoration: none;
+
+  font-size: 0.78rem;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-shop-link:hover {
+  background: rgba(110, 59, 94, 0.09);
+  border-color: rgba(110, 59, 94, 0.25);
+
+  transform: translateX(2px);
+}
+
+/* SHOP ICON */
+
+.cart-shop-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: #6e3b5e;
+  color: #fff;
+
+  font-size: 0.7rem;
+}
+
+/* SOLD BY */
+
+.cart-shop-label {
+  color: #83758a;
+
+  font-size: 0.72rem;
+}
+
+/* SHOP NAME */
+
+.cart-shop-link strong {
+  color: #6e3b5e;
+
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* ARROW */
+
+.cart-shop-arrow {
+  color: #83758a;
+
+  font-size: 0.65rem;
+
+  transition: transform 0.2s ease;
+}
+
+.cart-shop-link:hover .cart-shop-arrow {
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+  .cart-shop-link {
+    max-width: 100%;
+  }
+
+  .cart-shop-link strong {
+    max-width: 150px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+/* =========================================================
+   SHOP HEADER
+========================================================= */
+
+.cart-shop-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 18px 20px;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(110, 59, 94, 0.12);
+
+  border-radius: 16px;
+
+  box-shadow: 0 4px 18px rgba(46, 36, 48, 0.05);
+}
+
+/* SHOP ICON */
+
+.cart-shop-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: rgba(110, 59, 94, 0.1);
+
+  color: #6e3b5e;
+
+  font-size: 1.25rem;
+}
+
+/* SHOP INFORMATION */
+
+.cart-shop-info {
+  min-width: 0;
+}
+
+.cart-shop-label {
+  display: block;
+
+  margin-bottom: 2px;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+
+  color: #83758a;
+}
+
+.cart-shop-info h2 {
+  margin: 0;
+
+  font-size: 1.15rem;
+  font-weight: 700;
+
+  color: #2e2430;
+}
+
+.cart-shop-info p {
+  margin: 3px 0 0;
+
+  font-size: 0.78rem;
+
+  color: #83758a;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+  .cart-shop-header {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .cart-shop-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 1.1rem;
+  }
+
+  .cart-shop-info h2 {
+    font-size: 1rem;
+  }
+}

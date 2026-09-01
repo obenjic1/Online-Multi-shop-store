@@ -1,3 +1,4 @@
+
 import {
   Component,
   computed,
@@ -6,312 +7,145 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import {
+  ActivatedRoute,
+  RouterLink
+} from '@angular/router';
 
-import { ProductService } from '../../../services/services/product';
 import { Product } from '../../../models/product.model';
+import { PublicProductService } from '../../../services/public/public-product-service';
 
 @Component({
   selector: 'app-product-list',
+
   standalone: true,
+
   imports: [
     CommonModule,
     RouterLink
   ],
+
   templateUrl: './product-list.html',
+
   styleUrl: './product-list.css'
 })
 export class ProductList {
 
+  // =========================================================
+  // SERVICES
+  // =========================================================
 
-  testProducts: Product[] = [
-    {
-      id: 101,
-      name: 'Classic Leather Handbag',
-      description: 'Elegant leather handbag for everyday use.',
-      price: 45000,
-      stockQuantity: 12,
-      categoryName: 'Handbags',
-      categoryId: 1,
-      active: true,
+  private publicProductService =
+    inject(PublicProductService);
 
-      images: []
-    },
-    {
-      id: 102,
-      name: 'Premium Travel Backpack',
-      description: 'Spacious backpack designed for travel.',
-      price: 65000,
-      stockQuantity: 8,
-      categoryName: 'Backpacks',
-      images: [],
-      categoryId: 2,
-      active: true
-    },
-    {
-      id: 103,
-      name: 'Mini Shoulder Bag',
-      description: 'Compact and stylish shoulder bag.',
-      price: 35000,
-      stockQuantity: 15,
-      categoryName: 'Shoulder Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 104,
-      name: 'Executive Laptop Backpack',
-      description: 'Professional backpack with laptop compartment.',
-      price: 75000,
-      stockQuantity: 6,
-      categoryName: 'Backpacks',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 105,
-      name: 'Elegant Evening Clutch',
-      description: 'Perfect clutch for evening occasions.',
-      price: 30000,
-      stockQuantity: 10,
-      categoryName: 'Clutches',
-      categoryId: 2,
-      active: true,
-      images: []
-    },
-    {
-      id: 106,
-      name: 'Classic Canvas Tote',
-      description: 'Lightweight tote for everyday shopping.',
-      price: 25000,
-      stockQuantity: 20,
-      categoryName: 'Tote Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 107,
-      name: 'Luxury Designer Handbag',
-      description: 'Premium handbag with elegant finishing.',
-      price: 95000,
-      stockQuantity: 5,
-      categoryName: 'Handbags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 108,
-      name: 'Weekend Travel Duffel',
-      description: 'Large duffel bag for weekend trips.',
-      price: 55000,
-      stockQuantity: 9,
-      categoryName: 'Travel Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 109,
-      name: 'Leather Crossbody Bag',
-      description: 'Convenient crossbody bag for daily use.',
-      price: 42000,
-      stockQuantity: 11,
-      categoryName: 'Shoulder Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 110,
-      name: 'Modern Office Tote',
-      description: 'Stylish tote suitable for work and business.',
-      price: 60000,
-      stockQuantity: 7,
-      categoryName: 'Tote Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 111,
-      name: 'Small Leather Clutch',
-      description: 'Minimal leather clutch for special occasions.',
-      price: 28000,
-      stockQuantity: 14,
-      categoryName: 'Clutches',
-      images: [],
-      categoryId: 2,
-      active: true,
-    },
-    {
-      id: 112,
-      name: 'Adventure Backpack',
-      description: 'Durable backpack for outdoor adventures.',
-      price: 58000,
-      stockQuantity: 13,
-      categoryName: 'Backpacks',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 113,
-      name: 'Luxury Shoulder Bag',
-      description: 'Premium shoulder bag with modern styling.',
-      price: 85000,
-      stockQuantity: 4,
-      categoryName: 'Shoulder Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 114,
-      name: 'Large Shopping Tote',
-      description: 'Spacious reusable tote bag.',
-      price: 22000,
-      stockQuantity: 25,
-      categoryName: 'Tote Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 115,
-      name: 'Business Laptop Bag',
-      description: 'Professional bag designed for laptops and documents.',
-      price: 70000,
-      stockQuantity: 8,
-      categoryName: 'Laptop Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 116,
-      name: 'Premium Leather Backpack',
-      description: 'Luxury leather backpack for professionals.',
-      price: 90000,
-      stockQuantity: 3,
-      categoryName: 'Backpacks',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 117,
-      name: 'Classic Evening Clutch',
-      description: 'Elegant clutch for parties and events.',
-      price: 38000,
-      stockQuantity: 9,
-      categoryName: 'Clutches',
-      categoryId: 2,
-      active: true,
-      images: []
-    },
-    {
-      id: 118,
-      name: 'Casual Crossbody Bag',
-      description: 'Comfortable everyday crossbody bag.',
-      price: 32000,
-      stockQuantity: 18,
-      categoryName: 'Shoulder Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 119,
-      name: 'Premium Office Backpack',
-      description: 'Modern backpack for work and commuting.',
-      price: 68000,
-      stockQuantity: 6,
-      categoryName: 'Backpacks',
-      categoryId: 1,
-      active: true,
-      images: []
-    },
-    {
-      id: 120,
-      name: 'Luxury Travel Bag',
-      description: 'Premium travel bag with spacious compartments.',
-      price: 110000,
-      stockQuantity: 3,
-      categoryName: 'Travel Bags',
-      categoryId: 1,
-      active: true,
-      images: []
-    }
-  ];
+  private route =
+    inject(ActivatedRoute);
 
-  private productService = inject(ProductService);
 
   // =========================================================
   // DATA
   // =========================================================
 
-  products = signal<Product[]>([]);
+  products =
+    signal<Product[]>([]);
 
-  loading = signal(true);
+  loading =
+    signal(true);
 
-  errorMessage = signal('');
+  errorMessage =
+    signal('');
+
+  /**
+   * null  = global storefront
+   * value = specific shop storefront
+   *
+   * Examples:
+   *
+   * /products
+   * /shop/kellyshop
+   */
+  shopSlug =
+    signal<string | null>(null);
+
 
   // =========================================================
   // FILTERS
   // =========================================================
 
-  searchTerm = signal('');
+  searchTerm =
+    signal('');
 
-  selectedCategory = signal('ALL');
+  selectedCategory =
+    signal('ALL');
 
-  selectedStock = signal('ALL');
+  selectedStock =
+    signal('ALL');
 
-  sortBy = signal('DEFAULT');
+  sortBy =
+    signal('DEFAULT');
+
 
   // =========================================================
   // PAGINATION
   // =========================================================
 
-  currentPage = signal(1);
+  currentPage =
+    signal(1);
 
-  pageSize = signal(8);
+  pageSize =
+    signal(8);
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
+
+  ngOnInit(): void {
+
+    /**
+     * The same component is used by:
+     *
+     * /products
+     *
+     * and
+     *
+     * /shop/:slug
+     *
+     * Therefore we read the optional slug from
+     * the current route.
+     */
+
+    const slug =
+      this.route.snapshot.paramMap.get('slug');
+
+    this.shopSlug.set(slug);
+
+    this.loadProducts();
+
+  }
+
 
   // =========================================================
   // CATEGORIES
   // =========================================================
 
-  ngOnInit(): void {
-
-    this.products.set(this.testProducts);
-    this.loadProducts();
-
-
-    // this.buildCategories();
-
-    //this.applyFilters();
-
-  }
-
-
-
-
-
   categories = computed(() => {
 
-    const names = this.products()
-      .map(product => product.categoryName)
-      .filter(
-        (category): category is string =>
-          !!category && category.trim().length > 0
-      );
+    const names =
+      this.products()
+        .map(product => product.categoryName)
+        .filter(
+          (category): category is string =>
+            !!category &&
+            category.trim().length > 0
+        );
 
-    return [...new Set(names)];
+    return [
+      ...new Set(names)
+    ];
 
   });
+
 
   // =========================================================
   // FILTERED PRODUCTS
@@ -319,72 +153,90 @@ export class ProductList {
 
   filteredProducts = computed(() => {
 
-    let result = [...this.products()];
+    let result =
+      [...this.products()];
+
 
     // -------------------------------------------------------
     // SEARCH
     // -------------------------------------------------------
 
-    const search = this.searchTerm()
-      .trim()
-      .toLowerCase();
+    const search =
+      this.searchTerm()
+        .trim()
+        .toLowerCase();
 
     if (search) {
 
-      result = result.filter(product =>
-        product.name
-          ?.toLowerCase()
-          .includes(search)
-        ||
-        product.description
-          ?.toLowerCase()
-          .includes(search)
-        ||
-        product.categoryName
-          ?.toLowerCase()
-          .includes(search)
-      );
+      result =
+        result.filter(product =>
+
+          product.name
+            ?.toLowerCase()
+            .includes(search)
+
+          ||
+
+          product.description
+            ?.toLowerCase()
+            .includes(search)
+
+          ||
+
+          product.categoryName
+            ?.toLowerCase()
+            .includes(search)
+
+        );
 
     }
+
 
     // -------------------------------------------------------
     // CATEGORY
     // -------------------------------------------------------
 
-    const category = this.selectedCategory();
+    const category =
+      this.selectedCategory();
 
     if (category !== 'ALL') {
 
-      result = result.filter(
-        product =>
-          product.categoryName === category
-      );
+      result =
+        result.filter(
+          product =>
+            product.categoryName === category
+        );
 
     }
+
 
     // -------------------------------------------------------
     // STOCK
     // -------------------------------------------------------
 
-    const stock = this.selectedStock();
+    const stock =
+      this.selectedStock();
 
     if (stock === 'AVAILABLE') {
 
-      result = result.filter(
-        product =>
-          product.stockQuantity > 0
-      );
+      result =
+        result.filter(
+          product =>
+            product.stockQuantity > 0
+        );
 
     }
 
     if (stock === 'OUT_OF_STOCK') {
 
-      result = result.filter(
-        product =>
-          product.stockQuantity === 0
-      );
+      result =
+        result.filter(
+          product =>
+            product.stockQuantity === 0
+        );
 
     }
+
 
     // -------------------------------------------------------
     // SORT
@@ -394,43 +246,52 @@ export class ProductList {
 
       case 'NAME_ASC':
 
-        result.sort((a, b) =>
-          a.name.localeCompare(b.name)
+        result.sort(
+          (a, b) =>
+            a.name.localeCompare(b.name)
         );
 
         break;
+
 
       case 'NAME_DESC':
 
-        result.sort((a, b) =>
-          b.name.localeCompare(a.name)
+        result.sort(
+          (a, b) =>
+            b.name.localeCompare(a.name)
         );
 
         break;
+
 
       case 'PRICE_LOW':
 
         result.sort(
           (a, b) =>
-            Number(a.price) - Number(b.price)
+            Number(a.price) -
+            Number(b.price)
         );
 
         break;
+
 
       case 'PRICE_HIGH':
 
         result.sort(
           (a, b) =>
-            Number(b.price) - Number(a.price)
+            Number(b.price) -
+            Number(a.price)
         );
 
         break;
+
 
       case 'STOCK':
 
         result.sort(
           (a, b) =>
-            b.stockQuantity - a.stockQuantity
+            b.stockQuantity -
+            a.stockQuantity
         );
 
         break;
@@ -441,6 +302,7 @@ export class ProductList {
 
   });
 
+
   // =========================================================
   // PAGINATION CALCULATIONS
   // =========================================================
@@ -449,6 +311,7 @@ export class ProductList {
     this.filteredProducts().length
   );
 
+
   totalPages = computed(() =>
     Math.ceil(
       this.totalItems() /
@@ -456,52 +319,72 @@ export class ProductList {
     )
   );
 
+
   paginatedProducts = computed(() => {
 
-    const products = this.filteredProducts();
+    const products =
+      this.filteredProducts();
 
     const start =
       (this.currentPage() - 1) *
       this.pageSize();
 
     const end =
-      start + this.pageSize();
+      start +
+      this.pageSize();
 
-    return products.slice(start, end);
+    return products.slice(
+      start,
+      end
+    );
 
   });
 
+
   pageNumbers = computed(() => {
 
-    const total = this.totalPages();
+    const total =
+      this.totalPages();
 
-    const current = this.currentPage();
+    const current =
+      this.currentPage();
 
     const pages: number[] = [];
 
     const maxVisiblePages = 5;
 
-    let start = Math.max(
-      1,
-      current - 2
-    );
+    let start =
+      Math.max(
+        1,
+        current - 2
+      );
 
-    let end = Math.min(
-      total,
-      start + maxVisiblePages - 1
-    );
+    let end =
+      Math.min(
+        total,
+        start +
+        maxVisiblePages -
+        1
+      );
+
 
     if (
-      end - start + 1 <
+      end -
+      start +
+      1 <
       maxVisiblePages
     ) {
 
-      start = Math.max(
-        1,
-        end - maxVisiblePages + 1
-      );
+      start =
+        Math.max(
+          1,
+          end -
+          maxVisiblePages +
+          1
+        );
 
     }
+
 
     for (
       let page = start;
@@ -517,22 +400,31 @@ export class ProductList {
 
   });
 
+
   // =========================================================
   // RESULT RANGE
   // =========================================================
 
   resultStart = computed(() => {
 
-    if (this.totalItems() === 0) {
+    if (
+      this.totalItems() === 0
+    ) {
+
       return 0;
+
     }
 
     return (
-      (this.currentPage() - 1) *
+      (
+        this.currentPage() -
+        1
+      ) *
       this.pageSize()
     ) + 1;
 
   });
+
 
   resultEnd = computed(() => {
 
@@ -543,11 +435,6 @@ export class ProductList {
     );
 
   });
-
-  // =========================================================
-  // INIT
-  // =========================================================
-
 
 
   // =========================================================
@@ -560,51 +447,158 @@ export class ProductList {
 
     this.errorMessage.set('');
 
-    this.productService.findAll().subscribe({
 
-      next: response => {
+    const slug =
+      this.shopSlug();
 
 
-        /*
-         * If your backend returns:
-         *
-         * Product[]
-         *
-         * this works directly.
-         */
+    // =======================================================
+    // SHOP STOREFRONT
+    // =======================================================
 
-        this.products.set(response);
+    if (slug) {
 
-        this.currentPage.set(1);
+      this.publicProductService
+        .findByShop(slug)
+        .subscribe({
 
-        this.loading.set(false);
+          next: response => {
 
-      },
+            this.products.set(
+              response
+            );
 
-      error: error => {
+            this.currentPage.set(1);
 
-        console.error(
-          'PRODUCT LOAD ERROR:',
-          error
-        );
+            this.loading.set(false);
 
-        this.errorMessage.set(
-          'Unable to load products. Please try again.'
-        );
+          },
 
-        this.loading.set(false);
 
-      }
+          error: error => {
 
-    });
+            console.error(
+              'SHOP PRODUCT LOAD ERROR:',
+              error
+            );
+
+            this.errorMessage.set(
+              'Unable to load this shop. Please try again.'
+            );
+
+            this.loading.set(false);
+
+          }
+
+        });
+
+      return;
+
+    }
+
+
+    // =======================================================
+    // GLOBAL STOREFRONT
+    // =======================================================
+
+    this.publicProductService
+      .findAll()
+      .subscribe({
+
+        next: response => {
+
+          this.products.set(
+            response
+          );
+
+          this.currentPage.set(1);
+
+          this.loading.set(false);
+
+        },
+
+
+        error: error => {
+
+          console.error(
+            'PUBLIC PRODUCT LOAD ERROR:',
+            error
+          );
+
+          this.errorMessage.set(
+            'Unable to load products. Please try again.'
+          );
+
+          this.loading.set(false);
+
+        }
+
+      });
 
   }
+
+
+  // =========================================================
+  // PRODUCT LINK
+  // =========================================================
+
+  /**
+   * IMPORTANT:
+   *
+   * This method controls ALL product-detail navigation.
+   *
+   * Global:
+   *
+   * /products/1
+   *
+   * Shop:
+   *
+   * /shop/kellyshop/products/1
+   */
+
+  getProductLink(
+    productId: number
+  ): string[] {
+
+    const slug =
+      this.shopSlug();
+
+
+    // -------------------------------------------------------
+    // SHOP PRODUCT
+    // -------------------------------------------------------
+
+    if (slug) {
+
+      return [
+        '/shop',
+        slug,
+        'products',
+        productId.toString()
+      ];
+
+    }
+
+
+    // -------------------------------------------------------
+    // GLOBAL PRODUCT
+    // -------------------------------------------------------
+
+    return [
+      '/products',
+      productId.toString()
+    ];
+
+  }
+
 
   // =========================================================
   // SEARCH
   // =========================================================
 
-  onSearch(event: Event): void {
+  onSearch(
+    event: Event
+  ): void {
 
     const input =
       event.target as HTMLInputElement;
@@ -617,11 +611,14 @@ export class ProductList {
 
   }
 
+
   // =========================================================
   // CATEGORY
   // =========================================================
 
-  changeCategory(category: string): void {
+  changeCategory(
+    category: string
+  ): void {
 
     this.selectedCategory.set(
       category
@@ -631,11 +628,14 @@ export class ProductList {
 
   }
 
+
   // =========================================================
   // STOCK
   // =========================================================
 
-  changeStock(stock: string): void {
+  changeStock(
+    stock: string
+  ): void {
 
     this.selectedStock.set(
       stock
@@ -645,23 +645,31 @@ export class ProductList {
 
   }
 
+
   // =========================================================
   // SORT
   // =========================================================
 
-  changeSort(sort: string): void {
+  changeSort(
+    sort: string
+  ): void {
 
-    this.sortBy.set(sort);
+    this.sortBy.set(
+      sort
+    );
 
     this.currentPage.set(1);
 
   }
 
+
   // =========================================================
   // PAGE
   // =========================================================
 
-  goToPage(page: number): void {
+  goToPage(
+    page: number
+  ): void {
 
     if (
       page < 1 ||
@@ -672,7 +680,9 @@ export class ProductList {
 
     }
 
-    this.currentPage.set(page);
+    this.currentPage.set(
+      page
+    );
 
     window.scrollTo({
       top: 0,
@@ -680,6 +690,7 @@ export class ProductList {
     });
 
   }
+
 
   nextPage(): void {
 
@@ -696,6 +707,7 @@ export class ProductList {
 
   }
 
+
   previousPage(): void {
 
     if (
@@ -710,6 +722,7 @@ export class ProductList {
 
   }
 
+
   // =========================================================
   // CLEAR FILTERS
   // =========================================================
@@ -718,15 +731,22 @@ export class ProductList {
 
     this.searchTerm.set('');
 
-    this.selectedCategory.set('ALL');
+    this.selectedCategory.set(
+      'ALL'
+    );
 
-    this.selectedStock.set('ALL');
+    this.selectedStock.set(
+      'ALL'
+    );
 
-    this.sortBy.set('DEFAULT');
+    this.sortBy.set(
+      'DEFAULT'
+    );
 
     this.currentPage.set(1);
 
   }
+
 
   // =========================================================
   // CHECK FILTER STATE
@@ -735,14 +755,28 @@ export class ProductList {
   hasActiveFilters = computed(() => {
 
     return (
-      this.searchTerm().trim() !== '' ||
-      this.selectedCategory() !== 'ALL' ||
-      this.selectedStock() !== 'ALL' ||
-      this.sortBy() !== 'DEFAULT'
+
+      this.searchTerm()
+        .trim() !== ''
+
+      ||
+
+      this.selectedCategory() !==
+      'ALL'
+
+      ||
+
+      this.selectedStock() !==
+      'ALL'
+
+      ||
+
+      this.sortBy() !==
+      'DEFAULT'
+
     );
 
   });
 
-
-
 }
+

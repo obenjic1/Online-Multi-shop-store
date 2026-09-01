@@ -23,6 +23,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "orders")
@@ -39,6 +42,10 @@ public class Order {
 
     @Column(nullable = false, unique = true)
     private String orderNumber;
+    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "shop_id", nullable = false)
+private Shop shop;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

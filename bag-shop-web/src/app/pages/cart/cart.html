@@ -22,7 +22,25 @@
         <span>Continue Shopping</span>
       </a>
     </div>
+    <!-- ================= SHOP HEADER ================= -->
 
+    @if (shopSlug()) {
+      <div class="cart-shop-header mb-4">
+        <div class="cart-shop-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <div class="cart-shop-info">
+          <span class="cart-shop-label"> SHOPPING FROM </span>
+
+          <h2>
+            {{ cartItems()[0]?.product?.shopName || shopSlug() }}
+          </h2>
+
+          <p>All products in this cart are from this shop.</p>
+        </div>
+      </div>
+    }
     <!-- ================= CART ================= -->
 
     @if (cartItems().length > 0) {
@@ -35,7 +53,9 @@
           <div class="cart-items-wrapper">
             @for (item of cartItems(); track item.product.id) {
               <div class="cart-item">
-                <!-- PRODUCT IMAGE -->
+                <!-- =================================================
+                     PRODUCT IMAGE
+                ================================================== -->
 
                 <div class="cart-product-image">
                   @if (item.product.images?.length) {
@@ -48,18 +68,54 @@
                   }
                 </div>
 
-                <!-- PRODUCT INFORMATION -->
+                <!-- =================================================
+                     PRODUCT INFORMATION
+                ================================================== -->
 
                 <div class="cart-product-info">
+                  <!-- CATEGORY -->
+
                   <div class="product-category">
                     {{ item.product.categoryName || 'Product' }}
                   </div>
+
+                  <!-- SHOP -->
+
+                  @if (item.product.shopName) {
+                    <a
+                      class="cart-shop-link"
+                      [routerLink]="
+                        item.product.shopSlug ? ['/shop', item.product.shopSlug] : ['/products']
+                      "
+                    >
+                      <span class="cart-shop-icon">
+                        <i class="bi bi-shop"></i>
+                      </span>
+
+                      <span class="cart-shop-label"> Sold by </span>
+
+                      <strong>
+                        {{ item.product.shopName }}
+                      </strong>
+
+                      <i class="bi bi-arrow-right cart-shop-arrow"></i>
+                    </a>
+                  }
+
+                  <!-- PRODUCT NAME -->
 
                   <h3 class="product-name">
                     {{ item.product.name }}
                   </h3>
 
-                  <div class="product-price">{{ item.product.price | number: '1.0-0' }} CFA</div>
+                  <!-- PRICE -->
+
+                  <div class="product-price">
+                    {{ item.product.price | number: '1.0-0' }}
+                    CFA
+                  </div>
+
+                  <!-- STOCK -->
 
                   <div class="stock-info">
                     @if (item.product.stockQuantity > 0) {
@@ -69,12 +125,14 @@
                     } @else {
                       <i class="bi bi-x-circle-fill"></i>
 
-                      <span>Out of stock</span>
+                      <span> Out of stock </span>
                     }
                   </div>
                 </div>
 
-                <!-- QUANTITY -->
+                <!-- =================================================
+                     QUANTITY
+                ================================================== -->
 
                 <div class="quantity-section">
                   <span class="quantity-label"> Quantity </span>
@@ -108,7 +166,9 @@
                   }
                 </div>
 
-                <!-- SUBTOTAL -->
+                <!-- =================================================
+                     SUBTOTAL
+                ================================================== -->
 
                 <div class="subtotal-section">
                   <span class="subtotal-label"> Subtotal </span>
@@ -119,7 +179,9 @@
                   </strong>
                 </div>
 
-                <!-- REMOVE -->
+                <!-- =================================================
+                     REMOVE
+                ================================================== -->
 
                 <button
                   type="button"
@@ -134,7 +196,9 @@
             }
           </div>
 
-          <!-- CLEAR CART -->
+          <!-- =================================================
+               CLEAR CART
+          ================================================== -->
 
           <div class="cart-actions mt-4">
             <button type="button" class="clear-cart-button" (click)="clear()">
@@ -166,10 +230,14 @@
             <div class="summary-row">
               <span>
                 Subtotal
+
                 <small> ({{ cartCount() }} {{ cartCount() === 1 ? 'item' : 'items' }}) </small>
               </span>
 
-              <strong> {{ cartTotal() | number: '1.0-0' }} CFA </strong>
+              <strong>
+                {{ cartTotal() | number: '1.0-0' }}
+                CFA
+              </strong>
             </div>
 
             <!-- SHIPPING -->
@@ -179,6 +247,7 @@
 
               <strong class="free-delivery">
                 <i class="bi bi-check-circle-fill"></i>
+
                 Free
               </strong>
             </div>
@@ -190,7 +259,10 @@
             <div class="total-row">
               <span> Total </span>
 
-              <strong> {{ cartTotal() | number: '1.0-0' }} CFA </strong>
+              <strong>
+                {{ cartTotal() | number: '1.0-0' }}
+                CFA
+              </strong>
             </div>
 
             <!-- CHECKOUT -->
@@ -257,6 +329,7 @@
 
         <a routerLink="/products" class="start-shopping-button">
           <i class="bi bi-bag"></i>
+
           Start Shopping
         </a>
       </div>

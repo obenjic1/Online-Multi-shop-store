@@ -26,7 +26,7 @@
         </div>
 
         <div>
-          <strong>Unable to place order</strong>
+          <strong> Unable to place order </strong>
 
           <div>
             {{ errorMessage }}
@@ -80,6 +80,7 @@
 
                         <span class="free-label">
                           <i class="bi bi-check-circle-fill"></i>
+
                           Free
                         </span>
                       </div>
@@ -110,6 +111,7 @@
 
                         <span class="delivery-label">
                           <i class="bi bi-info-circle"></i>
+
                           Delivery charges apply
                         </span>
                       </div>
@@ -309,11 +311,19 @@
           <!-- PLACE ORDER                                    -->
           <!-- ============================================= -->
 
-          <button type="submit" class="place-order-btn" [disabled]="submitting">
+          <button
+            type="submit"
+            class="place-order-btn"
+            [disabled]="submitting || hasMixedShops() || invalidShopItemCount() > 0"
+          >
             @if (submitting) {
               <span class="spinner-border spinner-border-sm"></span>
 
               <span> Placing your order... </span>
+            } @else if (hasMixedShops() || invalidShopItemCount() > 0) {
+              <i class="bi bi-exclamation-triangle"></i>
+
+              <span> Fix Shop Items Before Ordering </span>
             } @else {
               <i class="bi bi-bag-check"></i>
 
@@ -349,11 +359,26 @@
             </div>
           </div>
 
-          <!-- ITEMS -->
+          <!-- ================================================= -->
+          <!-- ITEMS                                             -->
+          <!-- ================================================= -->
+
+          <!-- ================================================= -->
+          <!-- ITEMS                                             -->
+          <!-- ================================================= -->
 
           <div class="summary-items">
             @for (item of cartItems(); track item.product.id) {
-              <div class="summary-item">
+              <!-- ================================================= -->
+              <!-- CHECK WHETHER PRODUCT BELONGS TO ANOTHER SHOP     -->
+              <!-- ================================================= -->
+
+              <div
+                class="summary-item"
+                [class.shop-mismatch]="item.shopSlug && shopSlug() && item.shopSlug !== shopSlug()"
+              >
+                <!-- IMAGE -->
+
                 <div class="summary-image">
                   @if (item.product.images?.length) {
                     <img [src]="item.product.images[0]" [alt]="item.product.name" />
@@ -366,15 +391,47 @@
                   </span>
                 </div>
 
+                <!-- PRODUCT -->
+
                 <div class="summary-product">
                   <h3>
                     {{ item.product.name }}
                   </h3>
 
-                  <p>${{ item.product.price | number: '1.0-0' }}</p>
+                  <!-- ================================================= -->
+                  <!-- SHOP NAME                                         -->
+                  <!-- ================================================= -->
+
+                  @if (item.shopSlug !== shopSlug()) {
+                    <div class="shop-mismatch-warning">
+                      <i class="bi bi-exclamation-triangle-fill"></i>
+
+                      <span>
+                        {{ item.product.shopName || 'Different shop' }}
+                      </span>
+                    </div>
+                  } @else {
+                    <div class="product-shop">
+                      <i class="bi bi-shop"></i>
+
+                      <span>
+                        {{ item.product.shopName || 'Shop' }}
+                      </span>
+                    </div>
+                  }
+
+                  <p>
+                    {{ item.product.price | number: '1.0-0' }}
+                    FCFA
+                  </p>
                 </div>
 
-                <strong> ${{ item.product.price * item.quantity | number: '1.0-0' }} </strong>
+                <!-- ITEM TOTAL -->
+
+                <strong>
+                  {{ item.product.price * item.quantity | number: '1.0-0' }}
+                  FCFA
+                </strong>
               </div>
             } @empty {
               <div class="empty-summary">
@@ -385,13 +442,47 @@
             }
           </div>
 
-          <!-- TOTALS -->
+          <!-- ================================================= -->
+          <!-- SHOP VALIDATION ERROR                             -->
+          <!-- ================================================= -->
+
+          @if (hasMixedShops() || invalidShopItemCount() > 0) {
+            <div class="shop-validation-alert">
+              <div class="shop-validation-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+
+              <div class="shop-validation-content">
+                <strong> Products from different shops </strong>
+
+                <p>
+                  All products in an order must be from the same shop. Please remove the highlighted
+                  product
+                  {{ invalidShopItemCount() === 1 ? '' : 's' }}
+                  before continuing.
+                </p>
+
+                <a routerLink="/cart" class="review-cart-link">
+                  <i class="bi bi-cart3 me-1"></i>
+                  Review your cart
+                </a>
+              </div>
+            </div>
+          }
+
+          <!-- ================================================= -->
+          <!-- TOTALS                                            -->
+          <!-- ================================================= -->
 
           <div class="summary-totals">
             <div>
               <span> Subtotal </span>
 
-              <strong> ${{ cartTotal() | number: '1.0-0' }} </strong>
+              <strong>
+                {{ cartTotal() | number: '1.0-0' }}
+
+                FCFA
+              </strong>
             </div>
 
             <div>
@@ -401,15 +492,23 @@
             </div>
           </div>
 
-          <!-- GRAND TOTAL -->
+          <!-- ================================================= -->
+          <!-- GRAND TOTAL                                       -->
+          <!-- ================================================= -->
 
           <div class="grand-total">
             <span> Total </span>
 
-            <strong> ${{ cartTotal() | number: '1.0-0' }} </strong>
+            <strong>
+              {{ cartTotal() | number: '1.0-0' }}
+
+              FCFA
+            </strong>
           </div>
 
-          <!-- BENEFITS -->
+          <!-- ================================================= -->
+          <!-- BENEFITS                                          -->
+          <!-- ================================================= -->
 
           <div class="checkout-benefits">
             <div>
@@ -449,7 +548,9 @@
             </div>
           </div>
 
-          <!-- BACK TO CART -->
+          <!-- ================================================= -->
+          <!-- BACK TO CART                                      -->
+          <!-- ================================================= -->
 
           <a routerLink="/cart" class="back-cart">
             <i class="bi bi-arrow-left"></i>

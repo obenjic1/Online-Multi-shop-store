@@ -1,23 +1,21 @@
 package com.bag_shop_api.bag_shop_api.Service;
 
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bag_shop_api.bag_shop_api.DTO.ProductImageResponse;
 import com.bag_shop_api.bag_shop_api.Entity.Product;
 import com.bag_shop_api.bag_shop_api.Entity.ProductImage;
+import com.bag_shop_api.bag_shop_api.Entity.Shop;
 import com.bag_shop_api.bag_shop_api.Repository.ProductImageRepository;
 import com.bag_shop_api.bag_shop_api.Repository.ProductRepository;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import java.util.Optional;
+//import com.cloudinary.Cloudinary;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -25,88 +23,179 @@ public class ProductImageService {
 
         private final ProductRepository productRepository;
         private final ProductImageRepository productImageRepository;
-        private final Cloudinary cloudinary;
-
+     //   private final Cloudinary cloudinary;
+        private final ImageStorageService imageStorageService;
+        private final CurrentUserService currentUserService;
+                
+        
         @Transactional
         public void upload(
-                        Long productId,
-                        List<MultipartFile> files) throws IOException {
+                Long productId,
+                List<MultipartFile> files) throws IOException {
 
-                Product product = productRepository.findById(productId)
-                                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+            // Get the currently authenticated user's shop
+            Shop shop = currentUserService.getCurrentShop();
 
-                long currentImageCount = productImageRepository.countByProductId(productId);
+            // Only find the product if it belongs to the current user's shop
+            Product product = productRepository
+                    .findByIdAndShopId(productId, shop.getId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Product not found"));
 
-                for (MultipartFile file : files) {
+            long currentImageCount =
+                    productImageRepository.countByProductId(productId);
 
-                        Map<?, ?> result = cloudinary.uploader().upload(
-                                        file.getBytes(),
-                                        ObjectUtils.asMap(
-                                                        "folder", "bag-shop/products"));
+            for (MultipartFile file : files) {
+            	/*
 
-                        String imageUrl = (String) result.get("secure_url");
+                Map<?, ?> result = cloudinary.uploader().upload(
+                        file.getBytes(),
+                        ObjectUtils.asMap(
+                                "folder", "bag-shop/products")); 
+                                
+                                
+                                     String imageUrl = (String) result.get("secure_url");
+           
+                                
+                                */
+            	
 
-                        ProductImage image = new ProductImage();
+                String imageUrl = imageStorageService.upload(
+                        file,
+                        "products");
 
-                        image.setProduct(product);
-                        image.setImageUrl(imageUrl);
-                        image.setOriginalFileName(file.getOriginalFilename());
 
-                        image.setPrimaryImage(currentImageCount == 0);
 
-                        image.setDisplayOrder((int) currentImageCount);
+                ProductImage image = new ProductImage();
 
-                        productImageRepository.save(image);
+                image.setProduct(product);
+                image.setImageUrl(imageUrl);
+                image.setOriginalFileName(file.getOriginalFilename());
+                image.setPrimaryImage(currentImageCount == 0);
+                image.setDisplayOrder((int) currentImageCount);
 
-                        currentImageCount++;
-                }
+                productImageRepository.save(image);
+
+                currentImageCount++;
+            }
         }
 
         @Transactional(readOnly = true)
         public List<ProductImageResponse> getByProductId(Long productId) {
 
-                return productImageRepository
-                                .findByProductIdOrderByDisplayOrderAsc(productId)
-                                .stream()
-                                .map(image -> new ProductImageResponse(
-                                                image.getId(),
-                                                image.getImageUrl(),
-                                                image.getOriginalFileName(),
-                                                image.isPrimaryImage(),
-                                                image.getDisplayOrder()))
-                                .toList();
+            Shop shop = currentUserService.getCurrentShop();
+
+            // Verify that the product belongs to the current user's shop
+            Product product = productRepository
+                    .findByIdAndShopId(productId, shop.getId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Product not found"));
+
+            return productImageRepository
+                    .findByProductIdOrderByDisplayOrderAsc(product.getId())
+                    .stream()
+                    .map(image -> new ProductImageResponse(
+                            image.getId(),
+                            image.getImageUrl(),
+                            image.getOriginalFileName(),
+                            image.isPrimaryImage(),
+                            image.getDisplayOrder()))
+                    .toList();
         }
         
-     @Transactional
-public void delete(Long productId, Long imageId) {
+        /*
 
-    ProductImage image = productImageRepository
-            .findById(imageId)
-            .orElseThrow(() ->
-                    new RuntimeException("Image not found: " + imageId));
+        @Transactional
+        public void delete(Long productId, Long imageId) {
 
-    if (!image.getProduct().getId().equals(productId)) {
-        throw new RuntimeException(
-                "Image does not belong to this product");
-    }
+            Shop shop = currentUserService.getCurrentShop();
 
-    boolean wasPrimary = image.isPrimaryImage();
+            // First verify that the product belongs to the current user's shop
+            Product product = productRepository
+                    .findByIdAndShopId(productId, shop.getId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Product not found"));
 
-    productImageRepository.delete(image);
+            ProductImage image = productImageRepository
+                    .findById(imageId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Image not found: " + imageId));
 
-    // If the deleted image was primary,
-    // make the first remaining image primary.
-    if (wasPrimary) {
+            // Make sure the image belongs to the requested product
+            if (!image.getProduct().getId().equals(product.getId())) {
 
-        productImageRepository
-                .findFirstByProductIdOrderByDisplayOrderAsc(productId)
-                .ifPresent(nextImage -> {
+                throw new RuntimeException(
+                        "Image does not belong to this product");
+            }
 
-                    nextImage.setPrimaryImage(true);
+            boolean wasPrimary = image.isPrimaryImage();
 
-                    productImageRepository.save(nextImage);
-                });
-    }
-}
+            productImageRepository.delete(image);
+
+            // If the deleted image was primary,
+            // make the first remaining image primary.
+            if (wasPrimary) {
+
+                productImageRepository
+                        .findFirstByProductIdOrderByDisplayOrderAsc(productId)
+                        .ifPresent(nextImage -> {
+
+                            nextImage.setPrimaryImage(true);
+
+                            productImageRepository.save(nextImage);
+                        });
+            }
+        } */
+        
+        @Transactional
+        public void delete(Long productId, Long imageId) {
+
+            Shop shop = currentUserService.getCurrentShop();
+
+            Product product = productRepository
+                    .findByIdAndShopId(productId, shop.getId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Product not found"));
+
+            ProductImage image = productImageRepository
+                    .findById(imageId)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Image not found: " + imageId));
+
+            if (!image.getProduct().getId().equals(product.getId())) {
+
+                throw new RuntimeException(
+                        "Image does not belong to this product");
+            }
+
+            boolean wasPrimary = image.isPrimaryImage();
+
+            try {
+
+                imageStorageService.delete(
+                        image.getImageUrl());
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(
+                        "Failed to delete image file", e);
+            }
+
+            productImageRepository.delete(image);
+
+            if (wasPrimary) {
+
+                productImageRepository
+                        .findFirstByProductIdOrderByDisplayOrderAsc(productId)
+                        .ifPresent(nextImage -> {
+
+                            nextImage.setPrimaryImage(true);
+
+                            productImageRepository.save(nextImage);
+                        });
+            }
+        }
+        
 
 }

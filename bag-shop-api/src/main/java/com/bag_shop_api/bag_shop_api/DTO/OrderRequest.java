@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bag_shop_api.bag_shop_api.Enums.FulfillmentType;
 
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderRequest {
+
+ @NotBlank(message = "Shop slug is required")
+    private String shopSlug;
 
     @NotBlank
     private String customerName;

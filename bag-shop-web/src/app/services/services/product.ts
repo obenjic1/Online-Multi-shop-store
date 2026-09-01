@@ -8,9 +8,14 @@ import { Product, ProductImage } from '../../models/product.model';
   providedIn: 'root',
 })
 export class ProductService {
+
   private http = inject(HttpClient);
 
   private readonly url = `${environment.apiUrl}/products`;
+
+  // =========================
+  // ADMIN / AUTHENTICATED
+  // =========================
 
   findAll(): Observable<Product[]> {
     return this.http.get<Product[]>(this.url);
@@ -59,9 +64,51 @@ export class ProductService {
     );
   }
 
-  deleteImage(productId: number, imageId: number): Observable<void> {
+  deleteImage(
+    productId: number,
+    imageId: number
+  ): Observable<void> {
+
     return this.http.delete<void>(
       `${this.url}/${productId}/images/${imageId}`
+    );
+  }
+
+
+  // =========================
+  // PUBLIC
+  // =========================
+
+  findPublicAll(): Observable<Product[]> {
+
+    return this.http.get<Product[]>(
+      `${environment.apiUrl}/public/products`
+    );
+  }
+
+  findPublicByShop(slug: string): Observable<Product[]> {
+
+    return this.http.get<Product[]>(
+      `${environment.apiUrl}/public/products/shop/${slug}`
+    );
+  }
+
+
+  findPublicById(id: number): Observable<Product> {
+    return this.http.get<Product>(
+      `${environment.apiUrl}/public/products/${id}`
+    );
+  }
+
+
+
+  findPublicShopProduct(
+    slug: string,
+    productId: number
+  ): Observable<Product> {
+
+    return this.http.get<Product>(
+      `${environment.apiUrl}/public/products/shop/${slug}/${productId}`
     );
   }
 }

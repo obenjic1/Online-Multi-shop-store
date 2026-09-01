@@ -1,15 +1,26 @@
 <div class="product-page">
   @if (product(); as product) {
     <div class="container py-4 py-lg-5">
-      <!-- ================= BREADCRUMB ================= -->
+      <!-- =====================================================
+           BREADCRUMB
+      ====================================================== -->
 
       <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb product-breadcrumb mb-0">
           <li class="breadcrumb-item">
-            <a routerLink="/products">
-              <i class="bi bi-shop me-1"></i>
-              Shop
-            </a>
+            @if (shopSlug()) {
+              <a [routerLink]="['/shop', shopSlug()]">
+                <i class="bi bi-shop me-1"></i>
+
+                Shop
+              </a>
+            } @else {
+              <a routerLink="/products">
+                <i class="bi bi-shop me-1"></i>
+
+                Shop
+              </a>
+            }
           </li>
 
           <li class="breadcrumb-item active">
@@ -18,10 +29,14 @@
         </ol>
       </nav>
 
-      <!-- ================= PRODUCT ================= -->
+      <!-- =====================================================
+           PRODUCT
+      ====================================================== -->
 
       <div class="row g-4 g-xl-5 align-items-start">
-        <!-- ================= GALLERY ================= -->
+        <!-- ===================================================
+             GALLERY
+        ==================================================== -->
 
         <div class="col-lg-6">
           <div class="product-gallery">
@@ -46,12 +61,7 @@
 
                 <!-- WISHLIST -->
 
-                <button
-                  type="button"
-                  class="wishlist-button"
-                  aria-label="Add to wishlist"
-                  onclick="event.stopPropagation()"
-                >
+                <button type="button" class="wishlist-button" aria-label="Add to wishlist">
                   <i class="bi bi-heart"></i>
                 </button>
 
@@ -68,12 +78,12 @@
 
               @if (images().length > 1) {
                 <div class="thumbnail-wrapper">
-                  @for (image of images(); track image.id) {
+                  @for (image of images(); track image.id; let i = $index) {
                     <button
                       type="button"
                       class="thumbnail-button"
                       [class.active-thumbnail]="selectedImage()?.id === image.id"
-                      (click)="selectImage(image, 0)"
+                      (click)="selectImage(image, i)"
                     >
                       <img [src]="image.imageUrl" [alt]="product.name" loading="lazy" />
                     </button>
@@ -91,8 +101,9 @@
             }
           </div>
         </div>
-
-        <!-- ================= PRODUCT INFORMATION ================= -->
+        <!-- ===================================================
+     PRODUCT INFORMATION
+==================================================== -->
 
         <div class="col-lg-6">
           <div class="product-information">
@@ -110,6 +121,27 @@
               {{ product.name }}
             </h1>
 
+            <!-- SHOP -->
+
+            @if (product.shopName) {
+              <a
+                class="product-shop-link"
+                [routerLink]="product.shopSlug ? ['/shop', product.shopSlug] : ['/products']"
+              >
+                <span class="shop-icon">
+                  <i class="bi bi-shop"></i>
+                </span>
+
+                <span class="shop-label"> Sold by </span>
+
+                <strong>
+                  {{ product.shopName }}
+                </strong>
+
+                <i class="bi bi-arrow-right shop-arrow"></i>
+              </a>
+            }
+
             <!-- RATING -->
 
             <div class="product-rating">
@@ -121,11 +153,11 @@
                 <i class="bi bi-star-half"></i>
               </div>
 
-              <span> 4.8 </span>
+              <span>4.8</span>
 
-              <span class="rating-divider"> • </span>
+              <span class="rating-divider">•</span>
 
-              <span> 124 reviews </span>
+              <span>124 reviews</span>
             </div>
 
             <!-- PRICE -->
@@ -133,18 +165,22 @@
             <div class="product-price">
               {{ product.price | number: '1.0-0' }}
 
-              <span> FCFA </span>
+              <span>FCFA</span>
             </div>
 
             <!-- DESCRIPTION -->
 
-            <p class="product-description">
-              {{ product.description }}
-            </p>
+            @if (product.description) {
+              <p class="product-description">
+                {{ product.description }}
+              </p>
+            }
 
             <div class="section-divider"></div>
 
-            <!-- STOCK -->
+            <!-- =================================================
+         STOCK
+    ================================================== -->
 
             @if (product.stockQuantity > 0) {
               <div class="stock-status">
@@ -153,7 +189,7 @@
                 </div>
 
                 <div>
-                  <strong> In stock </strong>
+                  <strong>In stock</strong>
 
                   <span> {{ product.stockQuantity }} available </span>
                 </div>
@@ -165,21 +201,23 @@
                 </div>
 
                 <div>
-                  <strong> Out of stock </strong>
+                  <strong>Out of stock</strong>
 
-                  <span> Currently unavailable </span>
+                  <span>Currently unavailable</span>
                 </div>
               </div>
             }
 
-            <!-- ================= PURCHASE ================= -->
+            <!-- =================================================
+         PURCHASE
+    ================================================== -->
 
             @if (product.stockQuantity > 0) {
               <!-- QUANTITY -->
 
               <div class="quantity-section">
                 <div class="quantity-header">
-                  <label> Quantity </label>
+                  <label>Quantity</label>
 
                   <span> Maximum {{ product.stockQuantity }} </span>
                 </div>
@@ -218,11 +256,14 @@
               <button type="button" class="add-cart-button" (click)="addToCart()">
                 <i class="bi bi-bag-plus"></i>
 
-                <span> Add to Cart </span>
+                <span>Add to Cart</span>
 
-                <span class="button-separator"> • </span>
+                <span class="button-separator">•</span>
 
-                <span> {{ product.price * quantity() | number: '1.0-0' }} FCFA </span>
+                <span>
+                  {{ product.price * quantity() | number: '1.0-0' }}
+                  FCFA
+                </span>
               </button>
 
               <!-- BUY NOW -->
@@ -242,24 +283,22 @@
               </button>
             }
 
-            <!-- ================= BENEFITS ================= -->
+            <!-- =================================================
+         BENEFITS
+    ================================================== -->
 
             <div class="benefits">
-              <!-- SHIPPING -->
-
               <div class="benefit-item">
                 <div class="benefit-icon">
                   <i class="bi bi-truck"></i>
                 </div>
 
                 <div>
-                  <strong> Fast delivery </strong>
+                  <strong>Fast delivery</strong>
 
                   <span> Reliable delivery to your location </span>
                 </div>
               </div>
-
-              <!-- RETURNS -->
 
               <div class="benefit-item">
                 <div class="benefit-icon">
@@ -267,13 +306,11 @@
                 </div>
 
                 <div>
-                  <strong> Easy returns </strong>
+                  <strong>Easy returns</strong>
 
                   <span> Simple and convenient return policy </span>
                 </div>
               </div>
-
-              <!-- SECURITY -->
 
               <div class="benefit-item">
                 <div class="benefit-icon">
@@ -281,7 +318,7 @@
                 </div>
 
                 <div>
-                  <strong> Secure checkout </strong>
+                  <strong>Secure checkout</strong>
 
                   <span> Your payment information is protected </span>
                 </div>
@@ -291,7 +328,9 @@
         </div>
       </div>
 
-      <!-- ================= PRODUCT DETAILS ================= -->
+      <!-- =====================================================
+           PRODUCT DETAILS
+      ====================================================== -->
 
       <section class="product-details-section">
         <div class="details-heading">
@@ -338,7 +377,9 @@
       </section>
     </div>
   } @else {
-    <!-- ================= LOADING ================= -->
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
 
     <div class="container py-5">
       <div class="row g-5">
