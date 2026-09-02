@@ -1,19 +1,37 @@
-
 import {
   Component,
   computed,
   inject,
+  OnInit,
   signal
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+
 import {
   ActivatedRoute,
   RouterLink
 } from '@angular/router';
 
-import { Product } from '../../../models/product.model';
-import { PublicProductService } from '../../../services/public/public-product-service';
+import { Product, PublicCategory } from '../../../models/product.model';
+
+import {
+  PublicProductService
+} from '../../../services/public/public-product-service';
+
+import {
+  ShopService
+} from '../../../services/shop-service';
+
+import {
+  PublicShop,
+  Shop
+} from '../../../models/shop-model';
+
+import {
+  PublicShopPage
+} from '../../../models/shop-model';
+
 
 @Component({
   selector: 'app-product-list',
@@ -29,22 +47,25 @@ import { PublicProductService } from '../../../services/public/public-product-se
 
   styleUrl: './product-list.css'
 })
-export class ProductList {
+export class ProductList implements OnInit {
 
-  // =========================================================
-  // SERVICES
-  // =========================================================
+
 
   private publicProductService =
     inject(PublicProductService);
+
+  private shopService =
+    inject(ShopService);
 
   private route =
     inject(ActivatedRoute);
 
 
-  // =========================================================
-  // DATA
-  // =========================================================
+
+
+
+  shopLoading =
+    signal(false);
 
   products =
     signal<Product[]>([]);
@@ -55,22 +76,19 @@ export class ProductList {
   errorMessage =
     signal('');
 
-  /**
-   * null  = global storefront
-   * value = specific shop storefront
-   *
-   * Examples:
-   *
-   * /products
-   * /shop/kellyshop
-   */
+
   shopSlug =
     signal<string | null>(null);
 
+  shop =
+    signal<PublicShop | null>(null);
 
-  // =========================================================
-  // FILTERS
-  // =========================================================
+  isShopView =
+    computed(() =>
+      this.shopSlug() !== null
+    );
+
+  shopCategories = signal<PublicCategory[]>([]);
 
   searchTerm =
     signal('');
@@ -85,10 +103,6 @@ export class ProductList {
     signal('DEFAULT');
 
 
-  // =========================================================
-  // PAGINATION
-  // =========================================================
-
   currentPage =
     signal(1);
 
@@ -96,40 +110,241 @@ export class ProductList {
     signal(8);
 
 
-  // =========================================================
-  // INIT
-  // =========================================================
-
   ngOnInit(): void {
-
-    /**
-     * The same component is used by:
-     *
-     * /products
-     *
-     * and
-     *
-     * /shop/:slug
-     *
-     * Therefore we read the optional slug from
-     * the current route.
-     */
 
     const slug =
       this.route.snapshot.paramMap.get('slug');
 
     this.shopSlug.set(slug);
 
-    this.loadProducts();
+    this.loadAllProducts();
 
   }
 
 
-  // =========================================================
-  // CATEGORIES
-  // =========================================================
+  loadStorefront(): void {
 
+    this.loading.set(true);
+
+    this.errorMessage.set('');
+
+
+    const slug =
+      this.shopSlug();
+
+
+    if (slug) {
+
+      this.loadShop(slug);
+
+      return;
+
+    }
+
+
+    this.loadAllProducts();
+
+  }
+
+
+
+  private loadShop(
+    slug: string
+  ): void {
+
+    this.shopService
+      .getShopPage(slug)
+      .subscribe({
+
+        next: (response: PublicShopPage) => {
+
+          console.log(
+            'SHOP PAGE:',
+            response
+          );
+          this.shop.set(
+            response.shop
+          );
+          this.products.set(
+            response.products
+          );
+          this.currentPage.set(1);
+          this.loading.set(false);
+        },
+
+        error: error => {
+
+          console.error(
+            'SHOP PAGE LOAD ERROR:',
+            error
+          );
+
+
+          this.shop.set(null);
+          this.products.set([]);
+
+          this.errorMessage.set(
+            error.error?.message ||
+            'Unable to load this shop. Please try again.'
+          );
+          this.loading.set(false);
+
+        }
+
+      });
+
+  }
+  loadAllProducts(): void {
+
+    this.loading.set(true);
+
+    this.errorMessage.set('');
+
+    const slug =
+      this.shopSlug();
+
+
+    // =========================================================
+    // SHOP STOREFRONT
+    // =========================================================
+
+    if (slug) {
+
+      this.shopService
+        .getShopPage(slug)
+        .subscribe({
+
+          next: response => {
+
+            // ---------------------------------------------------
+            // SHOP
+            // ---------------------------------------------------
+
+            this.shop.set(
+              response.shop
+            );
+
+
+            // ---------------------------------------------------
+            // CATEGORIES
+            // ---------------------------------------------------
+
+            this.shopCategories.set(
+              response.categories
+            );
+
+
+            // ---------------------------------------------------
+            // PRODUCTS
+            // ---------------------------------------------------
+
+            this.products.set(
+              response.products
+            );
+
+
+            this.currentPage.set(1);
+
+            this.loading.set(false);
+
+          },
+
+
+          error: error => {
+
+            console.error(
+              'SHOP PAGE LOAD ERROR:',
+              error
+            );
+
+            this.shop.set(null);
+
+            this.shopCategories.set([]);
+
+            this.products.set([]);
+
+            this.errorMessage.set(
+              'Unable to load this shop. Please try again.'
+            );
+
+            this.loading.set(false);
+
+          }
+
+        });
+
+      return;
+    }
+
+
+    // =========================================================
+    // GLOBAL STOREFRONT
+    // =========================================================
+
+    this.shop.set(null);
+
+    this.shopCategories.set([]);
+
+
+    this.publicProductService
+      .findAll()
+      .subscribe({
+
+        next: response => {
+
+          this.products.set(
+            response
+          );
+
+          this.currentPage.set(1);
+
+          this.loading.set(false);
+
+        },
+
+
+        error: error => {
+
+          console.error(
+            'PUBLIC PRODUCT LOAD ERROR:',
+            error
+          );
+
+          this.products.set([]);
+
+          this.errorMessage.set(
+            'Unable to load products. Please try again.'
+          );
+
+          this.loading.set(false);
+
+        }
+
+      });
+
+  }
   categories = computed(() => {
+
+    // ---------------------------------------------------------
+    // SHOP STOREFRONT
+    // ---------------------------------------------------------
+
+    if (this.shopSlug()) {
+
+      return this.shopCategories()
+        .map(category => category.name)
+        .filter(
+          (name): name is string =>
+            !!name &&
+            name.trim().length > 0
+        );
+
+    }
+
+
+    // ---------------------------------------------------------
+    // GLOBAL STOREFRONT
+    // ---------------------------------------------------------
 
     const names =
       this.products()
@@ -146,25 +361,16 @@ export class ProductList {
 
   });
 
-
-  // =========================================================
-  // FILTERED PRODUCTS
-  // =========================================================
-
   filteredProducts = computed(() => {
 
     let result =
       [...this.products()];
 
-
-    // -------------------------------------------------------
-    // SEARCH
-    // -------------------------------------------------------
-
     const search =
       this.searchTerm()
         .trim()
         .toLowerCase();
+
 
     if (search) {
 
@@ -192,12 +398,9 @@ export class ProductList {
     }
 
 
-    // -------------------------------------------------------
-    // CATEGORY
-    // -------------------------------------------------------
-
     const category =
       this.selectedCategory();
+
 
     if (category !== 'ALL') {
 
@@ -210,12 +413,9 @@ export class ProductList {
     }
 
 
-    // -------------------------------------------------------
-    // STOCK
-    // -------------------------------------------------------
-
     const stock =
       this.selectedStock();
+
 
     if (stock === 'AVAILABLE') {
 
@@ -227,6 +427,7 @@ export class ProductList {
 
     }
 
+
     if (stock === 'OUT_OF_STOCK') {
 
       result =
@@ -236,11 +437,6 @@ export class ProductList {
         );
 
     }
-
-
-    // -------------------------------------------------------
-    // SORT
-    // -------------------------------------------------------
 
     switch (this.sortBy()) {
 
@@ -298,14 +494,12 @@ export class ProductList {
 
     }
 
+
     return result;
 
   });
 
 
-  // =========================================================
-  // PAGINATION CALCULATIONS
-  // =========================================================
 
   totalItems = computed(() =>
     this.filteredProducts().length
@@ -325,13 +519,16 @@ export class ProductList {
     const products =
       this.filteredProducts();
 
+
     const start =
       (this.currentPage() - 1) *
       this.pageSize();
 
+
     const end =
       start +
       this.pageSize();
+
 
     return products.slice(
       start,
@@ -346,18 +543,22 @@ export class ProductList {
     const total =
       this.totalPages();
 
+
     const current =
       this.currentPage();
+
 
     const pages: number[] = [];
 
     const maxVisiblePages = 5;
+
 
     let start =
       Math.max(
         1,
         current - 2
       );
+
 
     let end =
       Math.min(
@@ -396,14 +597,11 @@ export class ProductList {
 
     }
 
+
     return pages;
 
   });
 
-
-  // =========================================================
-  // RESULT RANGE
-  // =========================================================
 
   resultStart = computed(() => {
 
@@ -414,6 +612,7 @@ export class ProductList {
       return 0;
 
     }
+
 
     return (
       (
@@ -437,125 +636,6 @@ export class ProductList {
   });
 
 
-  // =========================================================
-  // LOAD PRODUCTS
-  // =========================================================
-
-  loadProducts(): void {
-
-    this.loading.set(true);
-
-    this.errorMessage.set('');
-
-
-    const slug =
-      this.shopSlug();
-
-
-    // =======================================================
-    // SHOP STOREFRONT
-    // =======================================================
-
-    if (slug) {
-
-      this.publicProductService
-        .findByShop(slug)
-        .subscribe({
-
-          next: response => {
-
-            this.products.set(
-              response
-            );
-
-            this.currentPage.set(1);
-
-            this.loading.set(false);
-
-          },
-
-
-          error: error => {
-
-            console.error(
-              'SHOP PRODUCT LOAD ERROR:',
-              error
-            );
-
-            this.errorMessage.set(
-              'Unable to load this shop. Please try again.'
-            );
-
-            this.loading.set(false);
-
-          }
-
-        });
-
-      return;
-
-    }
-
-
-    // =======================================================
-    // GLOBAL STOREFRONT
-    // =======================================================
-
-    this.publicProductService
-      .findAll()
-      .subscribe({
-
-        next: response => {
-
-          this.products.set(
-            response
-          );
-
-          this.currentPage.set(1);
-
-          this.loading.set(false);
-
-        },
-
-
-        error: error => {
-
-          console.error(
-            'PUBLIC PRODUCT LOAD ERROR:',
-            error
-          );
-
-          this.errorMessage.set(
-            'Unable to load products. Please try again.'
-          );
-
-          this.loading.set(false);
-
-        }
-
-      });
-
-  }
-
-
-  // =========================================================
-  // PRODUCT LINK
-  // =========================================================
-
-  /**
-   * IMPORTANT:
-   *
-   * This method controls ALL product-detail navigation.
-   *
-   * Global:
-   *
-   * /products/1
-   *
-   * Shop:
-   *
-   * /shop/kellyshop/products/1
-   */
-
   getProductLink(
     productId: number
   ): string[] {
@@ -563,10 +643,6 @@ export class ProductList {
     const slug =
       this.shopSlug();
 
-
-    // -------------------------------------------------------
-    // SHOP PRODUCT
-    // -------------------------------------------------------
 
     if (slug) {
 
@@ -579,11 +655,6 @@ export class ProductList {
 
     }
 
-
-    // -------------------------------------------------------
-    // GLOBAL PRODUCT
-    // -------------------------------------------------------
-
     return [
       '/products',
       productId.toString()
@@ -592,10 +663,6 @@ export class ProductList {
   }
 
 
-  // =========================================================
-  // SEARCH
-  // =========================================================
-
   onSearch(
     event: Event
   ): void {
@@ -603,18 +670,16 @@ export class ProductList {
     const input =
       event.target as HTMLInputElement;
 
+
     this.searchTerm.set(
       input.value
     );
+
 
     this.currentPage.set(1);
 
   }
 
-
-  // =========================================================
-  // CATEGORY
-  // =========================================================
 
   changeCategory(
     category: string
@@ -624,14 +689,11 @@ export class ProductList {
       category
     );
 
+
     this.currentPage.set(1);
 
   }
 
-
-  // =========================================================
-  // STOCK
-  // =========================================================
 
   changeStock(
     stock: string
@@ -641,14 +703,10 @@ export class ProductList {
       stock
     );
 
+
     this.currentPage.set(1);
 
   }
-
-
-  // =========================================================
-  // SORT
-  // =========================================================
 
   changeSort(
     sort: string
@@ -658,15 +716,10 @@ export class ProductList {
       sort
     );
 
+
     this.currentPage.set(1);
 
   }
-
-
-  // =========================================================
-  // PAGE
-  // =========================================================
-
   goToPage(
     page: number
   ): void {
@@ -680,9 +733,11 @@ export class ProductList {
 
     }
 
+
     this.currentPage.set(
       page
     );
+
 
     window.scrollTo({
       top: 0,
@@ -723,10 +778,6 @@ export class ProductList {
   }
 
 
-  // =========================================================
-  // CLEAR FILTERS
-  // =========================================================
-
   clearFilters(): void {
 
     this.searchTerm.set('');
@@ -748,9 +799,6 @@ export class ProductList {
   }
 
 
-  // =========================================================
-  // CHECK FILTER STATE
-  // =========================================================
 
   hasActiveFilters = computed(() => {
 
@@ -778,5 +826,6 @@ export class ProductList {
 
   });
 
-}
 
+
+}
