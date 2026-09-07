@@ -1,0 +1,235 @@
+<div class="admin-layout">
+  <!-- =====================================================
+       MOBILE TOP BAR
+  ====================================================== -->
+
+  <header class="admin-mobile-header">
+    <button type="button" class="mobile-menu-btn" (click)="toggleSidebar()" aria-label="Open menu">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div class="mobile-brand">
+      <div class="brand-mark">
+        <i class="bi bi-bag-heart"></i>
+      </div>
+
+      <span> Kelly Bags </span>
+    </div>
+
+    <button type="button" class="mobile-profile-btn" aria-label="Account">
+      <i class="bi bi-person"></i>
+    </button>
+  </header>
+
+  <!-- =====================================================
+       SIDEBAR OVERLAY - MOBILE
+  ====================================================== -->
+
+  @if (sidebarOpen()) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  }
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+
+  <aside class="admin-sidebar" [class.sidebar-open]="sidebarOpen()">
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+      <div class="brand-mark">
+        <i class="bi bi-bag-heart"></i>
+      </div>
+
+      <div>
+        <div class="brand-name">Kelly Bags</div>
+
+        <div class="brand-label">ADMINISTRATION</div>
+      </div>
+
+      <button
+        type="button"
+        class="sidebar-close d-lg-none"
+        (click)="closeSidebar()"
+        aria-label="Close menu"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- SHOP MINI CARD -->
+
+    @if (shop()) {
+      <div class="sidebar-shop">
+        <div class="sidebar-shop-logo">
+          @if (shop()!.logo) {
+            <img [src]="shop()!.logo" [alt]="shop()!.name" />
+          } @else {
+            <i class="bi bi-shop"></i>
+          }
+        </div>
+
+        <div class="sidebar-shop-info">
+          <div class="sidebar-shop-name">
+            {{ shop()!.name }}
+          </div>
+
+          <div class="sidebar-shop-status">
+            <span class="status-dot" [class.inactive]="!shop()!.active"></span>
+
+            {{ shop()!.active ? 'Active' : 'Inactive' }}
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- NAVIGATION -->
+
+    <nav class="admin-nav">
+      <div class="nav-section-title">STORE</div>
+
+      <!-- DASHBOARD -->
+
+      <a
+        routerLink="/admin"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-grid-1x2"></i>
+
+        <span> Dashboard </span>
+      </a>
+
+      <!-- SHOP -->
+
+      <a
+        routerLink="/admin/shop"
+        routerLinkActive="active"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-shop"></i>
+
+        <span> My Shop </span>
+      </a>
+
+      <!-- PRODUCTS -->
+
+      <a
+        routerLink="/admin/products"
+        routerLinkActive="active"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-box-seam"></i>
+
+        <span> Products </span>
+      </a>
+
+      <!-- CATEGORIES -->
+
+      <a
+        routerLink="/admin/categories"
+        routerLinkActive="active"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-grid"></i>
+
+        <span> Categories </span>
+      </a>
+
+      <!-- ORDERS -->
+
+      <a
+        routerLink="/admin/orders"
+        routerLinkActive="active"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-bag-check"></i>
+
+        <span> Orders </span>
+
+        <span class="nav-badge"> Soon </span>
+      </a>
+
+      <!-- CUSTOMERS -->
+
+      <a
+        routerLink="/admin/customers"
+        routerLinkActive="active"
+        class="admin-nav-link"
+        (click)="closeSidebar()"
+      >
+        <i class="bi bi-people"></i>
+
+        <span> Customers </span>
+
+        <span class="nav-badge"> Soon </span>
+      </a>
+    </nav>
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="sidebar-footer">
+      <a routerLink="/products" target="_blank" class="sidebar-footer-link">
+        <i class="bi bi-box-arrow-up-right"></i>
+
+        <span> View Store </span>
+      </a>
+
+      <button type="button" class="sidebar-footer-link logout-btn">
+        <i class="bi bi-box-arrow-right"></i>
+
+        <span> Logout </span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="admin-main">
+    <!-- DESKTOP TOP BAR -->
+
+    <header class="admin-topbar">
+      <div class="topbar-title">
+        <span> Store Administration </span>
+      </div>
+
+      <div class="topbar-actions">
+        <a routerLink="/products" target="_blank" class="topbar-store-link">
+          <i class="bi bi-eye me-1"></i>
+
+          View Store
+        </a>
+
+        <button type="button" class="topbar-icon-btn" title="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+
+        <div class="topbar-user">
+          <div class="user-avatar">
+            <i class="bi bi-person"></i>
+          </div>
+
+          <div class="user-details">
+            <strong> Admin </strong>
+
+            <small> Store Manager </small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

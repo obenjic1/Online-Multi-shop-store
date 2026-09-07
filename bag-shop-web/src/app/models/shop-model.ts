@@ -37,6 +37,12 @@ export interface Shop {
   ownerId?: number;
 
   ownerUsername?: string;
+  accentColor?: string;
+  bannerImage?: string;
+  banner?: string;
+  region?: string;
+  landmark?: string;
+  deliveryFee?: number;
 
 }
 

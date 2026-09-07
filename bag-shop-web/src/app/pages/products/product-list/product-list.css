@@ -656,3 +656,363 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* =========================================================
+   PRODUCT PRICE
+========================================================= */
+.document-summary {
+  padding: 0.5rem;
+}
+
+/* ========================================
+CARD
+======================================== */
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  min-height: 90px;
+  padding: 0.9rem;
+
+  background: #ffffff;
+
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  transition: all 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ========================================
+ICON
+======================================== */
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 1.15rem;
+}
+
+/* ========================================
+CONTENT
+======================================== */
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.72rem;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+  color: #6c757d;
+}
+
+.value {
+  font-size: 0.9rem;
+
+  font-weight: 700;
+
+  color: #343a40;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* ========================================
+VALUE + ACTIONS
+======================================== */
+
+.value-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 0.5rem;
+}
+
+.actions {
+  display: flex;
+
+  gap: 0.25rem;
+
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: #f1f3f5;
+
+  color: #495057;
+
+  font-size: 0.8rem;
+
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #343a40;
+
+  color: #ffffff;
+}
+
+/* ========================================
+RECEIPT
+======================================== */
+
+.receipt-card {
+  border-left: 3px solid #6f42c1;
+}
+
+.receipt-card .card-icon {
+  color: #6f42c1;
+
+  background: #f1ecff;
+}
+
+/* ========================================
+DEPOT
+======================================== */
+
+.depot-card {
+  border-left: 3px solid #0d6efd;
+}
+
+.depot-card .card-icon {
+  color: #0d6efd;
+
+  background: #e7f1ff;
+}
+
+/* ========================================
+DOCUMENT TYPE
+======================================== */
+
+.type-card {
+  border-left: 3px solid #fd7e14;
+}
+
+.type-card .card-icon {
+  color: #fd7e14;
+
+  background: #fff1e6;
+}
+
+/* ========================================
+OFFICE
+======================================== */
+
+.office-card {
+  border-left: 3px solid #198754;
+}
+
+.office-card .card-icon {
+  color: #198754;
+
+  background: #e8f7ef;
+}
+
+/* ========================================
+STATUS
+======================================== */
+
+.status-card {
+  border-left: 3px solid #dc3545;
+}
+
+.status-card .card-icon {
+  color: #dc3545;
+
+  background: #fdebec;
+}
+
+/* ========================================
+STATUS BADGE
+======================================== */
+
+.status {
+  width: fit-content;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 0.35rem;
+
+  padding: 0.25rem 0.55rem;
+
+  border-radius: 6px;
+
+  font-size: 0.8rem;
+
+  font-weight: 600;
+}
+
+.status.rejected {
+  color: #dc3545;
+
+  background: #fdebec;
+}
+
+/* ========================================
+REJECTION REASON
+======================================== */
+
+.reject-reason {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.65rem;
+
+  padding: 0.8rem 1rem;
+
+  background: #fff8e1;
+
+  border: 1px solid #ffe69c;
+
+  border-left: 3px solid #ffc107;
+
+  border-radius: 10px;
+
+  color: #664d03;
+
+  font-size: 0.9rem;
+}
+
+.reject-reason > i {
+  font-size: 1.1rem;
+
+  color: #e0a800;
+}
+
+.reject-reason strong {
+  margin-right: 0.35rem;
+}
+
+/* ========================================
+MOBILE
+======================================== */
+
+@media (max-width: 575.98px) {
+  .summary-card {
+    min-height: 80px;
+  }
+}
+
+/* Card hover lift */
+.doc-info-card {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.doc-info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(59, 48, 40, 0.1);
+}
+
+.doc-info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #b8945a;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.doc-info-card:hover::before {
+  opacity: 1;
+}
+
+/* Action buttons */
+.doc-action-btn {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: #a09080;
+  background: transparent;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.doc-action-btn:hover {
+  background: rgba(184, 148, 90, 0.12);
+  color: #3b3028;
+}
+
+.doc-action-btn:active {
+  transform: scale(0.92);
+}
+
+/* Status dot pulse */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+}
+
+.doc-info-card .d-inline-block {
+  animation: pulse 2s infinite;
+}
+.icon-box {
+  width: 42px;
+  height: 42px;
+}

@@ -1,0 +1,100 @@
+.login-page {
+  min-height: 100vh;
+  background: #f8f9fc;
+}
+
+.brand-mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #6e3b5e;
+  color: #fff;
+
+  font-size: 1.4rem;
+}
+
+.brand-name {
+  color: #2e2430;
+  letter-spacing: 1.5px;
+  font-size: 1.35rem;
+}
+
+.login-card {
+  background: #fff;
+  border: 1px solid #e8ebf3;
+  border-radius: 16px;
+
+  padding: 2rem;
+
+  box-shadow: 0 8px 30px rgba(46, 36, 48, 0.06);
+}
+
+.form-label {
+  color: #2e2430;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.input-group-text {
+  background: #fff;
+  border-right: 0;
+  color: #83758a;
+}
+
+.input-group .form-control {
+  border-left: 0;
+}
+
+.input-group .form-control:focus {
+  border-color: #8c5a97;
+  box-shadow: none;
+}
+
+.input-group:focus-within .input-group-text {
+  border-color: #8c5a97;
+  color: #6e3b5e;
+}
+
+.password-toggle {
+  border: 1px solid #dee2e6;
+  background: #fff;
+  color: #83758a;
+}
+
+.password-toggle:hover {
+  color: #6e3b5e;
+}
+
+.login-btn {
+  background: #6e3b5e;
+  border-color: #6e3b5e;
+  color: #fff;
+
+  padding: 0.7rem 1rem;
+  font-weight: 500;
+}
+
+.login-btn:hover {
+  background: #5d304f;
+  border-color: #5d304f;
+  color: #fff;
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+}
+
+.back-link {
+  color: #6e3b5e;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: #8c5a97;
+}

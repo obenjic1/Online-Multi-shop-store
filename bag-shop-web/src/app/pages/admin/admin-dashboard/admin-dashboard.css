@@ -1,0 +1,367 @@
+.admin-dashboard {
+  min-height: 100vh;
+  background: #f8f7f9;
+  color: #2e2430;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #83758a;
+  margin-bottom: 0.35rem;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2e2430;
+}
+
+.dashboard-subtitle {
+  color: #83758a;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+
+/* =========================================================
+   SHOP CARD
+========================================================= */
+
+.shop-card {
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(46, 36, 48, 0.03);
+}
+
+.shop-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.shop-logo {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border-radius: 12px;
+  background: #f1eaf0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 1.5rem;
+}
+
+.shop-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shop-info {
+  min-width: 0;
+}
+
+.shop-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #83758a;
+}
+
+.shop-info h2 {
+  font-size: 1.25rem;
+  margin: 0.15rem 0 0.2rem;
+  font-weight: 700;
+}
+
+.shop-info p {
+  color: #83758a;
+  margin: 0 0 0.45rem;
+  font-size: 0.85rem;
+}
+
+.shop-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #5f6f63;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5c9b72;
+}
+
+.status-dot.inactive {
+  background: #a39aa5;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section-heading h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.section-heading p {
+  margin: 0.15rem 0 0;
+  color: #83758a;
+  font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  height: 100%;
+}
+
+.stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1eaf0;
+  color: #6e3b5e;
+  font-size: 1.05rem;
+}
+
+.stat-icon.active {
+  background: #edf5ef;
+  color: #548365;
+}
+
+.stat-icon.inactive {
+  background: #f1eff2;
+  color: #83758a;
+}
+
+.stat-icon.stock {
+  background: #faf2ed;
+  color: #a56e4e;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-content span {
+  font-size: 0.76rem;
+  color: #83758a;
+}
+
+.stat-content strong {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #2e2430;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-action {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, transform 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.quick-action:hover {
+  color: inherit;
+  border-color: #d8c7d4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(46, 36, 48, 0.06);
+}
+
+.quick-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 9px;
+  background: #f1eaf0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action h5 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.quick-action p {
+  font-size: 0.75rem;
+  color: #83758a;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.quick-arrow {
+  margin-left: auto;
+  color: #b0a6b1;
+  font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   EMPTY SHOP
+========================================================= */
+
+.empty-shop-card {
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-shop-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #f1eaf0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-shop-card h5 {
+  margin: 0 0 0.2rem;
+}
+
+.empty-shop-card p {
+  color: #83758a;
+  font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   SKELETON
+========================================================= */
+
+.skeleton-card {
+  min-height: 96px;
+}
+
+.skeleton-logo,
+.skeleton-line,
+.stat-loading {
+  background: #eeeaf0;
+  border-radius: 6px;
+}
+
+.skeleton-logo {
+  width: 64px;
+  height: 64px;
+}
+
+.skeleton-line {
+  width: 220px;
+  height: 10px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.skeleton-title {
+  width: 150px;
+  height: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+  .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    flex: 1;
+  }
+
+  .shop-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .shop-actions {
+    width: 100%;
+  }
+
+  .shop-actions .btn {
+    width: 100%;
+  }
+
+}

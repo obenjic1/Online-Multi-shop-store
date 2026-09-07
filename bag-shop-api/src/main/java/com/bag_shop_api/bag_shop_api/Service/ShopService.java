@@ -19,13 +19,11 @@ import lombok.RequiredArgsConstructor;
 public class ShopService {
 
     private final ShopRepository shopRepository;
-    private final UserRepository userRepository;
+    private final CurrentUserService currentUserService;
 
     public ShopResponse create(ShopRequest request) {
 
-        User owner = userRepository.findById(request.getOwnerId())
-                .orElseThrow(() ->
-                        new RuntimeException("Owner user not found"));
+       User owner = currentUserService.getCurrentUser();
 
         if (owner.getRole() != Role.ROLE_ADMIN) {
 
@@ -119,7 +117,7 @@ public class ShopService {
         return slug;
     }
 
-    private ShopResponse map(Shop shop) {
+   private ShopResponse map(Shop shop) {
 
         return ShopResponse.builder()
 
@@ -188,4 +186,41 @@ public class ShopService {
 
                 .build();
     }
+    
+    public ShopResponse getMyShop() {
+    User owner = currentUserService.getCurrentUser();
+
+    Shop shop = shopRepository.findByOwnerId(owner.getId())
+            .orElseThrow(() ->
+                    new RuntimeException("You do not have a shop"));
+
+    return map(shop);}
+    
+    public ShopResponse updateMyShop(ShopRequest request) {
+    User owner = currentUserService.getCurrentUser();
+
+    Shop shop = shopRepository.findByOwnerId(owner.getId())
+            .orElseThrow(() ->
+                    new RuntimeException("You do not have a shop"));
+
+    shop.setName(request.getName());
+    shop.setDescription(request.getDescription());
+    shop.setLogo(request.getLogo());
+    shop.setBanner(request.getBanner());
+    shop.setThemeColor(request.getThemeColor());
+    shop.setAccentColor(request.getAccentColor());
+    shop.setPhoneNumber(request.getPhoneNumber());
+    shop.setWhatsappNumber(request.getWhatsappNumber());
+    shop.setEmail(request.getEmail());
+    shop.setAddress(request.getAddress());
+    shop.setCity(request.getCity());
+    shop.setRegion(request.getRegion());
+    shop.setLandmark(request.getLandmark());
+    shop.setPickupAvailable(request.isPickupAvailable());
+    shop.setDeliveryAvailable(request.isDeliveryAvailable());
+    shop.setDeliveryFee(request.getDeliveryFee());
+
+    return map(shopRepository.save(shop));
+}
+
 }

@@ -1,0 +1,124 @@
+<div class="login-page">
+  <div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+      <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+        <!-- Brand -->
+        <div class="text-center mb-4">
+          <div class="brand-mark mx-auto mb-3">
+            <i class="bi bi-bag-heart"></i>
+          </div>
+
+          <h2 class="brand-name mb-1">Admins</h2>
+
+          <p class="text-muted mb-0">Welcome back</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+          <div class="mb-4">
+            <h4 class="fw-semibold mb-1">Sign in</h4>
+
+            <p class="text-muted small mb-0">Access your Admin dashboard.</p>
+          </div>
+
+          <!-- Error -->
+          @if (errorMessage()) {
+            <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+              <i class="bi bi-exclamation-circle"></i>
+
+              <span>
+                {{ errorMessage() }}
+              </span>
+            </div>
+          }
+
+          <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+            <!-- Username -->
+            <div class="mb-3">
+              <label for="username" class="form-label"> Username </label>
+
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-person"></i>
+                </span>
+
+                <input
+                  id="username"
+                  type="text"
+                  class="form-control"
+                  formControlName="username"
+                  placeholder="Enter your username"
+                  autocomplete="username"
+                />
+              </div>
+
+              @if (loginForm.controls.username.touched && loginForm.controls.username.invalid) {
+                <small class="text-danger"> Username is required. </small>
+              }
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label"> Password </label>
+
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock"></i>
+                </span>
+
+                <input
+                  id="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                />
+
+                <button
+                  type="button"
+                  class="btn password-toggle"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+                >
+                  <i
+                    class="bi"
+                    [class.bi-eye]="!showPassword()"
+                    [class.bi-eye-slash]="showPassword()"
+                  ></i>
+                </button>
+              </div>
+
+              @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+                <small class="text-danger"> Password is required. </small>
+              }
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn login-btn w-100" [disabled]="loading()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+
+                Signing in...
+              } @else {
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                Sign In
+              }
+            </button>
+          </form>
+
+          <!-- Back -->
+          <div class="text-center mt-4">
+            <a routerLink="/products" class="back-link">
+              <i class="bi bi-arrow-left me-1"></i>
+              Back to shop
+            </a>
+          </div>
+        </div>
+
+        <p class="text-center text-muted small mt-4">Padiman</p>
+      </div>
+    </div>
+  </div>
+</div>

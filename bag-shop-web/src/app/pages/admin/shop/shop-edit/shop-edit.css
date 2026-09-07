@@ -1,0 +1,187 @@
+.shop-edit-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.shop-card {
+  border: 1px solid #eee9ef;
+  border-radius: 14px;
+  box-shadow: 0 3px 14px rgba(46, 36, 48, 0.04);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(110, 59, 94, 0.08);
+  color: #6e3b5e;
+
+  flex-shrink: 0;
+}
+
+.form-label {
+  color: #2e2430;
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+  border-color: #e5dfe7;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #8c5a97;
+  box-shadow: 0 0 0 0.2rem rgba(140, 90, 151, 0.12);
+}
+
+.form-control-color {
+  width: 48px;
+  height: 38px;
+  padding: 3px;
+}
+
+.color-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-input span {
+  font-size: 0.85rem;
+  color: #83758a;
+  font-family: monospace;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid #f0ecf2;
+}
+
+.setting-row:last-of-type {
+  border-bottom: 0;
+}
+
+.form-check-input {
+  width: 2.5em;
+  height: 1.3em;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #6e3b5e;
+  border-color: #6e3b5e;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 11px 0;
+
+  border-bottom: 1px solid #f1edf2;
+
+  font-size: 0.9rem;
+}
+
+.detail-item:last-child {
+  border-bottom: 0;
+}
+
+.detail-item span:first-child {
+  color: #83758a;
+}
+
+.detail-item strong {
+  color: #2e2430;
+  font-size: 0.85rem;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.save-card {
+  position: sticky;
+  top: 20px;
+}
+
+.btn-primary {
+  background-color: #6e3b5e;
+  border-color: #6e3b5e;
+}
+
+.btn-primary:hover {
+  background-color: #5e304f;
+  border-color: #5e304f;
+}
+
+.btn-outline-primary {
+  color: #6e3b5e;
+  border-color: #6e3b5e;
+}
+
+.btn-outline-primary:hover {
+  background-color: #6e3b5e;
+  border-color: #6e3b5e;
+}
+
+.shop-form-skeleton {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-card {
+  height: 220px;
+  background: #f1edf2;
+  border-radius: 14px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .save-card {
+    position: static;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .shop-edit-page {
+    padding-bottom: 20px;
+  }
+
+  .card-body {
+    padding: 1.15rem !important;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+}

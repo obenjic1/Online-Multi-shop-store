@@ -1,0 +1,735 @@
+<div class="shop-edit-page">
+
+  <!-- HEADER -->
+  <div class="d-flex flex-column flex-md-row
+              justify-content-between align-items-md-center
+              gap-3 mb-4">
+
+    <div>
+      <div class="text-uppercase small fw-semibold text-muted mb-1">
+        My Shop
+      </div>
+
+      <h1 class="h3 fw-bold mb-1">
+        Edit Shop
+      </h1>
+
+      <p class="text-muted mb-0">
+        Update your shop information and storefront settings.
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+      <a
+        routerLink="/admin/shop"
+        class="btn btn-light border">
+
+        <i class="bi bi-arrow-left me-2"></i>
+        Back
+      </a>
+
+      @if (shop()) {
+        <a
+          [routerLink]="['/shop', shop()!.slug]"
+          target="_blank"
+          class="btn btn-outline-primary">
+
+          <i class="bi bi-shop me-2"></i>
+          View Store
+        </a>
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- LOADING -->
+  @if (loading()) {
+
+    <div class="shop-form-skeleton">
+
+      <div class="skeleton-card mb-4"></div>
+
+      <div class="row g-4">
+
+        <div class="col-lg-8">
+          <div class="skeleton-card"></div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="skeleton-card"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  @if (!loading()) {
+
+    <!-- ALERTS -->
+
+    @if (errorMessage()) {
+
+      <div class="alert alert-danger border-0 shadow-sm mb-4">
+        <i class="bi bi-exclamation-circle me-2"></i>
+        {{ errorMessage() }}
+      </div>
+
+    }
+
+    @if (successMessage()) {
+
+      <div class="alert alert-success border-0 shadow-sm mb-4">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ successMessage() }}
+      </div>
+
+    }
+
+
+    <form
+      [formGroup]="shopForm"
+      (ngSubmit)="saveChanges()"
+      novalidate>
+
+      <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-lg-8">
+
+
+          <!-- BASIC INFORMATION -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <div class="section-heading mb-4">
+
+                <div class="section-icon">
+                  <i class="bi bi-shop"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-1">
+                    Basic Information
+                  </h5>
+
+                  <p class="text-muted small mb-0">
+                    The main information customers see about your shop.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <!-- NAME -->
+              <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                  Shop Name
+                  <span class="text-danger">*</span>
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="name"
+                  placeholder="e.g. Kelly Bags"
+                  [class.is-invalid]="
+                    name.invalid && name.touched
+                  ">
+
+                @if (name.invalid && name.touched) {
+
+                  <div class="invalid-feedback">
+                    Shop name is required.
+                  </div>
+
+                }
+
+              </div>
+
+
+              <!-- DESCRIPTION -->
+              <div>
+
+                <label class="form-label fw-semibold">
+                  Description
+                </label>
+
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  formControlName="description"
+                  placeholder="Tell customers a little about your shop...">
+                </textarea>
+
+                <div class="form-text">
+                  A short description helps customers understand
+                  what your shop offers.
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- BRANDING -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <div class="section-heading mb-4">
+
+                <div class="section-icon">
+                  <i class="bi bi-palette"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-1">
+                    Storefront Branding
+                  </h5>
+
+                  <p class="text-muted small mb-0">
+                    Control how your storefront looks.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <!-- LOGO -->
+              <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                  Logo URL
+                </label>
+
+                <input
+                  type="url"
+                  class="form-control"
+                  formControlName="logo"
+                  placeholder="https://...">
+
+                <div class="form-text">
+                  Enter the URL of your shop logo.
+                </div>
+
+              </div>
+
+
+              <!-- BANNER -->
+              <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                  Banner URL
+                </label>
+
+                <input
+                  type="url"
+                  class="form-control"
+                  formControlName="banner"
+                  placeholder="https://...">
+
+                <div class="form-text">
+                  This image can be used as the storefront banner.
+                </div>
+
+              </div>
+
+
+              <!-- COLORS -->
+              <div class="row g-4">
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    Primary Color
+                  </label>
+
+                  <div class="color-input">
+
+                    <input
+                      type="color"
+                      class="form-control form-control-color"
+                      formControlName="themeColor">
+
+                    <span>
+                      {{ shopForm.controls.themeColor.value }}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    Accent Color
+                  </label>
+
+                  <div class="color-input">
+
+                    <input
+                      type="color"
+                      class="form-control form-control-color"
+                      formControlName="accentColor">
+
+                    <span>
+                      {{ shopForm.controls.accentColor.value }}
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- CONTACT -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <div class="section-heading mb-4">
+
+                <div class="section-icon">
+                  <i class="bi bi-telephone"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-1">
+                    Contact Information
+                  </h5>
+
+                  <p class="text-muted small mb-0">
+                    How customers can contact your shop.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <div class="row g-4">
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    Phone Number
+                  </label>
+
+                  <div class="input-group">
+
+                    <span class="input-group-text">
+                      <i class="bi bi-telephone"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="phoneNumber"
+                      placeholder="+237 ...">
+
+                  </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    WhatsApp Number
+                  </label>
+
+                  <div class="input-group">
+
+                    <span class="input-group-text">
+                      <i class="bi bi-whatsapp"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="whatsappNumber"
+                      placeholder="+237 ...">
+
+                  </div>
+
+                </div>
+
+
+                <div class="col-12">
+
+                  <label class="form-label fw-semibold">
+                    Email Address
+                  </label>
+
+                  <div class="input-group">
+
+                    <span class="input-group-text">
+                      <i class="bi bi-envelope"></i>
+                    </span>
+
+                    <input
+                      type="email"
+                      class="form-control"
+                      formControlName="email"
+                      placeholder="shop@example.com"
+                      [class.is-invalid]="
+                        email.invalid && email.touched
+                      ">
+
+                    @if (email.invalid && email.touched) {
+                      <div class="invalid-feedback">
+                        Please enter a valid email address.
+                      </div>
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- LOCATION -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <div class="section-heading mb-4">
+
+                <div class="section-icon">
+                  <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-1">
+                    Shop Location
+                  </h5>
+
+                  <p class="text-muted small mb-0">
+                    Help customers find your physical shop.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                  Address
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="address"
+                  placeholder="Street or building address">
+
+              </div>
+
+
+              <div class="row g-4">
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    City
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="city"
+                    placeholder="e.g. Buea">
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    Region
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="region"
+                    placeholder="e.g. South West">
+
+                </div>
+
+
+                <div class="col-12">
+
+                  <label class="form-label fw-semibold">
+                    Landmark
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="landmark"
+                    placeholder="e.g. Near Molyko Park">
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div class="col-lg-4">
+
+
+          <!-- FULFILLMENT -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <div class="section-heading mb-4">
+
+                <div class="section-icon">
+                  <i class="bi bi-truck"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-1">
+                    Fulfillment
+                  </h5>
+
+                  <p class="text-muted small mb-0">
+                    Configure how customers receive orders.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <!-- PICKUP -->
+              <div class="setting-row">
+
+                <div>
+
+                  <div class="fw-semibold">
+                    Store Pickup
+                  </div>
+
+                  <small class="text-muted">
+                    Customers can collect orders.
+                  </small>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="pickupAvailable">
+
+                </div>
+
+              </div>
+
+
+              <!-- DELIVERY -->
+              <div class="setting-row">
+
+                <div>
+
+                  <div class="fw-semibold">
+                    Delivery
+                  </div>
+
+                  <small class="text-muted">
+                    Deliver orders to customers.
+                  </small>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="deliveryAvailable">
+
+                </div>
+
+              </div>
+
+
+              <!-- DELIVERY FEE -->
+              <div class="mt-4">
+
+                <label class="form-label fw-semibold">
+                  Delivery Fee
+                </label>
+
+                <div class="input-group">
+
+                  <input
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    formControlName="deliveryFee">
+
+                  <span class="input-group-text">
+                    FCFA
+                  </span>
+
+                </div>
+
+                <div class="form-text">
+                  Set to 0 if delivery is free.
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SHOP DETAILS -->
+          <div class="card shop-card mb-4">
+
+            <div class="card-body p-4">
+
+              <h6 class="fw-bold mb-3">
+                Shop Details
+              </h6>
+
+              @if (shop()) {
+
+                <div class="detail-item">
+
+                  <span>
+                    Shop URL
+                  </span>
+
+                  <strong>
+                    /{{ shop()!.slug }}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                  <span>
+                    Status
+                  </span>
+
+                  @if (shop()!.active) {
+
+                    <span class="badge rounded-pill bg-success-subtle text-success">
+                      Active
+                    </span>
+
+                  } @else {
+
+                    <span class="badge rounded-pill bg-secondary-subtle text-secondary">
+                      Inactive
+                    </span>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- ACTIONS -->
+          <div class="card shop-card save-card">
+
+            <div class="card-body p-4">
+
+              <div class="mb-3">
+
+                <div class="fw-semibold">
+                  Save your changes
+                </div>
+
+                <small class="text-muted">
+                  Your storefront will use the updated information.
+                </small>
+
+              </div>
+
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100 mb-2"
+                [disabled]="saving()">
+
+                @if (saving()) {
+
+                  <span
+                    class="spinner-border spinner-border-sm me-2">
+                  </span>
+
+                  Saving...
+
+                } @else {
+
+                  <i class="bi bi-check-lg me-2"></i>
+                  Save Changes
+
+                }
+
+              </button>
+
+
+              <button
+                type="button"
+                class="btn btn-light border w-100"
+                [disabled]="saving()"
+                (click)="cancel()">
+
+                Cancel
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  }
+
+</div>

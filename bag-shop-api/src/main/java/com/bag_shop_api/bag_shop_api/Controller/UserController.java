@@ -30,13 +30,14 @@ public class UserController {
 
     private final UserService userService;
 
-    public ResponseEntity<UserResponse> createUser(
-            @Valid @RequestBody CreateUserRequest request) {
+    @PostMapping
+public ResponseEntity<UserResponse> createUser(
+        @Valid @RequestBody CreateUserRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userService.createUser(request));
-    }
+    return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(userService.createUser(request));
+}
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll() {

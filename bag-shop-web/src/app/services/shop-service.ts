@@ -64,6 +64,20 @@ export class ShopService {
     );
   }
 
+  getMyShop(): Observable<Shop> {
+    return this.http.get<Shop>(
+      `${this.ADMIN_API}/me`
+    );
+  }
+
+
+  updateMyShop(request: ShopRequest): Observable<Shop> {
+    return this.http.put<Shop>(
+      `${this.ADMIN_API}/me`,
+      request
+    );
+  }
+
 }
 
 
@@ -84,33 +98,21 @@ export interface ShopPage {
 // =============================================================
 
 export interface ShopRequest {
-
   name: string;
-
   description?: string;
-
   logo?: string;
-
+  banner?: string;
   themeColor?: string;
-
+  accentColor?: string;
   phoneNumber?: string;
-
   whatsappNumber?: string;
-
   email?: string;
-
   address?: string;
-
   city?: string;
-
-  latitude?: number;
-
-  longitude?: number;
-
+  region?: string;
+  landmark?: string;
   pickupAvailable: boolean;
-
   deliveryAvailable: boolean;
-
-  ownerId: number;
-
+  deliveryFee?: number;
+  ownerId?: number;
 }

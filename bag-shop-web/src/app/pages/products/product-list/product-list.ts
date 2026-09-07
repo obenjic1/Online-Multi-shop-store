@@ -117,6 +117,36 @@ export class ProductList implements OnInit {
 
     this.shopSlug.set(slug);
 
+    this.route.queryParams.subscribe(params => {
+
+      const category =
+        params['category'];
+
+      if (category) {
+
+        this.selectedCategory.set(category);
+
+      } else {
+
+        this.selectedCategory.set('ALL');
+
+      }
+
+      const sort =
+        params['sort'];
+
+      if (sort === 'newest') {
+
+        // We will handle this properly
+        // when your Product model contains
+        // a createdAt field.
+
+      }
+
+      this.currentPage.set(1);
+
+    });
+
     this.loadAllProducts();
 
   }

@@ -1,0 +1,270 @@
+<div class="admin-dashboard">
+  <div class="container-fluid px-3 px-lg-4 py-4">
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="dashboard-header mb-4">
+      <div>
+        <div class="eyebrow">ADMINISTRATION</div>
+
+        <h1 class="dashboard-title">Dashboard</h1>
+
+        <p class="dashboard-subtitle mb-0">Manage your shop, products and store activity.</p>
+      </div>
+
+      <div class="header-actions">
+        @if (shop()) {
+          <a [routerLink]="['/shop', shop()!.slug]" target="_blank" class="btn btn-light border">
+            <i class="bi bi-box-arrow-up-right me-2"></i>
+            View Store
+          </a>
+        }
+
+        <a routerLink="/admin/products/new" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-2"></i>
+          Add Product
+        </a>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SHOP OVERVIEW
+    ====================================================== -->
+
+    @if (loadingShop()) {
+      <div class="shop-card skeleton-card mb-4">
+        <div class="skeleton-logo"></div>
+
+        <div class="flex-grow-1">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line"></div>
+        </div>
+      </div>
+    } @else if (shop()) {
+      <div class="shop-card mb-4">
+        <div class="shop-brand">
+          <div class="shop-logo">
+            @if (shop()!.logo) {
+              <img [src]="shop()!.logo" [alt]="shop()!.name" />
+            } @else {
+              <i class="bi bi-shop"></i>
+            }
+          </div>
+
+          <div class="shop-info">
+            <div class="shop-label">MY SHOP</div>
+
+            <h2>
+              {{ shop()!.name }}
+            </h2>
+
+            @if (shop()!.description) {
+              <p>
+                {{ shop()!.description }}
+              </p>
+            }
+
+            <div class="shop-status">
+              <span class="status-dot" [class.inactive]="!shop()!.active"></span>
+
+              {{ shop()!.active ? 'Store is active' : 'Store is inactive' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-actions">
+          <a routerLink="/admin/shop/edit" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>
+            Edit Shop
+          </a>
+        </div>
+      </div>
+    } @else {
+      <div class="empty-shop-card mb-4">
+        <div class="empty-shop-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <div>
+          <h5>Shop not found</h5>
+          <p class="mb-0">Your shop information could not be loaded.</p>
+        </div>
+      </div>
+    }
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="section-heading mb-3">
+      <div>
+        <h3>Store Overview</h3>
+        <p>Quick look at your product inventory.</p>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <!-- TOTAL -->
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+
+          <div class="stat-content">
+            <span>Total Products</span>
+
+            @if (loadingProducts()) {
+              <strong class="stat-loading"></strong>
+            } @else {
+              <strong>{{ totalProducts() }}</strong>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE -->
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon active">
+            <i class="bi bi-check-circle"></i>
+          </div>
+
+          <div class="stat-content">
+            <span>Active Products</span>
+
+            @if (loadingProducts()) {
+              <strong class="stat-loading"></strong>
+            } @else {
+              <strong>{{ activeProducts() }}</strong>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- INACTIVE -->
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon inactive">
+            <i class="bi bi-pause-circle"></i>
+          </div>
+
+          <div class="stat-content">
+            <span>Inactive Products</span>
+
+            @if (loadingProducts()) {
+              <strong class="stat-loading"></strong>
+            } @else {
+              <strong>{{ inactiveProducts() }}</strong>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- OUT OF STOCK -->
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon stock">
+            <i class="bi bi-exclamation-circle"></i>
+          </div>
+
+          <div class="stat-content">
+            <span>Out of Stock</span>
+
+            @if (loadingProducts()) {
+              <strong class="stat-loading"></strong>
+            } @else {
+              <strong>{{ outOfStock() }}</strong>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    <div class="section-heading mb-3">
+      <div>
+        <h3>Quick Actions</h3>
+        <p>Common things you may want to do.</p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <!-- ADD PRODUCT -->
+
+      <div class="col-12 col-md-6 col-xl-3">
+        <a routerLink="/admin/products/new" class="quick-action">
+          <div class="quick-icon">
+            <i class="bi bi-plus-lg"></i>
+          </div>
+
+          <div>
+            <h5>Add Product</h5>
+            <p>Add a new product to your store.</p>
+          </div>
+
+          <i class="bi bi-arrow-right quick-arrow"></i>
+        </a>
+      </div>
+
+      <!-- PRODUCTS -->
+
+      <div class="col-12 col-md-6 col-xl-3">
+        <a routerLink="/admin/products" class="quick-action">
+          <div class="quick-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+
+          <div>
+            <h5>Manage Products</h5>
+            <p>View and manage your inventory.</p>
+          </div>
+
+          <i class="bi bi-arrow-right quick-arrow"></i>
+        </a>
+      </div>
+
+      <!-- CATEGORIES -->
+
+      <div class="col-12 col-md-6 col-xl-3">
+        <a routerLink="/admin/categories" class="quick-action">
+          <div class="quick-icon">
+            <i class="bi bi-grid"></i>
+          </div>
+
+          <div>
+            <h5>Categories</h5>
+            <p>Organize your products.</p>
+          </div>
+
+          <i class="bi bi-arrow-right quick-arrow"></i>
+        </a>
+      </div>
+
+      <!-- SHOP -->
+
+      <div class="col-12 col-md-6 col-xl-3">
+        <a routerLink="/admin/shop/edit" class="quick-action">
+          <div class="quick-icon">
+            <i class="bi bi-shop"></i>
+          </div>
+
+          <div>
+            <h5>Edit Shop</h5>
+            <p>Update your store information.</p>
+          </div>
+
+          <i class="bi bi-arrow-right quick-arrow"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

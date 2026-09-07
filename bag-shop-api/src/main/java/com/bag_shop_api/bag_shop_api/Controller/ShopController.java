@@ -24,4 +24,17 @@ public class ShopController {
         return ResponseEntity.ok(
                 shopService.create(request));
     }
+    
+    @GetMapping("/me")
+public ResponseEntity<ShopResponse> getMyShop() {
+    return ResponseEntity.ok(shopService.getMyShop());
+}
+
+@PutMapping("/me")
+public ResponseEntity<ShopResponse> updateMyShop(
+        @Valid @RequestBody ShopRequest request) {
+
+    return ResponseEntity.ok(
+            shopService.updateMyShop(request));
+}
 }

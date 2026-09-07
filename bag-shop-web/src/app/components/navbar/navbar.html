@@ -2,7 +2,7 @@
 <!-- PREMIUM FASHION NAVBAR                                   -->
 <!-- ========================================================= -->
 
-<!-- Announcement Bar -->
+<!-- ANNOUNCEMENT BAR -->
 <div
   class="announcement-bar"
   style="
@@ -14,11 +14,11 @@
     padding: 0.45rem 1rem;
   "
 >
-  <span> Free delivery on selected orders </span>
+  <span>Free delivery on selected orders</span>
 
   <span class="mx-2 opacity-50">•</span>
 
-  <span> New collections now available </span>
+  <span>New collections now available</span>
 </div>
 
 <!-- ========================================================= -->
@@ -28,7 +28,10 @@
 <nav class="navbar navbar-expand-lg sticky-top premium-navbar">
   <div class="container">
     <!-- BRAND -->
-    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/products">
+    <a
+      class="navbar-brand d-flex align-items-center gap-2"
+      [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+    >
       <span class="brand-icon">
         <i class="bi bi-handbag-fill"></i>
       </span>
@@ -49,13 +52,20 @@
       <i class="bi bi-list"></i>
     </button>
 
-    <!-- NAV CONTENT -->
+    <!-- ===================================================== -->
+    <!-- NAV CONTENT                                           -->
+    <!-- ===================================================== -->
+
     <div class="collapse navbar-collapse" id="navbarContent">
-      <!-- NAVIGATION -->
+      <!-- =================================================== -->
+      <!-- MAIN NAVIGATION                                     -->
+      <!-- =================================================== -->
+
       <ul class="navbar-nav mx-auto align-items-lg-center gap-lg-2">
+        <!-- SHOP -->
         <li class="nav-item">
           <a
-            routerLink="/products"
+            [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
             routerLinkActive="nav-active"
             [routerLinkActiveOptions]="{ exact: true }"
             class="nav-link premium-nav-link"
@@ -64,83 +74,101 @@
           </a>
         </li>
 
-        <!-- HANDBAGS -->
+        <!-- ================================================= -->
+        <!-- CATEGORIES                                        -->
+        <!-- ================================================= -->
+
         <li class="nav-item dropdown">
-          <a
-            class="nav-link premium-nav-link dropdown-toggle"
-            href="#"
-            role="button"
+          <button
+            type="button"
+            class="nav-link premium-nav-link dropdown-toggle border-0 bg-transparent"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Handbags
-          </a>
+            Categories
+          </button>
 
           <ul class="dropdown-menu premium-dropdown">
-            <li>
-              <a
-                class="dropdown-item"
-                routerLink="/products"
-                [queryParams]="{ category: 'handbags' }"
-              >
-                <span class="category-icon handbag-icon">
-                  <i class="bi bi-handbag"></i>
-                </span>
+            <!-- LOADING -->
+            @if (loadingCategories()) {
+              <li>
+                <span class="dropdown-item-text text-muted">
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
 
-                <span>
-                  <strong>Handbags</strong>
-                  <small>Elegant everyday styles</small>
+                  Loading categories...
                 </span>
-              </a>
-            </li>
+              </li>
+            }
+
+            <!-- NO CATEGORIES -->
+            @else if (categories().length === 0) {
+              <li>
+                <span class="dropdown-item-text text-muted"> No categories available </span>
+              </li>
+            }
+
+            <!-- CATEGORIES -->
+            @else {
+              @for (category of categories(); track category.id) {
+                <li>
+                  <a
+                    class="dropdown-item"
+                    [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+                    [queryParams]="{
+                      category: category.name,
+                    }"
+                  >
+                    <span class="category-icon">
+                      <i class="bi bi-grid"></i>
+                    </span>
+
+                    <span>
+                      <strong>
+                        {{ category.name }}
+                      </strong>
+
+                      <small> Explore {{ category.name }} </small>
+                    </span>
+                  </a>
+                </li>
+              }
+            }
           </ul>
         </li>
 
-        <!-- BABY -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link premium-nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Baby
-          </a>
+        <!-- ================================================= -->
+        <!-- FIRST FEW CATEGORIES ON DESKTOP                  -->
+        <!-- ================================================= -->
 
-          <ul class="dropdown-menu premium-dropdown">
-            <li>
-              <a class="dropdown-item" routerLink="/products" [queryParams]="{ category: 'baby' }">
-                <span class="category-icon baby-icon">
-                  <i class="bi bi-balloon-heart"></i>
-                </span>
+        @for (category of categories().slice(0, 3); track category.id) {
+          <li class="nav-item d-none d-xl-block">
+            <a
+              class="nav-link premium-nav-link"
+              [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+              [queryParams]="{
+                category: category.name,
+              }"
+            >
+              {{ category.name }}
+            </a>
+          </li>
+        }
 
-                <span>
-                  <strong>Baby Wear</strong>
-                  <small>Soft & comfortable essentials</small>
-                </span>
-              </a>
-            </li>
-          </ul>
-        </li>
+        <!-- ================================================= -->
+        <!-- NEW ARRIVALS                                      -->
+        <!-- ================================================= -->
 
-        <!-- CHILDREN -->
-        <li class="nav-item">
-          <a
-            class="nav-link premium-nav-link"
-            routerLink="/products"
-            [queryParams]="{ category: 'children' }"
-          >
-            Children
-          </a>
-        </li>
-
-        <!-- NEW ARRIVALS -->
         <li class="nav-item">
           <a
             class="nav-link premium-nav-link new-link"
-            routerLink="/products"
-            [queryParams]="{ category: 'new' }"
+            [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+            [queryParams]="{
+              sort: 'newest',
+            }"
           >
             New Arrivals
 
@@ -149,20 +177,38 @@
         </li>
       </ul>
 
-      <!-- RIGHT ACTIONS -->
+      <!-- =================================================== -->
+      <!-- RIGHT ACTIONS                                      -->
+      <!-- =================================================== -->
+
       <div class="navbar-actions d-flex align-items-center gap-2">
         <!-- SEARCH -->
-        <button type="button" class="nav-action" aria-label="Search">
+        <button type="button" class="nav-action" aria-label="Search" title="Search">
           <i class="bi bi-search"></i>
         </button>
 
         <!-- ACCOUNT -->
-        <button type="button" class="nav-action d-none d-md-flex" aria-label="Account">
+        <a
+          routerLink="/login"
+          class="nav-action d-none d-md-flex"
+          aria-label="Account"
+          title="Account"
+        >
           <i class="bi bi-person"></i>
-        </button>
+        </a>
+
+        <!-- ACCOUNT / LOGIN -->
+        <a routerLink="/login" class="nav-action d-none d-md-flex" aria-label="Login" title="Login">
+          <i class="bi bi-person"></i>
+        </a>
 
         <!-- WISHLIST -->
-        <button type="button" class="nav-action d-none d-md-flex" aria-label="Wishlist">
+        <button
+          type="button"
+          class="nav-action d-none d-md-flex"
+          aria-label="Wishlist"
+          title="Wishlist"
+        >
           <i class="bi bi-heart"></i>
         </button>
 
@@ -184,38 +230,70 @@
 </nav>
 
 <!-- ========================================================= -->
-<!-- MOBILE BOTTOM NAVIGATION                                  -->
+<!-- MOBILE BOTTOM NAVIGATION                                 -->
 <!-- ========================================================= -->
 
 <nav class="mobile-bottom-nav d-lg-none">
+  <!-- SHOP -->
   <a
-    routerLink="/products"
+    [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
     routerLinkActive="mobile-active"
     [routerLinkActiveOptions]="{ exact: true }"
   >
     <i class="bi bi-grid"></i>
-    <span>Shop</span>
+
+    <span> Shop </span>
   </a>
 
-  <a routerLink="/products" [queryParams]="{ category: 'handbags' }">
+  <!-- CATEGORIES -->
+  <a
+    [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+    [queryParams]="{
+      category: categories().length > 0 ? categories()[0].name : null,
+    }"
+  >
     <i class="bi bi-handbag"></i>
-    <span>Bags</span>
+
+    <span> Bags </span>
   </a>
 
-  <a routerLink="/products" [queryParams]="{ category: 'baby' }">
-    <i class="bi bi-balloon-heart"></i>
-    <span>Baby</span>
-  </a>
+  <!-- SECOND CATEGORY -->
+  @if (categories().length > 1) {
+    <a
+      [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+      [queryParams]="{
+        category: categories()[1].name,
+      }"
+    >
+      <i class="bi bi-stars"></i>
 
-  <a routerLink="/products" [queryParams]="{ category: 'children' }">
-    <i class="bi bi-stars"></i>
-    <span>Kids</span>
-  </a>
+      <span>
+        {{ categories()[1].name }}
+      </span>
+    </a>
+  }
 
+  <!-- THIRD CATEGORY -->
+  @if (categories().length > 2) {
+    <a
+      [routerLink]="shopSlug() ? ['/shop', shopSlug()] : ['/products']"
+      [queryParams]="{
+        category: categories()[2].name,
+      }"
+    >
+      <i class="bi bi-grid-3x3-gap"></i>
+
+      <span>
+        {{ categories()[2].name }}
+      </span>
+    </a>
+  }
+
+  <!-- CART -->
   <a routerLink="/cart" class="position-relative">
     <i class="bi bi-bag"></i>
 
-    <span>Cart</span>
+    <span> Cart </span>
 
     @if (cartCount() > 0) {
       <b class="mobile-cart-count">

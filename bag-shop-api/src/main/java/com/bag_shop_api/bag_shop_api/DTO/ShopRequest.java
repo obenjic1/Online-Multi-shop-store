@@ -73,6 +73,5 @@ public class ShopRequest {
     // OWNER
     // =========================================================
 
-    @NotNull
-    private Long ownerId;
+   
 }

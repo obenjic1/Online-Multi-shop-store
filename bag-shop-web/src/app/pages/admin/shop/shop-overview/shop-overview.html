@@ -1,0 +1,343 @@
+<div class="shop-overview">
+  <div class="container-fluid px-3 px-lg-4">
+    <!-- HEADER -->
+
+    <div class="page-header">
+      <div>
+        <div class="eyebrow">STORE MANAGEMENT</div>
+
+        <h1>My Shop</h1>
+
+        <p>View and manage your store information.</p>
+      </div>
+
+      <div class="page-actions">
+        @if (shop()) {
+          <a [routerLink]="['/shop', shop()!.slug]" target="_blank" class="btn btn-light border">
+            <i class="bi bi-eye me-2"></i>
+            View Store
+          </a>
+
+          <a routerLink="/admin/shop/edit" class="btn btn-primary">
+            <i class="bi bi-pencil me-2"></i>
+            Edit Shop
+          </a>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <!-- LOADING -->
+
+      <div class="shop-card loading-card">
+        <div class="loading-banner"></div>
+
+        <div class="loading-body">
+          <div class="loading-logo"></div>
+
+          <div class="loading-lines">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    } @else if (shop()) {
+      <!-- =================================================
+           SHOP PROFILE
+      ================================================== -->
+
+      <div class="shop-card">
+        <!-- BANNER -->
+
+        <div class="shop-banner">
+          @if (shop()!.banner) {
+            <img [src]="shop()!.banner" [alt]="shop()!.name" />
+          } @else {
+            <div class="banner-placeholder">
+              <i class="bi bi-shop"></i>
+            </div>
+          }
+
+          <div class="banner-overlay"></div>
+        </div>
+
+        <!-- SHOP IDENTITY -->
+
+        <div class="shop-profile">
+          <div class="shop-logo">
+            @if (shop()!.logo) {
+              <img [src]="shop()!.logo" [alt]="shop()!.name" />
+            } @else {
+              <i class="bi bi-shop"></i>
+            }
+          </div>
+
+          <div class="shop-identity">
+            <h2>
+              {{ shop()!.name }}
+            </h2>
+
+            <div class="shop-slug">/{{ shop()!.slug }}</div>
+
+            <div class="shop-status">
+              <span class="status-dot" [class.inactive]="!shop()!.active"></span>
+
+              {{ shop()!.active ? 'Store Active' : 'Store Inactive' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+
+        @if (shop()!.description) {
+          <div class="shop-description">
+            <h3>About the Store</h3>
+
+            <p>
+              {{ shop()!.description }}
+            </p>
+          </div>
+        }
+
+        <!-- INFORMATION -->
+
+        <div class="information-section">
+          <h3>Store Information</h3>
+
+          <div class="row g-3">
+            <!-- PHONE -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-telephone"></i>
+                </div>
+
+                <div>
+                  <span> Phone </span>
+
+                  <strong>
+                    {{ shop()!.phoneNumber || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- WHATSAPP -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-whatsapp"></i>
+                </div>
+
+                <div>
+                  <span> WhatsApp </span>
+
+                  <strong>
+                    {{ shop()!.whatsappNumber || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-envelope"></i>
+                </div>
+
+                <div>
+                  <span> Email </span>
+
+                  <strong>
+                    {{ shop()!.email || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- ADDRESS -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <div>
+                  <span> Address </span>
+
+                  <strong>
+                    {{ shop()!.address || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- CITY -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-building"></i>
+                </div>
+
+                <div>
+                  <span> City </span>
+
+                  <strong>
+                    {{ shop()!.city || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- REGION -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-map"></i>
+                </div>
+
+                <div>
+                  <span> Region </span>
+
+                  <strong>
+                    {{ shop()!.region || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- LANDMARK -->
+
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="bi bi-signpost-2"></i>
+                </div>
+
+                <div>
+                  <span> Landmark </span>
+
+                  <strong>
+                    {{ shop()!.landmark || 'Not provided' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDER OPTIONS -->
+
+        <div class="information-section">
+          <h3>Order & Delivery</h3>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="option-card">
+                <div class="option-icon">
+                  <i class="bi bi-shop"></i>
+                </div>
+
+                <div class="flex-grow-1">
+                  <strong> Store Pickup </strong>
+
+                  <span> Customers can collect their orders. </span>
+                </div>
+
+                <span class="option-status" [class.disabled]="!shop()!.pickupAvailable">
+                  {{ shop()!.pickupAvailable ? 'Available' : 'Unavailable' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="option-card">
+                <div class="option-icon">
+                  <i class="bi bi-truck"></i>
+                </div>
+
+                <div class="flex-grow-1">
+                  <strong> Delivery </strong>
+
+                  <span> Deliver orders to customers. </span>
+                </div>
+
+                <span class="option-status" [class.disabled]="!shop()!.deliveryAvailable">
+                  {{ shop()!.deliveryAvailable ? 'Available' : 'Unavailable' }}
+                </span>
+              </div>
+            </div>
+
+            @if (shop()!.deliveryAvailable) {
+              <div class="col-12">
+                <div class="delivery-fee">
+                  <span> Delivery Fee </span>
+
+                  <strong> {{ shop()!.deliveryFee || 0 }} XAF </strong>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- APPEARANCE -->
+
+        <div class="information-section">
+          <h3>Store Appearance</h3>
+
+          <div class="appearance-row">
+            <div class="appearance-item">
+              <span> Theme Color </span>
+
+              <div class="color-value">
+                <span
+                  class="color-preview"
+                  [style.background]="shop()!.themeColor || '#6E3B5E'"
+                ></span>
+
+                <code>
+                  {{ shop()!.themeColor || 'Default' }}
+                </code>
+              </div>
+            </div>
+
+            <div class="appearance-item">
+              <span> Accent Color </span>
+
+              <div class="color-value">
+                <span
+                  class="color-preview"
+                  [style.background]="shop()!.accentColor || '#D96C86'"
+                ></span>
+
+                <code>
+                  {{ shop()!.accentColor || 'Default' }}
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- NO SHOP -->
+
+      <div class="no-shop">
+        <div class="no-shop-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <h3>Shop unavailable</h3>
+
+        <p>We could not load your shop information.</p>
+      </div>
+    }
+  </div>
+</div>

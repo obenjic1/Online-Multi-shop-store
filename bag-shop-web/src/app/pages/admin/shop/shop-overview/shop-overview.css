@@ -1,0 +1,456 @@
+.shop-overview {
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  color: #83758a;
+  margin-bottom: 0.3rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #2e2430;
+}
+
+.page-header p {
+  margin: 0.25rem 0 0;
+  color: #83758a;
+  font-size: 0.85rem;
+}
+
+.page-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* =========================================================
+   SHOP CARD
+========================================================= */
+
+.shop-card {
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(46, 36, 48, 0.03);
+}
+
+/* =========================================================
+   BANNER
+========================================================= */
+
+.shop-banner {
+  height: 190px;
+  position: relative;
+  background: #eee8ed;
+  overflow: hidden;
+}
+
+.shop-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c7d8d;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #f3edf2, #e9dfe7);
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, rgba(46, 36, 48, 0.2));
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.shop-profile {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  margin-top: -38px;
+  position: relative;
+}
+
+.shop-logo {
+  width: 82px;
+  height: 82px;
+  border-radius: 14px;
+  background: #f2eaf1;
+  border: 4px solid #fff;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 1.7rem;
+  flex-shrink: 0;
+}
+
+.shop-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shop-identity {
+  padding-bottom: 0.35rem;
+}
+
+.shop-identity h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.shop-slug {
+  color: #918792;
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.shop-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  color: #607066;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5c9b72;
+}
+
+.status-dot.inactive {
+  background: #a39aa5;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.shop-description {
+  padding: 1.4rem 1.5rem 0;
+}
+
+.shop-description h3,
+.information-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.shop-description p {
+  color: #706873;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.information-section {
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #f0edf1;
+}
+
+.info-item {
+  min-height: 72px;
+  padding: 0.8rem;
+  background: #faf9fa;
+  border: 1px solid #f0edf1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f1e9f0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-item > div:last-child {
+  min-width: 0;
+}
+
+.info-item span {
+  display: block;
+  font-size: 0.68rem;
+  color: #938a96;
+  margin-bottom: 0.15rem;
+}
+
+.info-item strong {
+  display: block;
+  font-size: 0.78rem;
+  color: #403741;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.option-card {
+  min-height: 76px;
+  padding: 0.85rem;
+  border: 1px solid #ebe7ec;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.option-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #f1e9f0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-card strong {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.option-card span {
+  display: block;
+  color: #918792;
+  font-size: 0.7rem;
+  margin-top: 0.15rem;
+}
+
+.option-status {
+  margin-left: auto;
+  padding: 0.25rem 0.55rem;
+  border-radius: 20px;
+  background: #edf5ef;
+  color: #548365 !important;
+  font-size: 0.64rem !important;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.option-status.disabled {
+  background: #f1eff2;
+  color: #8b838d !important;
+}
+
+.delivery-fee {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: #faf9fa;
+  border-radius: 9px;
+  font-size: 0.76rem;
+}
+
+.delivery-fee span {
+  color: #83758a;
+}
+
+.delivery-fee strong {
+  font-size: 0.85rem;
+}
+
+/* =========================================================
+   APPEARANCE
+========================================================= */
+
+.appearance-row {
+  display: flex;
+  gap: 3rem;
+}
+
+.appearance-item > span {
+  display: block;
+  color: #83758a;
+  font-size: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+.color-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-preview {
+  width: 25px;
+  height: 25px;
+  border-radius: 6px;
+  border: 1px solid #ddd5dd;
+}
+
+.color-value code {
+  color: #625967;
+  font-size: 0.72rem;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.no-shop {
+  padding: 4rem 1rem;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #ebe7ec;
+  border-radius: 14px;
+}
+
+.no-shop-icon {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 1rem;
+  border-radius: 12px;
+  background: #f1e9f0;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.no-shop h3 {
+  font-size: 1rem;
+}
+
+.no-shop p {
+  color: #83758a;
+  font-size: 0.8rem;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-banner,
+.loading-logo,
+.loading-lines div {
+  background: #eeeaf0;
+  animation: pulse 1.4s infinite ease-in-out;
+}
+
+.loading-banner {
+  height: 190px;
+}
+
+.loading-body {
+  display: flex;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+}
+
+.loading-logo {
+  width: 82px;
+  height: 82px;
+  border-radius: 14px;
+}
+
+.loading-lines {
+  padding-top: 0.5rem;
+}
+
+.loading-lines div {
+  width: 180px;
+  height: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.loading-lines div:first-child {
+  width: 130px;
+  height: 16px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-actions {
+    width: 100%;
+  }
+
+  .page-actions .btn {
+    flex: 1;
+  }
+
+  .shop-banner {
+    height: 150px;
+  }
+
+  .shop-profile {
+    padding: 0 1rem;
+  }
+
+  .information-section {
+    padding: 1.2rem 1rem;
+  }
+
+  .appearance-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
