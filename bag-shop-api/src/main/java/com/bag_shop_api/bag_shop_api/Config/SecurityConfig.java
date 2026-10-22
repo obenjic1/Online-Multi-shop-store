@@ -60,42 +60,48 @@ public class SecurityConfig {
 
                 .authenticationProvider(authenticationProvider())
 
-                .authorizeHttpRequests(auth -> auth
+              .authorizeHttpRequests(auth -> auth
 
-                        // Authentication
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers(
-                        	    HttpMethod.POST,
-                        	    "/api/payments/initiate"
-                        	).permitAll()
+        // Authentication endpoints
+        .requestMatchers("/api/v1/auth/**").permitAll()
 
-                        	.requestMatchers(
-                        	    HttpMethod.GET,
-                        	    "/api/payments/order/**"
-                        	).permitAll()
+        // Public endpoints
+        .requestMatchers("/api/v1/public/**").permitAll()
+        .requestMatchers("/uploads/**").permitAll()
 
-                        // Public customer endpoints
-                        .requestMatchers(
-                                "/api/products/**",
-                                "/api/categories/**")
-                        .permitAll()
+        // Payment endpoints
+        .requestMatchers(
+                HttpMethod.POST,
+                "/api/v1/payments/initiate"
+        ).permitAll()
 
-                        // Customers can create orderss
-                        .requestMatchers(HttpMethod.POST, "/api/orders")
-                        .permitAll()
-                        
+        .requestMatchers(
+                HttpMethod.GET,
+                "/api/v1/payments/order/**"
+        ).permitAll()
 
-                        // User management - SUPER ADMIN ONLY
-                        .requestMatchers("/api/users/**")
-                        .hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/super-admin/**")
-                        .hasRole("SUPER_ADMIN")
+        // Public product and category endpoints
+        .requestMatchers(
+                "/api/v1/products/**",
+                "/api/v1/categories/**"
+        ).permitAll()
 
-                        // Everything else requires authentication
-                        .anyRequest()
-                        .authenticated())
+        // Customers can create orders without logging in
+        .requestMatchers(
+                HttpMethod.POST,
+                "/api/v1/orders"
+        ).permitAll()
+
+        // Super-admin-only endpoints
+        .requestMatchers("/api/v1/users/**")
+        .hasRole("SUPER_ADMIN")
+
+        .requestMatchers("/api/v1/super-admin/**")
+        .hasRole("SUPER_ADMIN")
+
+        // All remaining endpoints require authentication
+        .anyRequest().authenticated()
+)
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
