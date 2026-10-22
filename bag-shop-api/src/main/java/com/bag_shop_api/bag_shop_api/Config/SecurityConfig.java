@@ -82,7 +82,7 @@ public class SecurityConfig {
                                 "/api/categories/**")
                         .permitAll()
 
-                        // Customers can create orders
+                        // Customers can create orderss
                         .requestMatchers(HttpMethod.POST, "/api/orders")
                         .permitAll()
                         
