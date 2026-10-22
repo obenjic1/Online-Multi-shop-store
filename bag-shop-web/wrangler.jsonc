@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "online-multi-shop",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "./dist/bag-shop-web/browser",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
