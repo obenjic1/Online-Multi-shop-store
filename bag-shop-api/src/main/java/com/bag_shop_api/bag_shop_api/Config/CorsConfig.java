@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200"
+                "https://online-multi-shop.redemmed123.workers.dev"
         ));
 
         configuration.setAllowedMethods(List.of(
