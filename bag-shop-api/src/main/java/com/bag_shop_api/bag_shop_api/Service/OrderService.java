@@ -36,6 +36,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     private final ShopRepository shopRepository;
+    private final CurrentUserService currentUserService;
 
 
    
@@ -421,6 +422,11 @@ public class OrderService {
                 .createdAt(
                         order.getCreatedAt()
                 )
+                .deliveryFee(
+                        order.getFulfillmentType() == FulfillmentType.DELIVERY
+                        ? shop.getDeliveryFee()
+                        : BigDecimal.ZERO
+        )
 
                 // -------------------------------------------------
                 // ITEMS
@@ -461,5 +467,122 @@ public class OrderService {
                 )
 
                 .build();
+    }
+    
+    public List<OrderResponse> getMyShopOrders() {
+
+        Shop shop = currentUserService.getCurrentShop();
+
+        return orderRepository
+                .findByShopIdOrderByCreatedAtDesc(shop.getId())
+                .stream()
+                .map(this::map)
+                .toList();
+    }
+   
+    public OrderResponse getMyShopOrder(Long orderId) {
+
+        Shop shop = currentUserService.getCurrentShop();
+
+        Order order = orderRepository
+                .findByIdAndShopId(orderId, shop.getId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Order not found."
+                        )
+                );
+
+        return map(order);
+    }
+    
+    @Transactional
+    public OrderResponse updateOrderStatus(
+            Long orderId,
+            OrderStatus newStatus) {
+
+        Shop shop = currentUserService.getCurrentShop();
+
+        Order order = orderRepository
+                .findByIdAndShopId(orderId, shop.getId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Order not found."
+                        )
+                );
+
+        OrderStatus currentStatus = order.getStatus();
+
+        // ---------------------------------------------------------
+        // CANCELLED ORDERS CANNOT BE CHANGED
+        // ---------------------------------------------------------
+
+        if (currentStatus == OrderStatus.CANCELLED) {
+            throw new RuntimeException(
+                    "A cancelled order cannot be updated."
+            );
+        }
+
+        // ---------------------------------------------------------
+        // DELIVERED ORDERS CANNOT BE CHANGED
+        // ---------------------------------------------------------
+
+        if (currentStatus == OrderStatus.DELIVERED) {
+            throw new RuntimeException(
+                    "A delivered order cannot be updated."
+            );
+        }
+
+        // ---------------------------------------------------------
+        // CANCELLATION
+        // ---------------------------------------------------------
+
+        if (newStatus == OrderStatus.CANCELLED) {
+
+            for (OrderItem item : order.getItems()) {
+
+                Product product = item.getProduct();
+
+                product.setStockQuantity(
+                        product.getStockQuantity()
+                                + item.getQuantity()
+                );
+
+                productRepository.save(product);
+            }
+
+            order.setStatus(OrderStatus.CANCELLED);
+
+            return map(orderRepository.save(order));
+        }
+
+        // ---------------------------------------------------------
+        // NORMAL ORDER FLOW
+        // ---------------------------------------------------------
+
+        boolean validTransition =
+                (currentStatus == OrderStatus.PENDING
+                        && newStatus == OrderStatus.CONFIRMED)
+
+                || (currentStatus == OrderStatus.CONFIRMED
+                        && newStatus == OrderStatus.PROCESSING)
+
+                || (currentStatus == OrderStatus.PROCESSING
+                        && newStatus == OrderStatus.SHIPPED)
+
+                || (currentStatus == OrderStatus.SHIPPED
+                        && newStatus == OrderStatus.DELIVERED);
+
+        if (!validTransition) {
+            throw new RuntimeException(
+                    "Invalid order status transition: "
+                            + currentStatus
+                            + " → "
+                            + newStatus
+            );
+        }
+
+        order.setStatus(newStatus);
+
+        return map(orderRepository.save(order));
     }
 }

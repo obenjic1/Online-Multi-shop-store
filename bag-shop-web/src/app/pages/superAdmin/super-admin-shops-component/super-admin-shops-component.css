@@ -1,0 +1,144 @@
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.summary-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.summary-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #f5eef4;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.summary-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2e2430;
+}
+
+/* =========================================================
+   SHOP LOGO
+========================================================= */
+
+.shop-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #f5eef4;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.shop-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =========================================================
+   ADMIN AVATAR
+========================================================= */
+
+.admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f5eef4;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table > :not(caption) > * > * {
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+
+.table thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #83758a;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #f5eef4;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  background: rgba(46, 36, 48, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.assign-modal {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.modal-header-custom {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.modal-footer-custom {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

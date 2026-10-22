@@ -53,17 +53,6 @@ export class ShopService {
   }
 
 
-
-  createShop(
-    request: ShopRequest
-  ): Observable<Shop> {
-
-    return this.http.post<Shop>(
-      this.ADMIN_API,
-      request
-    );
-  }
-
   getMyShop(): Observable<Shop> {
     return this.http.get<Shop>(
       `${this.ADMIN_API}/me`
@@ -71,13 +60,70 @@ export class ShopService {
   }
 
 
-  updateMyShop(request: ShopRequest): Observable<Shop> {
+  updateMyShop(formData: FormData): Observable<Shop> {
     return this.http.put<Shop>(
       `${this.ADMIN_API}/me`,
-      request
+      formData
     );
   }
 
+
+
+  assignAdmin(shopId: number, adminId: number): Observable<Shop> {
+    return this.http.put<Shop>(
+      `${this.ADMIN_API}/${shopId}/owner/${adminId}`,
+      {}
+    );
+  }
+
+
+  createShop(
+    request: ShopRequest,
+    logoFile?: File | null,
+    bannerFile?: File | null
+  ): Observable<Shop> {
+
+    const formData = new FormData();
+
+    formData.append(
+      'shop',
+      new Blob(
+        [JSON.stringify(request)],
+        { type: 'application/json' }
+      )
+    );
+
+    if (logoFile) {
+      formData.append('logoFile', logoFile);
+    }
+
+    if (bannerFile) {
+      formData.append('bannerFile', bannerFile);
+    }
+
+    return this.http.post<Shop>(
+      this.ADMIN_API,
+      formData
+    );
+  }
+
+
+  getShopById(id: number): Observable<Shop> {
+    return this.http.get<Shop>(
+      `${this.ADMIN_API}/${id}`
+    );
+  }
+
+  updateShop(
+    id: number,
+    formData: FormData
+  ): Observable<Shop> {
+
+    return this.http.put<Shop>(
+      `${this.ADMIN_API}/${id}`,
+      formData
+    );
+  }
 }
 
 

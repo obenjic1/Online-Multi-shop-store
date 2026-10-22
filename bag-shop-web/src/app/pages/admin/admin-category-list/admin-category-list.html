@@ -1,0 +1,290 @@
+<div class="category-page">
+  <!-- HEADER -->
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4"
+  >
+    <div>
+      <div class="text-uppercase small fw-semibold text-muted mb-1">Product Management</div>
+
+      <h1 class="h3 fw-bold mb-1">Categories</h1>
+
+      <p class="text-muted mb-0">Organize your products into categories.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#categoryModal"
+      (click)="openAddModal()"
+    >
+      <i class="bi bi-plus-lg me-2"></i>
+      Add Category
+    </button>
+  </div>
+
+  <!-- ALERTS -->
+
+  @if (successMessage()) {
+    <div class="alert alert-success border-0 shadow-sm">
+      <i class="bi bi-check-circle me-2"></i>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger border-0 shadow-sm">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- SUMMARY -->
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-tags"></i>
+        </div>
+
+        <div>
+          <div class="stat-label">Total Categories</div>
+
+          <div class="stat-value">
+            {{ totalCategories() }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CARD -->
+
+  <div class="card category-card">
+    <div class="card-body p-0">
+      <!-- TOOLBAR -->
+
+      <div class="category-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+
+          <input
+            type="search"
+            class="form-control"
+            placeholder="Search categories..."
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+          />
+        </div>
+
+        @if (searchTerm()) {
+          <button type="button" class="btn btn-light border" (click)="clearSearch()">
+            <i class="bi bi-x-lg me-1"></i>
+            Clear
+          </button>
+        }
+      </div>
+
+      <!-- LOADING -->
+
+      @if (loading()) {
+        <div class="category-loading">
+          @for (item of [1, 2, 3, 4, 5]; track item) {
+            <div class="category-skeleton"></div>
+          }
+        </div>
+      }
+
+      <!-- EMPTY -->
+
+      @else if (filteredCategories().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-tags"></i>
+          </div>
+
+          @if (searchTerm()) {
+            <h5 class="fw-semibold">No categories found</h5>
+
+            <p class="text-muted mb-3">No category matches "{{ searchTerm() }}".</p>
+
+            <button type="button" class="btn btn-light border" (click)="clearSearch()">
+              Clear Search
+            </button>
+          } @else {
+            <h5 class="fw-semibold">No categories yet</h5>
+
+            <p class="text-muted mb-3">
+              Create your first category to start organizing your products.
+            </p>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#categoryModal"
+              (click)="openAddModal()"
+            >
+              <i class="bi bi-plus-lg me-2"></i>
+              Add Category
+            </button>
+          }
+        </div>
+      }
+
+      <!-- TABLE -->
+
+      @else {
+        <div class="table-responsive">
+          <table class="table category-table mb-0">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>ID</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (category of filteredCategories(); track category.id) {
+                <tr>
+                  <td>
+                    <div class="category-name">
+                      <div class="category-avatar">
+                        <i class="bi bi-tag"></i>
+                      </div>
+
+                      <div>
+                        <div class="fw-semibold">
+                          {{ category.name }}
+                        </div>
+
+                        <small class="text-muted"> Product category </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="category-id"> #{{ category.id }} </span>
+                  </td>
+
+                  <td>
+                    <div class="d-flex justify-content-end gap-2">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light border"
+                        title="Edit category"
+                        data-bs-toggle="modal"
+                        data-bs-target="#categoryModal"
+                        (click)="openEditModal(category)"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light border text-danger"
+                        title="Delete category"
+                        [disabled]="deleting()"
+                        (click)="deleteCategory(category)"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content category-modal">
+      <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold mb-1">
+              @if (editingCategory()) {
+                Edit Category
+              } @else {
+                Add Category
+              }
+            </h5>
+
+            <small class="text-muted">
+              @if (editingCategory()) {
+                Update the category name.
+              } @else {
+                Create a category for your products.
+              }
+            </small>
+          </div>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          @if (errorMessage()) {
+            <div class="alert alert-danger py-2 small">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <label class="form-label fw-semibold">
+            Category Name
+            <span class="text-danger">*</span>
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="e.g. Hand Bags"
+            [class.is-invalid]="
+              categoryForm.controls.name.invalid && categoryForm.controls.name.touched
+            "
+          />
+
+          @if (categoryForm.controls.name.invalid && categoryForm.controls.name.touched) {
+            <div class="invalid-feedback">Category name is required.</div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-light border"
+            data-bs-dismiss="modal"
+            [disabled]="saving()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            @if (saving()) {
+              <span class="spinner-border spinner-border-sm me-2"> </span>
+
+              Saving...
+            } @else {
+              <i class="bi bi-check-lg me-2"></i>
+
+              @if (editingCategory()) {
+                Update Category
+              } @else {
+                Create Category
+              }
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

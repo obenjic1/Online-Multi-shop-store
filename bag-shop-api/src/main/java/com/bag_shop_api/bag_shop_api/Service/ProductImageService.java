@@ -2,6 +2,7 @@ package com.bag_shop_api.bag_shop_api.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,8 @@ import com.bag_shop_api.bag_shop_api.Entity.Shop;
 import com.bag_shop_api.bag_shop_api.Repository.ProductImageRepository;
 import com.bag_shop_api.bag_shop_api.Repository.ProductRepository;
 //import com.cloudinary.Cloudinary;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +26,6 @@ public class ProductImageService {
 
         private final ProductRepository productRepository;
         private final ProductImageRepository productImageRepository;
-     //   private final Cloudinary cloudinary;
         private final ImageStorageService imageStorageService;
         private final CurrentUserService currentUserService;
                 
@@ -46,8 +48,8 @@ public class ProductImageService {
                     productImageRepository.countByProductId(productId);
 
             for (MultipartFile file : files) {
-            	/*
-
+            	
+/*
                 Map<?, ?> result = cloudinary.uploader().upload(
                         file.getBytes(),
                         ObjectUtils.asMap(
@@ -56,15 +58,18 @@ public class ProductImageService {
                                 
                                      String imageUrl = (String) result.get("secure_url");
            
+                        */String imageUrl = imageStorageService.upload(
+                                file,
+                                "bag-shop/products"
+                        );        
                                 
-                                */
-            	
+            	/*
 
                 String imageUrl = imageStorageService.upload(
                         file,
                         "products");
 
-
+*/
 
                 ProductImage image = new ProductImage();
 

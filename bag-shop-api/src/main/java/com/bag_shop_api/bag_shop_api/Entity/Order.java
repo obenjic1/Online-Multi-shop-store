@@ -13,19 +13,20 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "orders")
@@ -81,6 +82,15 @@ private Shop shop;
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
+    
+    @OneToOne(
+    	    mappedBy = "order",
+    	    fetch = FetchType.LAZY,
+    	    cascade = CascadeType.ALL,
+    	    orphanRemoval = true
+    	)
+    	private Payment payment;
 
 }

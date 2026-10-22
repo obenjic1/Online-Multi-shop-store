@@ -10,6 +10,7 @@ import com.bag_shop_api.bag_shop_api.DTO.UpdateUserRequest;
 import com.bag_shop_api.bag_shop_api.DTO.UserResponse;
 import com.bag_shop_api.bag_shop_api.Entity.User;
 import com.bag_shop_api.bag_shop_api.Repository.UserRepository;
+import com.bag_shop_api.bag_shop_api.Enums.Role;
 
 import lombok.RequiredArgsConstructor;
 
@@ -150,4 +151,13 @@ public class UserService {
 
         userRepository.delete(user);
     }
+    
+public List<UserResponse> getAvailableAdmins() {
+
+    return userRepository
+            .findAvailableAdmins(Role.ROLE_ADMIN)
+            .stream()
+            .map(this::toResponse)
+            .toList();
+}
 }

@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuardGuard } from './guards/auth-guard-guard';
+import { SuperAdminLayout } from './pages/superAdmin/super-admin-layout/super-admin-layout';
+import { ShopDetails } from './pages/superAdmin/shop-details/shop-details';
+import { ShopEdit } from './pages/admin/shop/shop-edit/shop-edit';
 
 export const routes: Routes = [
 
@@ -94,6 +97,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuardGuard],
+    data: {
+      roles: ['ROLE_ADMIN']
+    },
 
     loadComponent: () =>
       import('./pages/admin/admin-layout/admin-layout')
@@ -141,18 +147,89 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/admin/products/product-form/product-form')
             .then(m => m.ProductForm)
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./pages/admin/admin-category-list/admin-category-list')
+            .then(m => m.AdminCategoryList)
+      }, {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/admin/order/order-list/order-list')
+            .then(m => m.OrderList)
+      }, {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./pages/admin/order/order-details/order-details')
+            .then(m => m.OrderDetails)
       }
+
 
     ]
   },
   {
     path: 'super-admin',
-    canActivateChild: [authGuardGuard],
+
+    component: SuperAdminLayout,
+
+    canActivate: [authGuardGuard],
+
     data: {
       roles: ['ROLE_SUPER_ADMIN']
     },
+
     children: [
-      // super admin pages will go here
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import(
+            './pages/superAdmin/super-admin-dashboard/super-admin-dashboard'
+          ).then(
+            m => m.SuperAdminDashboard
+          )
+      },
+
+      {
+        path: 'administrators',
+        loadComponent: () =>
+          import(
+            './pages/superAdmin/administrators/administrators'
+          ).then(
+            m => m.Administrators
+          )
+      },
+
+      {
+        path: 'shops',
+        loadComponent: () =>
+          import(
+            './pages/superAdmin/super-admin-shops-component/super-admin-shops-component'
+          ).then(
+            m => m.SuperAdminShopsComponent
+          )
+      }, {
+        path: 'shops/new',
+        loadComponent: () =>
+          import(
+            './pages/superAdmin/add-shop/add-shop'
+          ).then(
+            m => m.AddShop
+          )
+      }, {
+        path: 'shops/:id',
+        component: ShopDetails
+      }, {
+        path: 'shops/:id/edit',
+        component: ShopEdit
+      }
     ]
   },
   // =========================================================

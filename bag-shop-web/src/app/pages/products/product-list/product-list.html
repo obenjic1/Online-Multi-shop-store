@@ -1,11 +1,15 @@
-<div class="product-list-page">
+<div
+  class="product-list-page"
+  [style.--shop-primary]="shop()?.themeColor || '#6E3B5E'"
+  [style.--shop-accent]="shop()?.accentColor || '#D96C86'"
+>
   <div class="container py-4 py-lg-5">
     <!-- =====================================================
          SHOP HEADER
     ====================================================== -->
 
     @if (shop()) {
-      <div class="shop-header mb-5" [style.--shop-theme]="shop()!.themeColor || '#6E3B5E'">
+      <div class="shop-header mb-5" [style.--shop-primary]="shop()!.themeColor || '#6E3B5E'">
         <div class="row align-items-center g-4">
           <!-- SHOP LOGO -->
           <div class="col-auto">

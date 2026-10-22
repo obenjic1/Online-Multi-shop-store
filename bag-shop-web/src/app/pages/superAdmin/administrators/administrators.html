@@ -1,0 +1,436 @@
+<div class="administrators-page">
+  <div class="container-fluid py-4">
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div
+      class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4"
+    >
+      <div>
+        <h4 class="mb-1 fw-semibold">Administrators</h4>
+
+        <p class="text-muted mb-0">Manage shop administrators and their access.</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="openCreateForm()">
+        <i class="bi bi-person-plus me-2"></i>
+
+        Add Administrator
+      </button>
+    </div>
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-xl-3">
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="bi bi-people"></i>
+          </div>
+
+          <div>
+            <div class="summary-label">Total Administrators</div>
+
+            <div class="summary-value">
+              {{ administrators().length }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="bi bi-person-check"></i>
+          </div>
+
+          <div>
+            <div class="summary-label">Active</div>
+
+            <div class="summary-value">
+              {{ administrators().filter((user) => user.enabled).length }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="bi bi-person-x"></i>
+          </div>
+
+          <div>
+            <div class="summary-label">Disabled</div>
+
+            <div class="summary-value">
+              {{ administrators().filter((user) => !user.enabled).length }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MAIN CARD
+    ====================================================== -->
+
+    <div class="card border-0 shadow-sm">
+      <!-- SEARCH -->
+
+      <div class="card-header bg-white border-bottom py-3">
+        <div class="row align-items-center g-3">
+          <div class="col-md-6">
+            <div class="search-box">
+              <i class="bi bi-search"></i>
+
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search administrators..."
+                (input)="onSearch($event)"
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 text-md-end">
+            <small class="text-muted">
+              Showing
+              <strong>
+                {{ filteredAdministrators().length }}
+              </strong>
+              administrator(s)
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================
+           LOADING
+      ==================================================== -->
+
+      @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <div class="text-muted mt-2">Loading administrators...</div>
+        </div>
+      }
+
+      <!-- ===================================================
+           EMPTY
+      ==================================================== -->
+
+      @else if (filteredAdministrators().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-people"></i>
+          </div>
+
+          <h6 class="mb-1">No administrators found</h6>
+
+          <p class="text-muted mb-3">
+            {{ searchTerm() ? 'Try changing your search.' : 'There are no administrators yet.' }}
+          </p>
+
+          @if (!searchTerm()) {
+            <button type="button" class="btn btn-primary btn-sm" (click)="openCreateForm()">
+              <i class="bi bi-person-plus me-1"></i>
+              Add Administrator
+            </button>
+          }
+        </div>
+      }
+
+      <!-- ===================================================
+           TABLE
+      ==================================================== -->
+
+      @else {
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Administrator</th>
+
+                <th>Contact</th>
+
+                <th>Status</th>
+
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (user of filteredAdministrators(); track user.id) {
+                <tr>
+                  <!-- USER -->
+
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="user-avatar">
+                        {{ user.username.charAt(0).toUpperCase() }}
+                      </div>
+
+                      <div>
+                        <div class="fw-semibold">
+                          {{ user.username }}
+                        </div>
+
+                        <small class="text-muted"> Administrator </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- CONTACT -->
+
+                  <td>
+                    @if (user.email) {
+                      <div>
+                        <i class="bi bi-envelope me-1 text-muted"></i>
+                        {{ user.email }}
+                      </div>
+                    }
+
+                    @if (user.phoneNumber) {
+                      <small class="text-muted">
+                        <i class="bi bi-telephone me-1"></i>
+
+                        {{ user.phoneNumber }}
+                      </small>
+                    }
+
+                    @if (!user.email && !user.phoneNumber) {
+                      <span class="text-muted"> No contact information </span>
+                    }
+                  </td>
+
+                  <!-- STATUS -->
+
+                  <td>
+                    @if (user.enabled) {
+                      <span class="status-badge active">
+                        <span></span>
+                        Active
+                      </span>
+                    } @else {
+                      <span class="status-badge disabled">
+                        <span></span>
+                        Disabled
+                      </span>
+                    }
+                  </td>
+
+                  <!-- ACTIONS -->
+
+                  <td class="text-end">
+                    <div class="btn-group" role="group">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light"
+                        title="Edit"
+                        (click)="openEditForm(user)"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light"
+                        [title]="user.enabled ? 'Disable' : 'Enable'"
+                        (click)="toggleStatus(user)"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-person-slash]="user.enabled"
+                          [class.bi-person-check]="!user.enabled"
+                        >
+                        </i>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light text-danger"
+                        title="Delete"
+                        (click)="deleteAdministrator(user)"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     CREATE / EDIT MODAL
+========================================================== -->
+
+@if (showForm()) {
+  <div class="modal-backdrop-custom" (click)="closeForm()">
+    <div class="admin-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+
+      <div class="modal-header-custom">
+        <div>
+          <h5 class="mb-1 fw-semibold">
+            {{ editingUser() ? 'Edit Administrator' : 'Add Administrator' }}
+          </h5>
+
+          <small class="text-muted">
+            {{
+              editingUser()
+                ? 'Update administrator information.'
+                : 'Create a new shop administrator.'
+            }}
+          </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close"
+          [disabled]="submitting()"
+          (click)="closeForm()"
+        ></button>
+      </div>
+
+      <!-- BODY -->
+
+      <form [formGroup]="adminForm" (ngSubmit)="saveAdministrator()">
+        <div class="modal-body-custom">
+          <!-- USERNAME -->
+
+          <div class="mb-3">
+            <label class="form-label">
+              Username
+              <span class="text-danger">*</span>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username"
+              [class.is-invalid]="isInvalid('username')"
+            />
+
+            @if (isInvalid('username')) {
+              <div class="invalid-feedback">
+                @if (adminForm.get('username')?.hasError('required')) {
+                  Username is required.
+
+                } @else {
+                  Username must contain at least 3 characters.
+                }
+              </div>
+            }
+          </div>
+
+          <!-- EMAIL -->
+
+          <div class="mb-3">
+            <label class="form-label"> Email </label>
+
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="admin@example.com"
+            />
+          </div>
+
+          <!-- PHONE -->
+
+          <div class="mb-3">
+            <label class="form-label"> Phone Number </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phoneNumber"
+              placeholder="6XXXXXXXX"
+            />
+          </div>
+
+          <!-- PASSWORD -->
+
+          <div class="mb-3">
+            <label class="form-label">
+              Password
+
+              @if (!editingUser()) {
+                <span class="text-danger">*</span>
+              }
+            </label>
+
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              [placeholder]="
+                editingUser() ? 'Leave blank to keep current password' : 'Enter password'
+              "
+              [class.is-invalid]="isInvalid('password')"
+            />
+
+            @if (isInvalid('password')) {
+              <div class="invalid-feedback">Password must contain at least 6 characters.</div>
+            }
+          </div>
+
+          <!-- ROLE -->
+
+          <div class="role-info">
+            <i class="bi bi-shield-check"></i>
+
+            <div>
+              <div class="fw-semibold">Administrator</div>
+
+              <small class="text-muted">
+                This user will have administrator-level access to their assigned shop.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="modal-footer-custom">
+          <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="submitting()"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+            @if (submitting()) {
+              <span class="spinner-border spinner-border-sm me-2"> </span>
+
+              Saving...
+            } @else {
+              <i
+                class="bi"
+                [class.bi-person-plus]="!editingUser()"
+                [class.bi-check-lg]="editingUser()"
+              >
+              </i>
+
+              {{ editingUser() ? 'Save Changes' : 'Create Administrator' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

@@ -13,7 +13,7 @@
         <i class="bi bi-bag-heart"></i>
       </div>
 
-      <span> Kelly Bags </span>
+      <span> {{ shop()!.name }} </span>
     </div>
 
     <button type="button" class="mobile-profile-btn" aria-label="Account">
@@ -42,7 +42,7 @@
       </div>
 
       <div>
-        <div class="brand-name">Kelly Bags</div>
+        <div class="brand-name">{{ shop()!.name }}</div>
 
         <div class="brand-label">ADMINISTRATION</div>
       </div>
@@ -152,8 +152,6 @@
         <i class="bi bi-bag-check"></i>
 
         <span> Orders </span>
-
-        <span class="nav-badge"> Soon </span>
       </a>
 
       <!-- CUSTOMERS -->

@@ -1,19 +1,4 @@
-<!-- ========================================================= -->
-<!-- PREMIUM FASHION NAVBAR                                   -->
-<!-- ========================================================= -->
-
-<!-- ANNOUNCEMENT BAR -->
-<div
-  class="announcement-bar"
-  style="
-    background: #2e2430;
-    color: #ffffff;
-    text-align: center;
-    font-size: 0.72rem;
-    letter-spacing: 0.7px;
-    padding: 0.45rem 1rem;
-  "
->
+<div class="announcement-bar" [style.background]="shopThemeColor()">
   <span>Free delivery on selected orders</span>
 
   <span class="mx-2 opacity-50">•</span>
@@ -25,7 +10,11 @@
 <!-- MAIN NAVBAR                                               -->
 <!-- ========================================================= -->
 
-<nav class="navbar navbar-expand-lg sticky-top premium-navbar">
+<nav
+  class="navbar navbar-expand-lg sticky-top premium-navbar"
+  [style.--shop-primary]="shopThemeColor()"
+  [style.--shop-accent]="shopAccentColor()"
+>
   <div class="container">
     <!-- BRAND -->
     <a
@@ -36,7 +25,9 @@
         <i class="bi bi-handbag-fill"></i>
       </span>
 
-      <span class="brand-name"> Bag Shop </span>
+      <span class="brand-name">
+        <span class="brand-name">{{ shop()?.name || 'Bag Shop' }}</span>
+      </span>
     </a>
 
     <!-- MOBILE TOGGLE -->
@@ -194,11 +185,6 @@
           aria-label="Account"
           title="Account"
         >
-          <i class="bi bi-person"></i>
-        </a>
-
-        <!-- ACCOUNT / LOGIN -->
-        <a routerLink="/login" class="nav-action d-none d-md-flex" aria-label="Login" title="Login">
           <i class="bi bi-person"></i>
         </a>
 

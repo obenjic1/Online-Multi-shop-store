@@ -52,7 +52,7 @@
 
         <div class="shop-banner">
           @if (shop()!.banner) {
-            <img [src]="shop()!.banner" [alt]="shop()!.name" />
+            <img [src]="imageUrlService.getImageUrl(shop()!.banner)" [alt]="shop()!.name" />
           } @else {
             <div class="banner-placeholder">
               <i class="bi bi-shop"></i>
@@ -67,7 +67,7 @@
         <div class="shop-profile">
           <div class="shop-logo">
             @if (shop()!.logo) {
-              <img [src]="shop()!.logo" [alt]="shop()!.name" />
+              <img [src]="imageUrlService.getImageUrl(shop()!.logo)" [alt]="shop()!.name" />
             } @else {
               <i class="bi bi-shop"></i>
             }

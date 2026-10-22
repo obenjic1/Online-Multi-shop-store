@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 
 import { ShopService } from '../../../../services/shop-service';
 import { Shop } from '../../../../models/shop-model';
+import { FileService } from '../../../../services/services/file-service';
 
 @Component({
   selector: 'app-shop-overview',
@@ -20,6 +21,8 @@ import { Shop } from '../../../../models/shop-model';
 export class ShopOverview implements OnInit {
 
   private readonly shopService = inject(ShopService);
+  readonly imageUrlService = inject(FileService);
+
 
   shop = signal<Shop | null>(null);
 

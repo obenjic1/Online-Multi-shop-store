@@ -80,4 +80,11 @@ public ResponseEntity<UserResponse> createUser(
 
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/available-admins")
+public ResponseEntity<List<UserResponse>> getAvailableAdmins() {
+    return ResponseEntity.ok(
+            userService.getAvailableAdmins()
+    );
+}
 }

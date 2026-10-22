@@ -55,6 +55,8 @@ export interface PublicShop {
   logo?: string;
 
   themeColor?: string;
+  accentColor?: string;
+
 
   phoneNumber?: string;
   whatsappNumber?: string;

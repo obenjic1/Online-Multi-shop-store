@@ -1,0 +1,476 @@
+<div class="container-fluid py-4">
+  <!-- ============================================
+       PAGE HEADER
+       ============================================ -->
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4"
+  >
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <button
+          type="button"
+          class="btn btn-sm btn-light border"
+          (click)="goBack()"
+          title="Back to shops"
+        >
+          <i class="bi bi-arrow-left"></i>
+        </button>
+
+        <span class="text-muted small"> Shop Management </span>
+      </div>
+
+      <h4 class="fw-bold mb-1">Shop Details</h4>
+
+      <p class="text-muted small mb-0">View shop information, services and branding.</p>
+    </div>
+
+    @if (shop) {
+      <button type="button" class="btn btn-primary px-3" (click)="editShop()">
+        <i class="bi bi-pencil me-2"></i>
+        Edit Shop
+      </button>
+    }
+  </div>
+
+  <!-- ============================================
+       LOADING
+       ============================================ -->
+  @if (loading) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+
+        <h6 class="fw-semibold mb-1">Loading shop</h6>
+
+        <p class="text-muted small mb-0">Retrieving shop information...</p>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================
+       ERROR
+       ============================================ -->
+  @else if (error) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <div
+          class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mb-3"
+          style="width: 55px; height: 55px"
+        >
+          <i class="bi bi-exclamation-triangle fs-4"></i>
+        </div>
+
+        <h6 class="fw-semibold">Unable to load shop</h6>
+
+        <p class="text-muted small mb-3">We couldn't retrieve the shop information.</p>
+
+        <button type="button" class="btn btn-primary btn-sm" (click)="retry()">
+          <i class="bi bi-arrow-clockwise me-2"></i>
+          Try Again
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================
+       SHOP CONTENT
+       ============================================ -->
+  @else if (shop) {
+    <!-- ==========================================
+         SHOP HERO
+         ========================================== -->
+    <div class="card border-0 shadow-sm overflow-hidden mb-4">
+      <!-- Banner -->
+      <div class="position-relative" style="height: 250px; background: #f3f3f3">
+        @if (shop.banner) {
+          <img
+            [src]="imageUrlService.getImageUrl(shop.banner)"
+            [alt]="shop.name + ' banner'"
+            class="w-100 h-100 object-fit-cover"
+          />
+        } @else {
+          <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="text-center text-muted">
+              <i class="bi bi-image fs-1"></i>
+
+              <div class="small mt-2">No banner image</div>
+            </div>
+          </div>
+        }
+
+        <!-- Banner overlay -->
+        <div
+          class="position-absolute top-0 start-0 w-100 h-100"
+          style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.35))"
+        ></div>
+
+        <!-- Status -->
+        <div class="position-absolute top-0 end-0 m-3">
+          @if (shop.active) {
+            <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">
+              <i class="bi bi-check-circle me-1"></i>
+              Active
+            </span>
+          } @else {
+            <span class="badge bg-secondary px-3 py-2 rounded-pill shadow-sm">
+              <i class="bi bi-pause-circle me-1"></i>
+              Inactive
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Shop Identity -->
+      <div class="card-body px-4 pb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-end gap-3">
+          <!-- Logo -->
+          <div
+            class="bg-white border rounded-3 shadow-sm d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 115px; height: 115px; margin-top: -55px; position: relative; z-index: 2"
+          >
+            @if (shop.logo) {
+              <img
+                [src]="imageUrlService.getImageUrl(shop.logo)"
+                [alt]="shop.name + ' logo'"
+                class="w-100 h-100 rounded-3 object-fit-cover"
+              />
+            } @else {
+              <span class="fw-bold fs-1" [style.color]="shop.themeColor || '#6E3B5E'">
+                {{ getShopInitial() }}
+              </span>
+            }
+          </div>
+
+          <!-- Identity -->
+          <div class="flex-grow-1 pb-1">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <h3 class="fw-bold mb-0">
+                {{ shop.name }}
+              </h3>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+              <span class="text-muted small">
+                <i class="bi bi-link-45deg me-1"></i>
+                /{{ shop.slug }}
+              </span>
+
+              <span class="text-muted small">
+                <i class="bi bi-person me-1"></i>
+                {{ shop.ownerUsername || 'No administrator assigned' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         ABOUT
+         ========================================== -->
+    <div class="mb-4">
+      <h5 class="fw-bold mb-2">About the shop</h5>
+
+      <p class="text-muted mb-0">
+        {{ shop.description || 'No description has been provided for this shop.' }}
+      </p>
+    </div>
+
+    <!-- ==========================================
+         INFORMATION GRID
+         ========================================== -->
+    <div class="row g-4">
+      <!-- ========================================
+           CONTACT
+           ======================================== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div
+                class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center me-3"
+                style="width: 42px; height: 42px"
+              >
+                <i class="bi bi-telephone fs-5"></i>
+              </div>
+
+              <div>
+                <h6 class="fw-bold mb-0">Contact Information</h6>
+
+                <small class="text-muted"> How customers can reach the shop </small>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+              <small class="text-muted d-block mb-1"> Phone </small>
+
+              @if (shop.phoneNumber) {
+                <span class="fw-semibold">
+                  <i class="bi bi-telephone me-2 text-muted"></i>
+                  {{ shop.phoneNumber }}
+                </span>
+              } @else {
+                <span class="text-muted"> Not provided </span>
+              }
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="mb-3">
+              <small class="text-muted d-block mb-1"> WhatsApp </small>
+
+              @if (shop.whatsappNumber) {
+                <span class="fw-semibold">
+                  <i class="bi bi-whatsapp me-2 text-muted"></i>
+                  {{ shop.whatsappNumber }}
+                </span>
+              } @else {
+                <span class="text-muted"> Not provided </span>
+              }
+            </div>
+
+            <!-- Email -->
+            <div>
+              <small class="text-muted d-block mb-1"> Email </small>
+
+              @if (shop.email) {
+                <span class="fw-semibold">
+                  <i class="bi bi-envelope me-2 text-muted"></i>
+                  {{ shop.email }}
+                </span>
+              } @else {
+                <span class="text-muted"> Not provided </span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================
+           LOCATION
+           ======================================== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div
+                class="rounded-3 bg-danger-subtle text-danger d-flex align-items-center justify-content-center me-3"
+                style="width: 42px; height: 42px"
+              >
+                <i class="bi bi-geo-alt fs-5"></i>
+              </div>
+
+              <div>
+                <h6 class="fw-bold mb-0">Location</h6>
+
+                <small class="text-muted"> Shop address and location </small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <small class="text-muted d-block mb-1"> Address </small>
+
+              <span class="fw-semibold">
+                {{ shop.address || 'Not provided' }}
+              </span>
+            </div>
+
+            <div class="mb-3">
+              <small class="text-muted d-block mb-1"> Landmark </small>
+
+              <span class="fw-semibold">
+                {{ shop.landmark || 'Not provided' }}
+              </span>
+            </div>
+
+            <div class="d-flex gap-5">
+              <div>
+                <small class="text-muted d-block mb-1"> City </small>
+
+                <span class="fw-semibold">
+                  {{ shop.city || 'Not provided' }}
+                </span>
+              </div>
+
+              <div>
+                <small class="text-muted d-block mb-1"> Region </small>
+
+                <span class="fw-semibold">
+                  {{ shop.region || 'Not provided' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================
+           SERVICES
+           ======================================== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div
+                class="rounded-3 bg-success-subtle text-success d-flex align-items-center justify-content-center me-3"
+                style="width: 42px; height: 42px"
+              >
+                <i class="bi bi-truck fs-5"></i>
+              </div>
+
+              <div>
+                <h6 class="fw-bold mb-0">Fulfillment</h6>
+
+                <small class="text-muted"> How customers receive their orders </small>
+              </div>
+            </div>
+
+            <!-- Pickup -->
+            <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-bag text-muted fs-5"></i>
+
+                <div>
+                  <div class="fw-semibold">Store Pickup</div>
+
+                  <small class="text-muted"> Customers collect orders from the shop </small>
+                </div>
+              </div>
+
+              @if (shop.pickupAvailable) {
+                <span class="badge bg-success-subtle text-success rounded-pill"> Available </span>
+              } @else {
+                <span class="badge bg-light text-muted border rounded-pill"> Unavailable </span>
+              }
+            </div>
+
+            <!-- Delivery -->
+            <div class="d-flex align-items-center justify-content-between py-3">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-truck text-muted fs-5"></i>
+
+                <div>
+                  <div class="fw-semibold">Delivery</div>
+
+                  <small class="text-muted"> Orders delivered to customers </small>
+                </div>
+              </div>
+
+              @if (shop.deliveryAvailable) {
+                <span class="badge bg-success-subtle text-success rounded-pill"> Available </span>
+              } @else {
+                <span class="badge bg-light text-muted border rounded-pill"> Unavailable </span>
+              }
+            </div>
+
+            @if (shop.deliveryAvailable) {
+              <div class="mt-2 pt-3 border-top">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted"> Delivery Fee </span>
+
+                  <span class="fw-bold">
+                    {{ formatDeliveryFee() }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================
+           BRANDING
+           ======================================== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div
+                class="rounded-3 bg-warning-subtle text-warning d-flex align-items-center justify-content-center me-3"
+                style="width: 42px; height: 42px"
+              >
+                <i class="bi bi-palette fs-5"></i>
+              </div>
+
+              <div>
+                <h6 class="fw-bold mb-0">Brand Appearance</h6>
+
+                <small class="text-muted"> Colors used by the storefront </small>
+              </div>
+            </div>
+
+            <!-- Primary -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold"> Primary Color </span>
+
+                <code>
+                  {{ shop.themeColor || '#6E3B5E' }}
+                </code>
+              </div>
+
+              <div
+                class="rounded-3 border"
+                style="height: 48px"
+                [style.background-color]="shop.themeColor || '#6E3B5E'"
+              ></div>
+            </div>
+
+            <!-- Accent -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold"> Accent Color </span>
+
+                <code>
+                  {{ shop.accentColor || '#D96C86' }}
+                </code>
+              </div>
+
+              <div
+                class="rounded-3 border"
+                style="height: 48px"
+                [style.background-color]="shop.accentColor || '#D96C86'"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================
+           ADMINISTRATOR
+           ======================================== -->
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <div
+              class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+            >
+              <div class="d-flex align-items-center gap-3">
+                <div
+                  class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
+                  style="width: 48px; height: 48px"
+                >
+                  <i class="bi bi-person fs-5"></i>
+                </div>
+
+                <div>
+                  <small class="text-muted d-block"> Shop Administrator </small>
+
+                  <div class="fw-bold">
+                    {{ shop.ownerUsername || 'No administrator assigned' }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small"> Shop ID </span>
+
+                <span class="badge bg-light text-dark border"> #{{ shop.id }} </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

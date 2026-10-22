@@ -1,0 +1,623 @@
+<div class="dashboard-page">
+  <div class="container-fluid px-3 px-lg-4 py-3 py-lg-4">
+    ```
+    <!-- =====================================================
+     HEADER
+====================================================== -->
+
+    <div class="dashboard-header">
+      <div>
+        <div class="page-eyebrow">PLATFORM OVERVIEW</div>
+
+        <div class="d-flex align-items-center gap-2">
+          <h4 class="page-title mb-0">Super Admin Dashboard</h4>
+
+          <span class="live-badge">
+            <span></span>
+            Live
+          </span>
+        </div>
+
+        <p class="page-subtitle mb-0 mt-1">
+          Monitor platform performance, shops, users, inventory and orders.
+        </p>
+      </div>
+
+      <div class="page-actions">
+        <a routerLink="/super-admin/shops" class="btn btn-light border">
+          <i class="bi bi-shop me-2"></i>
+          Shops
+        </a>
+
+        <a routerLink="/super-admin/administrators" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-2"></i>
+          Administrator
+        </a>
+      </div>
+    </div>
+
+    <!-- =====================================================
+     LOADING
+====================================================== -->
+
+    @if (loading()) {
+      <div class="dashboard-state">
+        <div class="spinner-border spinner-border-sm text-primary"></div>
+
+        <span>Loading platform overview...</span>
+      </div>
+    }
+
+    <!-- =====================================================
+     ERROR
+====================================================== -->
+
+    @else if (error()) {
+      <div class="dashboard-state error-state">
+        <div class="state-icon">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+
+        <div>
+          <strong>Unable to load dashboard</strong>
+          <small> We could not retrieve the latest platform statistics. </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary ms-auto"
+          (click)="loadDashboard()"
+        >
+          <i class="bi bi-arrow-clockwise me-1"></i>
+          Retry
+        </button>
+      </div>
+    }
+
+    <!-- =====================================================
+     DASHBOARD
+====================================================== -->
+
+    @else if (dashboard(); as data) {
+      <!-- ===================================================
+       KPI OVERVIEW
+  ==================================================== -->
+
+      <div class="section-header compact-header">
+        <div>
+          <span class="section-title"> Platform Overview </span>
+
+          <span class="section-description"> Key figures across the entire marketplace. </span>
+        </div>
+      </div>
+
+      <div class="row g-2 g-lg-3 mb-3">
+        <!-- ADMINS -->
+
+        <div class="col-6 col-xl-3">
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <i class="bi bi-person-badge"></i>
+            </div>
+
+            <div class="kpi-body">
+              <span class="kpi-label"> Administrators </span>
+
+              <strong class="kpi-value">
+                {{ data.totalAdmins }}
+              </strong>
+
+              <div class="kpi-footer">
+                <span class="positive"> {{ data.activeAdmins }} active </span>
+
+                <span> {{ data.inactiveAdmins }} inactive </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUSTOMERS -->
+
+        <div class="col-6 col-xl-3">
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <i class="bi bi-people"></i>
+            </div>
+
+            <div class="kpi-body">
+              <span class="kpi-label"> Customers </span>
+
+              <strong class="kpi-value">
+                {{ data.totalCustomers }}
+              </strong>
+
+              <div class="kpi-footer">
+                <span class="positive"> {{ data.activeCustomers }} active </span>
+
+                <span> {{ data.inactiveCustomers }} inactive </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHOPS -->
+
+        <div class="col-6 col-xl-3">
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <i class="bi bi-shop"></i>
+            </div>
+
+            <div class="kpi-body">
+              <span class="kpi-label"> Shops </span>
+
+              <strong class="kpi-value">
+                {{ data.totalShops }}
+              </strong>
+
+              <div class="kpi-footer">
+                <span class="positive"> {{ data.activeShops }} active </span>
+
+                <span> {{ data.inactiveShops }} inactive </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS -->
+
+        <div class="col-6 col-xl-3">
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <i class="bi bi-bag"></i>
+            </div>
+
+            <div class="kpi-body">
+              <span class="kpi-label"> Products </span>
+
+              <strong class="kpi-value">
+                {{ data.totalProducts }}
+              </strong>
+
+              <div class="kpi-footer">
+                <span class="positive"> {{ data.activeProducts }} active </span>
+
+                <span [class.danger-text]="data.outOfStockProducts > 0">
+                  {{ data.outOfStockProducts }} out
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================
+       REVENUE + ORDER PIPELINE
+  ==================================================== -->
+
+      <div class="row g-3 mb-3">
+        <!-- REVENUE -->
+
+        <div class="col-12 col-xl-8">
+          <div class="panel-card h-100">
+            <div class="panel-header">
+              <div>
+                <h6>Revenue Performance</h6>
+
+                <small> Revenue generated from delivered orders. </small>
+              </div>
+
+              <div class="panel-icon">
+                <i class="bi bi-bar-chart-line"></i>
+              </div>
+            </div>
+
+            <div class="revenue-grid">
+              <div class="revenue-main">
+                <span> Total Sales </span>
+
+                <strong>
+                  {{ formatCurrency(data.totalSales) }}
+                </strong>
+
+                <small> Lifetime delivered sales </small>
+              </div>
+
+              <div class="revenue-item">
+                <span> This Month </span>
+
+                <strong>
+                  {{ formatCurrency(data.monthlySales) }}
+                </strong>
+
+                <small> {{ data.monthlyOrders }} orders </small>
+              </div>
+
+              <div class="revenue-item">
+                <span> Today </span>
+
+                <strong>
+                  {{ formatCurrency(data.todaySales) }}
+                </strong>
+
+                <small> {{ data.todayOrders }} orders </small>
+              </div>
+
+              <div class="revenue-item">
+                <span> Avg. Order </span>
+
+                <strong>
+                  {{ formatCurrency(data.averageOrderValue) }}
+                </strong>
+
+                <small> Delivered orders </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDER PIPELINE -->
+
+        <div class="col-12 col-xl-4">
+          <div class="panel-card h-100">
+            <div class="panel-header">
+              <div>
+                <h6>Order Pipeline</h6>
+
+                <small> Current order distribution </small>
+              </div>
+
+              <i class="bi bi-arrow-repeat panel-header-icon"></i>
+            </div>
+
+            <div class="pipeline-list">
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot pending"></i>
+                  Pending
+                </span>
+
+                <strong>
+                  {{ data.pendingOrders }}
+                </strong>
+              </div>
+
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot confirmed"></i>
+                  Confirmed
+                </span>
+
+                <strong>
+                  {{ data.confirmedOrders }}
+                </strong>
+              </div>
+
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot processing"></i>
+                  Processing
+                </span>
+
+                <strong>
+                  {{ data.processingOrders }}
+                </strong>
+              </div>
+
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot shipped"></i>
+                  Shipped
+                </span>
+
+                <strong>
+                  {{ data.shippedOrders }}
+                </strong>
+              </div>
+
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot delivered"></i>
+                  Delivered
+                </span>
+
+                <strong>
+                  {{ data.deliveredOrders }}
+                </strong>
+              </div>
+
+              <div class="pipeline-row">
+                <span>
+                  <i class="pipeline-dot cancelled"></i>
+                  Cancelled
+                </span>
+
+                <strong>
+                  {{ data.cancelledOrders }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================
+       MAIN MANAGEMENT AREA
+  ==================================================== -->
+
+      <div class="row g-3 mb-3">
+        <!-- TOP SHOPS -->
+
+        <div class="col-12 col-xl-7">
+          <div class="panel-card h-100">
+            <div class="panel-header">
+              <div>
+                <h6>Top Performing Shops</h6>
+
+                <small> Ranked by delivered sales. </small>
+              </div>
+
+              <a routerLink="/super-admin/shops" class="panel-link">
+                View all
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+
+            @if (topShops().length === 0) {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="bi bi-shop"></i>
+                </div>
+
+                <span> No shop performance data available. </span>
+              </div>
+            } @else {
+              <div class="table-responsive">
+                <table class="table dashboard-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>SHOP</th>
+                      <th>ORDERS</th>
+                      <th>PRODUCTS</th>
+                      <th class="text-end">SALES</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @for (shop of topShops(); track shop.shopId) {
+                      <tr>
+                        <td>
+                          <div class="entity-cell">
+                            <div class="entity-avatar">
+                              {{ getShopInitials(shop.shopName) }}
+                            </div>
+
+                            <div class="entity-details">
+                              <strong>
+                                {{ shop.shopName }}
+                              </strong>
+
+                              <small> @{{ shop.shopSlug }} </small>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          {{ shop.totalOrders }}
+                        </td>
+
+                        <td>
+                          {{ shop.totalProducts }}
+                        </td>
+
+                        <td class="text-end">
+                          <strong class="amount">
+                            {{ formatCurrency(shop.totalSales) }}
+                          </strong>
+
+                          <small class="table-secondary-text">
+                            {{ shop.averageOrderValue | number: '1.0-0' }}
+                            avg
+                          </small>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- INVENTORY -->
+
+        <div class="col-12 col-xl-5">
+          <div class="panel-card h-100">
+            <div class="panel-header">
+              <div>
+                <h6>Inventory Health</h6>
+
+                <small> Platform-wide product availability. </small>
+              </div>
+
+              <i class="bi bi-box-seam panel-header-icon"></i>
+            </div>
+
+            <div class="inventory-summary">
+              <div class="inventory-primary">
+                <div class="inventory-number">
+                  {{ data.activeProducts }}
+                </div>
+
+                <div>
+                  <strong>Active Products</strong>
+                  <small> Currently available in the marketplace </small>
+                </div>
+              </div>
+
+              <div class="inventory-stat-row">
+                <div>
+                  <span class="inventory-dot neutral"></span>
+                  Inactive
+                </div>
+
+                <strong>
+                  {{ data.inactiveProducts }}
+                </strong>
+              </div>
+
+              <div class="inventory-stat-row warning-row">
+                <div>
+                  <span class="inventory-dot warning"></span>
+                  Low Stock
+                </div>
+
+                <strong>
+                  {{ data.lowStockProducts }}
+                </strong>
+              </div>
+
+              <div class="inventory-stat-row danger-row">
+                <div>
+                  <span class="inventory-dot danger"></span>
+                  Out of Stock
+                </div>
+
+                <strong>
+                  {{ data.outOfStockProducts }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================
+       RECENT ORDERS
+  ==================================================== -->
+
+      <div class="panel-card mb-3">
+        <div class="panel-header">
+          <div>
+            <h6>Recent Orders</h6>
+
+            <small> Latest order activity across the platform. </small>
+          </div>
+
+          <span class="panel-link disabled-link">
+            View all
+            <i class="bi bi-lock"></i>
+          </span>
+        </div>
+
+        @if (recentOrders().length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="bi bi-receipt"></i>
+            </div>
+
+            <span> No recent orders available. </span>
+          </div>
+        } @else {
+          <div class="table-responsive">
+            <table class="table dashboard-table mb-0">
+              <thead>
+                <tr>
+                  <th>ORDER</th>
+                  <th>SHOP</th>
+                  <th>STATUS</th>
+                  <th>DATE</th>
+                  <th class="text-end">AMOUNT</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (order of recentOrders(); track order.orderId) {
+                  <tr>
+                    <td>
+                      <div class="entity-cell">
+                        <div class="customer-avatar">
+                          {{ getOrderCustomerInitials(order.customerName) }}
+                        </div>
+
+                        <div class="entity-details">
+                          <strong> #{{ order.orderNumber }} </strong>
+
+                          <small>
+                            {{ order.customerName }}
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      {{ order.shopName }}
+                    </td>
+
+                    <td>
+                      <span class="status-badge" [class]="getStatusClass(order.status)">
+                        {{ getStatusLabel(order.status) }}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="table-date">
+                        {{ formatDate(order.createdAt) }}
+                      </span>
+                    </td>
+
+                    <td class="text-end">
+                      <strong class="amount">
+                        {{ formatCurrency(order.totalAmount) }}
+                      </strong>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <!-- ===================================================
+       QUICK ACTIONS
+  ==================================================== -->
+
+      <div class="quick-actions-bar">
+        <div class="quick-actions-title">
+          <i class="bi bi-lightning-charge"></i>
+
+          <div>
+            <strong>Quick Actions</strong>
+            <small>Platform management shortcuts</small>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <a routerLink="/super-admin/administrators" class="quick-link">
+            <i class="bi bi-person-badge"></i>
+            Administrators
+          </a>
+
+          <a routerLink="/super-admin/shops" class="quick-link">
+            <i class="bi bi-shop"></i>
+            Shops
+          </a>
+
+          <span class="quick-link disabled">
+            <i class="bi bi-receipt"></i>
+            Orders
+            <i class="bi bi-lock ms-auto"></i>
+          </span>
+
+          <span class="quick-link disabled">
+            <i class="bi bi-people"></i>
+            Customers
+            <i class="bi bi-lock ms-auto"></i>
+          </span>
+        </div>
+      </div>
+    }
+    ```
+  </div>
+</div>

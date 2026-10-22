@@ -2,12 +2,16 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   RouterLink,
   RouterLinkActive,
-  ActivatedRoute
+  ActivatedRoute,
+  Router,
+  NavigationEnd
 } from '@angular/router';
 
 import { ShopService } from '../../services/shop-service';
 import { PublicCategoryService, PublicCategory } from '../../services/public/public-category';
 import { CartService } from '../../services/cart';
+import { PublicShop } from '../../models/shop-model';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -24,38 +28,48 @@ export class Navbar implements OnInit {
   private cartService = inject(CartService);
   private shopService = inject(ShopService);
   private publicCategoryService = inject(PublicCategoryService);
-  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   cartCount = this.cartService.cartCount;
 
   categories = signal<PublicCategory[]>([]);
 
   shopSlug = signal<string | null>(null);
+  shop = signal<PublicShop | null>(null);
+
+  shopThemeColor = signal('#6E3B5E');
+
+  shopAccentColor = signal('#D96C86');
+
 
   loadingCategories = signal(false);
 
   ngOnInit(): void {
 
-    const slug = this.findShopSlug();
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd)
+      )
+      .subscribe(() => {
 
-    this.shopSlug.set(slug);
+        const slug = this.findShopSlug();
 
-    this.loadCategories(slug);
+        this.shopSlug.set(slug);
+
+        this.loadCategories(slug);
+      });
   }
 
   private findShopSlug(): string | null {
+    const url = this.router.url;
 
-    let route = this.route;
+    console.log('FINDING SHOP FROM URL:', url);
 
-    while (route) {
+    const match = url.match(/^\/shop\/([^/]+)/);
 
-      const slug = route.snapshot.paramMap.get('slug');
-
-      if (slug) {
-        return slug;
-      }
-
-      route = route.firstChild!;
+    if (match) {
+      console.log('FOUND SHOP SLUG:', match[1]);
+      return match[1];
     }
 
     return null;
@@ -71,8 +85,19 @@ export class Navbar implements OnInit {
 
         next: response => {
 
+          this.shop.set(response.shop ?? null);
+          console.log(this.shop());
+
           this.categories.set(
             response.categories ?? []
+          );
+
+          this.shopThemeColor.set(
+            response.shop?.themeColor || '#6E3B5E'
+          );
+
+          this.shopAccentColor.set(
+            response.shop?.accentColor || '#D96C86'
           );
 
           this.loadingCategories.set(false);
@@ -94,6 +119,15 @@ export class Navbar implements OnInit {
 
       return;
     }
+
+
+    /* NO SHOP */
+
+    this.shopThemeColor.set('#6E3B5E');
+
+    this.shopAccentColor.set('#D96C86');
+
+
 
     this.publicCategoryService.findAll().subscribe({
 

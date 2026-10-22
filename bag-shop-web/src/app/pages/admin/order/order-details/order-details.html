@@ -1,0 +1,464 @@
+<div class="admin-order-details-page">
+  <div class="container-fluid py-4 py-lg-5">
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div
+      class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4"
+    >
+      <div>
+        <div class="text-uppercase small fw-semibold text-muted">ORDER MANAGEMENT</div>
+
+        <h2 class="fw-bold mb-1">Order Details</h2>
+
+        <p class="text-muted mb-0">Review the order and manage its fulfillment status.</p>
+      </div>
+
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Orders
+      </button>
+    </div>
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-exclamation-triangle"></i>
+
+        <span>
+          {{ errorMessage() }}
+        </span>
+      </div>
+    }
+
+    <!-- =====================================================
+         SUCCESS
+    ====================================================== -->
+
+    @if (successMessage()) {
+      <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-check-circle"></i>
+
+        <span>
+          {{ successMessage() }}
+        </span>
+      </div>
+    }
+
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
+
+    @if (loading()) {
+      <div class="row g-4">
+        <div class="col-12 col-lg-8">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="skeleton skeleton-title mb-4"></div>
+
+              <div class="skeleton skeleton-line mb-3"></div>
+              <div class="skeleton skeleton-line mb-3"></div>
+              <div class="skeleton skeleton-line mb-3"></div>
+              <div class="skeleton skeleton-line"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="skeleton skeleton-title mb-4"></div>
+              <div class="skeleton skeleton-line mb-3"></div>
+              <div class="skeleton skeleton-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- =====================================================
+         ORDER CONTENT
+    ====================================================== -->
+
+    @if (!loading() && order()) {
+      <!-- ===================================================
+           ORDER SUMMARY HEADER
+      ==================================================== -->
+
+      <div class="order-header-card mb-4">
+        <div>
+          <div class="small text-muted mb-1">Order Number</div>
+
+          <div class="order-number">
+            {{ order()!.orderNumber }}
+          </div>
+
+          <div class="small text-muted mt-1">
+            Placed on
+            {{ order()!.createdAt | date: 'dd MMM yyyy, HH:mm' }}
+          </div>
+        </div>
+
+        <div class="text-lg-end">
+          <div class="small text-muted mb-2">Current Status</div>
+
+          @switch (order()!.status) {
+            @case ('PENDING') {
+              <span class="status-badge pending"> Pending </span>
+            }
+
+            @case ('CONFIRMED') {
+              <span class="status-badge confirmed"> Confirmed </span>
+            }
+
+            @case ('PROCESSING') {
+              <span class="status-badge processing"> Processing </span>
+            }
+
+            @case ('SHIPPED') {
+              <span class="status-badge shipped"> Shipped </span>
+            }
+
+            @case ('DELIVERED') {
+              <span class="status-badge delivered"> Delivered </span>
+            }
+
+            @case ('CANCELLED') {
+              <span class="status-badge cancelled"> Cancelled </span>
+            }
+
+            @default {
+              <span class="status-badge">
+                {{ order()!.status }}
+              </span>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="col-12 col-lg-8">
+          <!-- =================================================
+               CUSTOMER
+          ================================================== -->
+
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="section-heading mb-3">
+                <div class="section-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-0 fw-bold">Customer Information</h5>
+
+                  <small class="text-muted"> Contact information for this order </small>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="info-label">Customer Name</div>
+
+                  <div class="info-value">
+                    {{ order()!.customerName }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="info-label">Phone Number</div>
+
+                  <div class="info-value">
+                    {{ order()!.customerPhone }}
+                  </div>
+                </div>
+
+                @if (order()!.customerEmail) {
+                  <div class="col-md-6">
+                    <div class="info-label">Email Address</div>
+
+                    <div class="info-value">
+                      {{ order()!.customerEmail }}
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================
+               FULFILLMENT
+          ================================================== -->
+
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="section-heading mb-3">
+                <div class="section-icon">
+                  @if (order()!.fulfillmentType === 'DELIVERY') {
+                    <i class="bi bi-truck"></i>
+                  } @else {
+                    <i class="bi bi-shop"></i>
+                  }
+                </div>
+
+                <div>
+                  <h5 class="mb-0 fw-bold">Fulfillment</h5>
+
+                  <small class="text-muted"> How the customer will receive the order </small>
+                </div>
+              </div>
+
+              @if (order()!.fulfillmentType === 'DELIVERY') {
+                <div class="fulfillment-display delivery">
+                  <div class="fulfillment-display-icon">
+                    <i class="bi bi-truck"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">Delivery</div>
+
+                    <div class="text-muted small">
+                      {{ order()!.deliveryAddress }}
+                    </div>
+
+                    @if (order()!.deliveryCity) {
+                      <div class="text-muted small">
+                        {{ order()!.deliveryCity }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="fulfillment-display pickup">
+                  <div class="fulfillment-display-icon">
+                    <i class="bi bi-shop"></i>
+                  </div>
+
+                  <div>
+                    <div class="fw-semibold">Pickup</div>
+
+                    <div class="text-muted small">Customer will pick up the order.</div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               ORDER ITEMS
+          ================================================== -->
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+              <div class="p-4 pb-3">
+                <div class="section-heading">
+                  <div class="section-icon">
+                    <i class="bi bi-bag"></i>
+                  </div>
+
+                  <div>
+                    <h5 class="mb-0 fw-bold">Order Items</h5>
+
+                    <small class="text-muted">
+                      {{ order()!.items.length }}
+                      {{ order()!.items.length === 1 ? 'item' : 'items' }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table align-middle mb-0 order-items-table">
+                  <thead>
+                    <tr>
+                      <th class="ps-4">Product</th>
+
+                      <th>Price</th>
+
+                      <th>Qty</th>
+
+                      <th class="text-end pe-4">Subtotal</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @for (item of order()!.items; track item.productId) {
+                      <tr>
+                        <td class="ps-4">
+                          <div class="fw-semibold">
+                            {{ item.productName }}
+                          </div>
+                        </td>
+
+                        <td>
+                          {{ item.unitPrice | number: '1.0-0' }}
+                          FCFA
+                        </td>
+
+                        <td>
+                          <span class="quantity-badge">
+                            {{ item.quantity }}
+                          </span>
+                        </td>
+
+                        <td class="text-end pe-4 fw-semibold">
+                          {{ item.subtotal | number: '1.0-0' }}
+                          FCFA
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="col-12 col-lg-4">
+          <!-- =================================================
+               ORDER TOTAL
+          ================================================== -->
+
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="section-heading mb-4">
+                <div class="section-icon">
+                  <i class="bi bi-receipt"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-0 fw-bold">Order Summary</h5>
+                </div>
+              </div>
+
+              <div class="summary-row">
+                <span class="text-muted"> Subtotal </span>
+
+                <span>
+                  {{ order()!.subtotal | number: '1.0-0' }}
+                  FCFA
+                </span>
+              </div>
+
+              @if (order()!.fulfillmentType === 'DELIVERY') {
+                <div class="summary-row">
+                  <span class="text-muted"> Delivery Fee </span>
+
+                  <span class="text-muted"> Paid at delivery </span>
+                </div>
+              }
+
+              <hr />
+
+              <div class="summary-total">
+                <span> Total </span>
+
+                <span>
+                  {{ order()!.totalAmount | number: '1.0-0' }}
+                  FCFA
+                </span>
+              </div>
+
+              @if (order()!.fulfillmentType === 'DELIVERY') {
+                <div class="delivery-note mt-3">
+                  <i class="bi bi-info-circle me-2"></i>
+
+                  Delivery fee is paid separately at delivery.
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               STATUS MANAGEMENT
+          ================================================== -->
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="section-heading mb-3">
+                <div class="section-icon">
+                  <i class="bi bi-arrow-repeat"></i>
+                </div>
+
+                <div>
+                  <h5 class="mb-0 fw-bold">Order Status</h5>
+
+                  <small class="text-muted"> Manage fulfillment progress </small>
+                </div>
+              </div>
+
+              @if (getNextStatus()) {
+                <button
+                  type="button"
+                  class="btn btn-primary w-100 mb-2"
+                  [disabled]="updatingStatus()"
+                  (click)="updateStatus(getNextStatus()!)"
+                >
+                  @if (updatingStatus()) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+
+                    Updating...
+                  } @else {
+                    <i class="bi bi-arrow-right-circle me-2"></i>
+
+                    Mark as
+                    {{ getNextStatusLabel() }}
+                  }
+                </button>
+              }
+
+              @if (canCancel()) {
+                <button
+                  type="button"
+                  class="btn btn-outline-danger w-100"
+                  [disabled]="updatingStatus()"
+                  (click)="cancelOrder()"
+                >
+                  <i class="bi bi-x-circle me-2"></i>
+
+                  Cancel Order
+                </button>
+              }
+
+              @if (order()!.status === 'DELIVERED') {
+                <div class="status-complete-message">
+                  <i class="bi bi-check-circle-fill"></i>
+
+                  <div>
+                    <strong>Order completed</strong>
+
+                    <small> This order has been delivered. </small>
+                  </div>
+                </div>
+              }
+
+              @if (order()!.status === 'CANCELLED') {
+                <div class="status-cancelled-message">
+                  <i class="bi bi-x-circle-fill"></i>
+
+                  <div>
+                    <strong>Order cancelled</strong>
+
+                    <small> This order can no longer be updated. </small>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

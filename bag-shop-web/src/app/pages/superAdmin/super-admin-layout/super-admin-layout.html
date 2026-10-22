@@ -1,0 +1,115 @@
+<div class="super-admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="super-admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <i class="bi bi-bag-heart"></i>
+      </div>
+
+      <div>
+        <div class="brand-name">Kelly's Bags</div>
+
+        <small> Super Administration </small>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">MANAGEMENT</div>
+
+      <a
+        routerLink="dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        <i class="bi bi-grid-1x2"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="administrators" routerLinkActive="active" class="nav-item">
+        <i class="bi bi-person-badge"></i>
+        <span>Administrators</span>
+      </a>
+
+      <a routerLink="shops" routerLinkActive="active" class="nav-item">
+        <i class="bi bi-shop"></i>
+        <span>Shops</span>
+      </a>
+
+      <a routerLink="customers" routerLinkActive="active" class="nav-item">
+        <i class="bi bi-people"></i>
+        <span>Customers</span>
+      </a>
+
+      <a routerLink="orders" routerLinkActive="active" class="nav-item">
+        <i class="bi bi-receipt"></i>
+        <span>Orders</span>
+      </a>
+
+      <div class="nav-section mt-4">SYSTEM</div>
+
+      <a routerLink="settings" routerLinkActive="active" class="nav-item">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="admin-avatar">SA</div>
+
+        <div class="admin-info">
+          <strong> Super Admin </strong>
+
+          <small> Platform Administrator </small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+
+  <div class="super-admin-main">
+    <!-- TOP BAR -->
+
+    <header class="super-admin-navbar">
+      <div class="navbar-title">
+        <button type="button" class="mobile-menu-btn">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <div>
+          <span class="navbar-eyebrow"> PLATFORM MANAGEMENT </span>
+
+          <strong> Super Administration </strong>
+        </div>
+      </div>
+
+      <div class="navbar-actions">
+        <button type="button" class="navbar-icon-btn" title="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+
+        <div class="navbar-user">
+          <div class="navbar-user-avatar">SA</div>
+
+          <div class="navbar-user-info">
+            <strong> Super Admin </strong>
+
+            <small> Administrator </small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+
+    <main class="super-admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

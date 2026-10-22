@@ -3,11 +3,13 @@
    ========================================================= */
 
 .product-list-page {
+  --shop-primary: #6e3b5e;
+  --shop-accent: #d96c86;
+
   min-height: 100vh;
   background: #fcfafb;
   color: #2e2430;
 }
-
 /* =========================================================
    HEADER
    ========================================================= */
@@ -1015,4 +1017,11 @@ MOBILE
 .icon-box {
   width: 42px;
   height: 42px;
+}
+.shop-button {
+  background: var(--shop-primary);
+}
+
+.shop-accent {
+  color: var(--shop-accent);
 }

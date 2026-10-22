@@ -65,6 +65,16 @@ public class SecurityConfig {
                         // Authentication
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(
+                        	    HttpMethod.POST,
+                        	    "/api/payments/initiate"
+                        	).permitAll()
+
+                        	.requestMatchers(
+                        	    HttpMethod.GET,
+                        	    "/api/payments/order/**"
+                        	).permitAll()
 
                         // Public customer endpoints
                         .requestMatchers(
@@ -75,9 +85,12 @@ public class SecurityConfig {
                         // Customers can create orders
                         .requestMatchers(HttpMethod.POST, "/api/orders")
                         .permitAll()
+                        
 
                         // User management - SUPER ADMIN ONLY
                         .requestMatchers("/api/users/**")
+                        .hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/super-admin/**")
                         .hasRole("SUPER_ADMIN")
 
                         // Everything else requires authentication

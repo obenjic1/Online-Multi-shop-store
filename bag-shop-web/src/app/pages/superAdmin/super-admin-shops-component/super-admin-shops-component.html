@@ -1,0 +1,402 @@
+<div class="container-fluid py-4">
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <div
+    class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <h4 class="mb-1 fw-semibold">Shop Management</h4>
+
+      <p class="text-muted mb-0">Manage stores and their administrators.</p>
+    </div>
+
+    <button type="button" class="btn btn-primary" routerLink="/super-admin/shops/new">
+      <i class="bi bi-plus-lg me-2"></i>
+
+      Create Shop
+    </button>
+  </div>
+
+  <!-- =====================================================
+       SUMMARY
+  ====================================================== -->
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <div>
+          <small class="text-muted"> Total Shops </small>
+
+          <div class="summary-value">
+            {{ totalShops() }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+
+        <div>
+          <small class="text-muted"> Active </small>
+
+          <div class="summary-value">
+            {{ activeShops() }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="bi bi-pause-circle"></i>
+        </div>
+
+        <div>
+          <small class="text-muted"> Inactive </small>
+
+          <div class="summary-value">
+            {{ inactiveShops() }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="bi bi-person-check"></i>
+        </div>
+
+        <div>
+          <small class="text-muted"> Assigned </small>
+
+          <div class="summary-value">
+            {{ assignedShops() }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       FILTER CARD
+  ====================================================== -->
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-7">
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search shops or administrators..."
+              [value]="searchTerm()"
+              (input)="onSearch($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <select
+            class="form-select"
+            [value]="statusFilter()"
+            (change)="setStatusFilter($any($event.target).value)"
+          >
+            <option value="ALL">All Statuses</option>
+
+            <option value="ACTIVE">Active</option>
+
+            <option value="INACTIVE">Inactive</option>
+          </select>
+        </div>
+
+        <div class="col-lg-2">
+          <button type="button" class="btn btn-light border w-100" (click)="clearFilters()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  @if (loading()) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-body py-5 text-center">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+
+        <div class="text-muted">Loading shops...</div>
+      </div>
+    </div>
+  }
+
+  <!-- =====================================================
+       EMPTY STATE
+  ====================================================== -->
+
+  @else if (filteredShops().length === 0) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <div class="empty-icon mb-3">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <h6 class="fw-semibold">No shops found</h6>
+
+        <p class="text-muted mb-0">Try changing your search or filter.</p>
+      </div>
+    </div>
+  }
+
+  <!-- =====================================================
+       SHOP TABLE
+  ====================================================== -->
+
+  @else {
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4">Shop</th>
+
+              <th>Location</th>
+
+              <th>Administrator</th>
+
+              <th>Status</th>
+
+              <th class="text-end pe-4">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (shop of filteredShops(); track shop.id) {
+              <tr>
+                <!-- SHOP -->
+
+                <td class="ps-4">
+                  <div class="d-flex align-items-center">
+                    <div class="shop-logo">
+                      @if (shop.logo) {
+                        <img [src]="shop.logo" [alt]="shop.name" />
+                      } @else {
+                        <i class="bi bi-shop"></i>
+                      }
+                    </div>
+
+                    <div class="ms-3">
+                      <div class="fw-semibold">
+                        {{ shop.name }}
+                      </div>
+
+                      <small class="text-muted"> /{{ shop.slug }} </small>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- LOCATION -->
+
+                <td>
+                  <span class="text-muted">
+                    @if (getLocation(shop)) {
+                      <i class="bi bi-geo-alt me-1"></i>
+
+                      {{ getLocation(shop) }}
+                    } @else {
+                      —
+                    }
+                  </span>
+                </td>
+
+                <!-- ADMINISTRATOR -->
+
+                <td>
+                  @if (shop.ownerUsername) {
+                    <div class="d-flex align-items-center">
+                      <div class="admin-avatar">
+                        {{ shop.ownerUsername.charAt(0).toUpperCase() }}
+                      </div>
+
+                      <div class="ms-2">
+                        <div class="fw-medium">
+                          {{ shop.ownerUsername }}
+                        </div>
+
+                        <small class="text-muted"> Administrator </small>
+                      </div>
+                    </div>
+                  } @else {
+                    <span class="text-muted"> Not assigned </span>
+                  }
+                </td>
+
+                <!-- STATUS -->
+
+                <td>
+                  @if (shop.active) {
+                    <span class="badge rounded-pill bg-success-subtle text-success"> Active </span>
+                  } @else {
+                    <span class="badge rounded-pill bg-secondary-subtle text-secondary">
+                      Inactive
+                    </span>
+                  }
+                </td>
+
+                <!-- ACTIONS -->
+                <td class="text-end pe-4">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <!-- View -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      [routerLink]="['/super-admin/shops', shop.id]"
+                      title="View shop"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+
+                    <!-- Edit -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary"
+                      [routerLink]="['/super-admin/shops', shop.id, 'edit']"
+                      title="Edit shop"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- Assign / Reassign -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="openAssignModal(shop)"
+                      [title]="shop.ownerId ? 'Reassign administrator' : 'Assign administrator'"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- =======================================================
+     ASSIGN ADMIN MODAL
+======================================================== -->
+
+@if (showAssignModal()) {
+  <div class="modal-backdrop-custom" (click)="closeAssignModal()">
+    <div class="assign-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+
+      <div class="modal-header-custom">
+        <div>
+          <h5 class="mb-1 fw-semibold">
+            {{ selectedShop()?.ownerId ? 'Reassign Administrator' : 'Assign Administrator' }}
+          </h5>
+
+          <small class="text-muted">
+            {{ selectedShop()?.name }}
+          </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close"
+          [disabled]="assigning()"
+          (click)="closeAssignModal()"
+        ></button>
+      </div>
+
+      <!-- BODY -->
+
+      <div class="p-4">
+        <label class="form-label fw-medium"> Administrator </label>
+
+        <select
+          class="form-select"
+          [value]="selectedAdminId() ?? ''"
+          (change)="onAdminChange($event)"
+        >
+          <option value="">Select administrator</option>
+
+          @for (admin of availableAdministrators(); track admin.id) {
+            <option [value]="admin.id">
+              {{ admin.username }}
+              @if (admin.email) {
+                — {{ admin.email }}
+              }
+            </option>
+          }
+        </select>
+
+        @if (selectedShop()?.ownerUsername) {
+          <div class="alert alert-light border mt-3 mb-0">
+            <small class="text-muted"> Current administrator </small>
+
+            <div class="fw-medium mt-1">
+              {{ selectedShop()?.ownerUsername }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- FOOTER -->
+
+      <div class="modal-footer-custom">
+        <button
+          type="button"
+          class="btn btn-light border"
+          [disabled]="assigning()"
+          (click)="closeAssignModal()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="assigning() || !selectedAdminId()"
+          (click)="assignAdmin()"
+        >
+          @if (assigning()) {
+            <span class="spinner-border spinner-border-sm me-2"> </span>
+
+            Assigning...
+          } @else {
+            <i class="bi bi-check-lg me-1"></i>
+
+            Assign Administrator
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

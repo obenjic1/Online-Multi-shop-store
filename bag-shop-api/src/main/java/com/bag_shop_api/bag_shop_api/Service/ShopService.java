@@ -1,7 +1,10 @@
 package com.bag_shop_api.bag_shop_api.Service;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bag_shop_api.bag_shop_api.DTO.ShopRequest;
 import com.bag_shop_api.bag_shop_api.DTO.ShopResponse;
@@ -10,6 +13,7 @@ import com.bag_shop_api.bag_shop_api.Entity.User;
 import com.bag_shop_api.bag_shop_api.Enums.Role;
 import com.bag_shop_api.bag_shop_api.Repository.ShopRepository;
 import com.bag_shop_api.bag_shop_api.Repository.UserRepository;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,87 +22,81 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class ShopService {
 
-    private final ShopRepository shopRepository;
-    private final CurrentUserService currentUserService;
+private final ShopRepository shopRepository;
+private final UserRepository userRepository;
+private final CurrentUserService currentUserService;
+private final ImageStorageService imageStorageService;
 
-    public ShopResponse create(ShopRequest request) {
+   public ShopResponse create(
+        ShopRequest request,
+        MultipartFile logoFile,
+        MultipartFile bannerFile
+) throws IOException {
 
-       User owner = currentUserService.getCurrentUser();
+    User owner = userRepository.findById(request.getOwnerId())
+            .orElseThrow(() ->
+                    new RuntimeException("Administrator not found"));
 
-        if (owner.getRole() != Role.ROLE_ADMIN) {
+    if (owner.getRole() != Role.ROLE_ADMIN) {
+        throw new RuntimeException(
+                "Only users with ADMIN role can own a shop");
+    }
 
-            throw new RuntimeException(
-                    "Shop owner must have ADMIN role");
-        }
+    if (shopRepository.existsByOwnerId(owner.getId())) {
+        throw new RuntimeException(
+                "This administrator already owns a shop");
+    }
 
-        if (shopRepository.existsByOwnerId(owner.getId())) {
+    String slug = generateUniqueSlug(request.getName());
 
-            throw new RuntimeException(
-                    "This user already owns a shop");
-        }
+    String logoUrl = null;
+    String bannerUrl = null;
 
-        String slug =
-                generateUniqueSlug(request.getName());
-
-        Shop shop = Shop.builder()
-                .name(request.getName())
-                .slug(slug)
-                .description(
-                        request.getDescription())
-                .logo(
-                        request.getLogo())
-
-                .banner(
-                        request.getBanner())
-
-                .themeColor(
-                        request.getThemeColor())
-
-                .accentColor(
-                        request.getAccentColor())
-
-                .phoneNumber(
-                        request.getPhoneNumber())
-
-                .whatsappNumber(
-                        request.getWhatsappNumber())
-
-                .email(
-                        request.getEmail())
-
-                .address(
-                        request.getAddress())
-
-                .city(
-                        request.getCity())
-
-                .region(
-                        request.getRegion())
-
-                .landmark(
-                        request.getLandmark())
-
-
-                .pickupAvailable(
-                        request.isPickupAvailable())
-
-                .deliveryAvailable(
-                        request.isDeliveryAvailable())
-
-                .deliveryFee(
-                        request.getDeliveryFee())
-
-
-                .active(true)
-
-                .owner(owner)
-
-                .build();
-
-        return map(
-                shopRepository.save(shop)
+    if (logoFile != null && !logoFile.isEmpty()) {
+        logoUrl = imageStorageService.upload(
+                logoFile,
+                "shops/logos"
         );
     }
+
+    if (bannerFile != null && !bannerFile.isEmpty()) {
+        bannerUrl = imageStorageService.upload(
+                bannerFile,
+                "shops/banners"
+        );
+    }
+
+    Shop shop = Shop.builder()
+            .name(request.getName())
+            .slug(slug)
+            .description(request.getDescription())
+
+            .logo(logoUrl)
+            .banner(bannerUrl)
+
+            .themeColor(request.getThemeColor())
+            .accentColor(request.getAccentColor())
+
+            .phoneNumber(request.getPhoneNumber())
+            .whatsappNumber(request.getWhatsappNumber())
+            .email(request.getEmail())
+
+            .address(request.getAddress())
+            .city(request.getCity())
+            .region(request.getRegion())
+            .landmark(request.getLandmark())
+
+            .pickupAvailable(request.isPickupAvailable())
+            .deliveryAvailable(request.isDeliveryAvailable())
+            .deliveryFee(request.getDeliveryFee())
+
+            .active(true)
+            .owner(owner)
+
+            .build();
+
+    return map(shopRepository.save(shop));
+}
     private String generateUniqueSlug(String name) {
 
         String baseSlug = name
@@ -196,7 +194,10 @@ public class ShopService {
 
     return map(shop);}
     
-    public ShopResponse updateMyShop(ShopRequest request) {
+    public ShopResponse updateMyShop(
+            ShopRequest request,
+            MultipartFile logoFile,
+            MultipartFile bannerFile) throws IOException {
     User owner = currentUserService.getCurrentUser();
 
     Shop shop = shopRepository.findByOwnerId(owner.getId())
@@ -205,8 +206,7 @@ public class ShopService {
 
     shop.setName(request.getName());
     shop.setDescription(request.getDescription());
-    shop.setLogo(request.getLogo());
-    shop.setBanner(request.getBanner());
+    
     shop.setThemeColor(request.getThemeColor());
     shop.setAccentColor(request.getAccentColor());
     shop.setPhoneNumber(request.getPhoneNumber());
@@ -219,8 +219,180 @@ public class ShopService {
     shop.setPickupAvailable(request.isPickupAvailable());
     shop.setDeliveryAvailable(request.isDeliveryAvailable());
     shop.setDeliveryFee(request.getDeliveryFee());
+    if (logoFile != null && !logoFile.isEmpty()) {
+
+        if (shop.getLogo() != null && !shop.getLogo().isBlank()) {
+            imageStorageService.delete(shop.getLogo());
+        }
+
+        String logoUrl = imageStorageService.upload(
+                logoFile,
+                "shops/logos"
+        );
+
+        shop.setLogo(logoUrl);
+    }
+
+
+    if (bannerFile != null && !bannerFile.isEmpty()) {
+
+        if (shop.getBanner() != null && !shop.getBanner().isBlank()) {
+            imageStorageService.delete(shop.getBanner());
+        }
+
+        String bannerUrl = imageStorageService.upload(
+                bannerFile,
+                "shops/banners"
+        );
+
+        shop.setBanner(bannerUrl);
+    }
+
+    return map(shopRepository.save(shop));
+}
+public ShopResponse assignAdmin(Long shopId, Long adminId) {
+
+    // Find the shop
+    Shop shop = shopRepository.findById(shopId)
+            .orElseThrow(() ->
+                    new RuntimeException("Shop not found"));
+
+    // Find the user
+    // Find the administrator
+    User admin = userRepository.findById(adminId)
+            .orElseThrow(() ->
+                    new RuntimeException("Administrator not found"));
+
+    // Make sure the selected user is actually an ADMIN
+    if (admin.getRole() != Role.ROLE_ADMIN) {
+        throw new RuntimeException(
+                "Only users with ADMIN role can own a shop");
+    }
+
+    // Make sure this administrator does not already own another shop
+    shopRepository.findByOwnerId(admin.getId())
+            .ifPresent(existingShop -> {
+
+                if (!existingShop.getId().equals(shop.getId())) {
+                    throw new RuntimeException(
+                            "This administrator already owns another shop");
+                }
+            });
+
+    // Assign administrator to shop
+    shop.setOwner(admin);
 
     return map(shopRepository.save(shop));
 }
 
+public List<ShopResponse> findAll() {
+
+    return shopRepository.findAllByOrderByNameAsc()
+            .stream()
+            .map(this::map)
+            .toList();
+}
+
+public ShopResponse getShopById(Long shopId) {
+
+    Shop shop = shopRepository.findById(shopId)
+            .orElseThrow(() ->
+                    new RuntimeException("Shop not found")
+            );
+
+    return map(shop);
+}
+
+public ShopResponse updateShop(
+        Long shopId,
+        ShopRequest request,
+        MultipartFile logoFile,
+        MultipartFile bannerFile
+) throws IOException {
+
+    Shop shop = shopRepository.findById(shopId)
+            .orElseThrow(() ->
+                    new RuntimeException("Shop not found"));
+
+    // =========================================================
+    // STORE INFORMATION
+    // =========================================================
+
+    shop.setName(request.getName());
+    shop.setDescription(request.getDescription());
+
+    // =========================================================
+    // BRANDING
+    // =========================================================
+
+    shop.setThemeColor(request.getThemeColor());
+    shop.setAccentColor(request.getAccentColor());
+
+    // =========================================================
+    // CONTACT
+    // =========================================================
+
+    shop.setPhoneNumber(request.getPhoneNumber());
+    shop.setWhatsappNumber(request.getWhatsappNumber());
+    shop.setEmail(request.getEmail());
+
+    // =========================================================
+    // LOCATION
+    // =========================================================
+
+    shop.setAddress(request.getAddress());
+    shop.setCity(request.getCity());
+    shop.setRegion(request.getRegion());
+    shop.setLandmark(request.getLandmark());
+
+    // =========================================================
+    // ORDER OPTIONS
+    // =========================================================
+
+    shop.setPickupAvailable(request.isPickupAvailable());
+    shop.setDeliveryAvailable(request.isDeliveryAvailable());
+    shop.setDeliveryFee(request.getDeliveryFee());
+
+    // =========================================================
+    // LOGO
+    // =========================================================
+
+    if (logoFile != null && !logoFile.isEmpty()) {
+
+        if (shop.getLogo() != null &&
+                !shop.getLogo().isBlank()) {
+
+            imageStorageService.delete(shop.getLogo());
+        }
+
+        String logoUrl = imageStorageService.upload(
+                logoFile,
+                "shops/logos"
+        );
+
+        shop.setLogo(logoUrl);
+    }
+
+    // =========================================================
+    // BANNER
+    // =========================================================
+
+    if (bannerFile != null && !bannerFile.isEmpty()) {
+
+        if (shop.getBanner() != null &&
+                !shop.getBanner().isBlank()) {
+
+            imageStorageService.delete(shop.getBanner());
+        }
+
+        String bannerUrl = imageStorageService.upload(
+                bannerFile,
+                "shops/banners"
+        );
+
+        shop.setBanner(bannerUrl);
+    }
+
+    return map(shopRepository.save(shop));
+}
 }

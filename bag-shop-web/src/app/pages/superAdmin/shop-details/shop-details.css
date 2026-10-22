@@ -1,0 +1,317 @@
+.shop-details-page {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Loading / Error */
+
+.loading-container,
+.error-container {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.error-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f1f3f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #6c757d;
+}
+
+/* Header */
+
+.shop-header-card {
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.shop-banner {
+  height: 190px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #adb5bd;
+  font-size: 42px;
+}
+
+.shop-header-content {
+  position: relative;
+  padding: 0 28px 26px;
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.shop-logo-wrapper {
+  margin-top: -55px;
+  position: relative;
+  z-index: 2;
+}
+
+.shop-logo,
+.shop-logo-placeholder {
+  width: 110px;
+  height: 110px;
+  border-radius: 14px;
+  border: 4px solid #fff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+.shop-logo {
+  object-fit: cover;
+  background: #fff;
+}
+
+.shop-logo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #6e3b5e;
+  color: #fff;
+  font-size: 38px;
+  font-weight: 600;
+}
+
+.shop-main-info {
+  padding-top: 18px;
+  padding-bottom: 3px;
+}
+
+.shop-description {
+  max-width: 800px;
+  font-size: 14px;
+}
+
+/* Status */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-active {
+  background: #e9f7ef;
+  color: #198754;
+}
+
+.status-inactive {
+  background: #f8eaea;
+  color: #dc3545;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Cards */
+
+.details-card {
+  border-radius: 12px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #f3edf2;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Information */
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #2e2430;
+  font-weight: 500;
+}
+
+/* Colors */
+
+.color-card {
+  padding: 14px;
+  border: 1px solid #e9ecef;
+  border-radius: 9px;
+}
+
+.color-preview {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.color-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-block;
+}
+
+.color-value {
+  font-size: 13px;
+  color: #495057;
+}
+
+/* Owner */
+
+.owner-box {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.owner-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f3edf2;
+  color: #6e3b5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Services */
+
+.service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.service-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.service-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.service-info i {
+  color: #6e3b5e;
+}
+
+.service-status {
+  font-size: 12px;
+  color: #dc3545;
+}
+
+.service-status.enabled {
+  color: #198754;
+}
+
+/* Shop Status */
+
+.status-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 9px;
+}
+
+.status-panel-active {
+  background: #edf8f2;
+  color: #198754;
+}
+
+.status-panel-inactive {
+  background: #fdf0f0;
+  color: #dc3545;
+}
+
+.status-panel-icon {
+  font-size: 20px;
+}
+
+.status-panel small {
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Responsive */
+
+@media (max-width: 767px) {
+  .shop-header {
+    text-align: center;
+  }
+
+  .shop-header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 18px 22px;
+  }
+
+  .shop-main-info {
+    padding-top: 12px;
+  }
+
+  .shop-logo-wrapper {
+    margin-top: -50px;
+  }
+
+  .shop-banner {
+    height: 150px;
+  }
+}

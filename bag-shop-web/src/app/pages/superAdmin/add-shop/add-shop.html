@@ -1,0 +1,816 @@
+<div class="add-shop-page">
+
+  <div class="container-fluid px-3 px-lg-4 py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header mb-4">
+
+      <div>
+
+        <div class="page-eyebrow">
+          SHOP MANAGEMENT
+        </div>
+
+        <h1 class="page-title">
+          Create Shop
+        </h1>
+
+        <p class="page-description">
+          Create a new shop and assign an administrator to manage it.
+        </p>
+
+      </div>
+
+      <a
+        routerLink="/super-admin/shops"
+        class="btn btn-light border">
+
+        <i class="bi bi-arrow-left me-2"></i>
+
+        Back to Shops
+
+      </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM
+    ====================================================== -->
+
+    <form
+      [formGroup]="shopForm"
+      (ngSubmit)="submit()">
+
+      <div class="row g-4">
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+          <!-- ===============================================
+               BASIC INFORMATION
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-shop"></i>
+              </div>
+
+              <div>
+                <h5>Basic Information</h5>
+
+                <p>
+                  Define the shop's identity and administrator.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <div class="row g-3">
+
+                <!-- Shop Name -->
+
+                <div class="col-md-8">
+
+                  <label class="form-label">
+                    Shop Name
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="name"
+                    placeholder="e.g. Kelly's Fashion">
+
+                  @if (hasError('name', 'required')) {
+
+                    <div class="field-error">
+                      Shop name is required.
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- Administrator -->
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    Administrator
+                    <span class="required">*</span>
+                  </label>
+
+                  <select
+                    class="form-select"
+                    formControlName="ownerId">
+
+                    <option [ngValue]="0">
+                      @if (loadingAdmins()) {
+                        Loading administrators...
+                      } @else {
+                        Select administrator
+                      }
+                    </option>
+
+                    @for (admin of admins(); track admin.id) {
+
+                      <option [ngValue]="admin.id">
+                        {{ admin.username }}
+                        @if (admin.email) {
+                          — {{ admin.email }}
+                        }
+                      </option>
+
+                    }
+
+                  </select>
+
+                  @if (!loadingAdmins() && admins().length === 0) {
+
+                    <div class="field-warning">
+                      <i class="bi bi-info-circle me-1"></i>
+                      No available administrators.
+                    </div>
+
+                  }
+
+                  @if (hasError('ownerId', 'min')) {
+
+                    <div class="field-error">
+                      Please select an administrator.
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="col-12">
+
+                  <label class="form-label">
+                    Description
+                  </label>
+
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    formControlName="description"
+                    placeholder="Briefly describe the shop...">
+                  </textarea>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               SHOP IMAGES
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-images"></i>
+              </div>
+
+              <div>
+
+                <h5>Shop Images</h5>
+
+                <p>
+                  Upload the shop logo and banner.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <div class="row g-4">
+
+                <!-- LOGO -->
+
+                <div class="col-md-5">
+
+                  <label class="form-label">
+                    Shop Logo
+                  </label>
+
+                  <div class="image-upload-box logo-upload">
+
+                    @if (logoPreview()) {
+
+                      <div class="image-preview">
+
+                        <img
+                          [src]="logoPreview()"
+                          alt="Shop logo preview">
+
+                        <button
+                          type="button"
+                          class="remove-image"
+                          (click)="removeLogo()">
+
+                          <i class="bi bi-x"></i>
+
+                        </button>
+
+                      </div>
+
+                    } @else {
+
+                      <label class="upload-placeholder">
+
+                        <i class="bi bi-cloud-arrow-up"></i>
+
+                        <span>
+                          Upload Logo
+                        </span>
+
+                        <small>
+                          PNG, JPG or WEBP
+                        </small>
+
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          (change)="onLogoSelected($event)">
+
+                      </label>
+
+                    }
+
+                  </div>
+
+                </div>
+
+
+                <!-- BANNER -->
+
+                <div class="col-md-7">
+
+                  <label class="form-label">
+                    Shop Banner
+                  </label>
+
+                  <div class="image-upload-box banner-upload">
+
+                    @if (bannerPreview()) {
+
+                      <div class="image-preview">
+
+                        <img
+                          [src]="bannerPreview()"
+                          alt="Shop banner preview">
+
+                        <button
+                          type="button"
+                          class="remove-image"
+                          (click)="removeBanner()">
+
+                          <i class="bi bi-x"></i>
+
+                        </button>
+
+                      </div>
+
+                    } @else {
+
+                      <label class="upload-placeholder">
+
+                        <i class="bi bi-image"></i>
+
+                        <span>
+                          Upload Banner
+                        </span>
+
+                        <small>
+                          Recommended wide image
+                        </small>
+
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          (change)="onBannerSelected($event)">
+
+                      </label>
+
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               CONTACT INFORMATION
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-telephone"></i>
+              </div>
+
+              <div>
+
+                <h5>Contact Information</h5>
+
+                <p>
+                  How customers can reach the shop.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <div class="row g-3">
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    Phone Number
+                  </label>
+
+                  <input
+                    type="tel"
+                    class="form-control"
+                    formControlName="phoneNumber"
+                    placeholder="6XXXXXXXX">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    WhatsApp Number
+                  </label>
+
+                  <input
+                    type="tel"
+                    class="form-control"
+                    formControlName="whatsappNumber"
+                    placeholder="6XXXXXXXX">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    Email Address
+                  </label>
+
+                  <input
+                    type="email"
+                    class="form-control"
+                    formControlName="email"
+                    placeholder="shop@example.com">
+
+                  @if (hasError('email', 'email')) {
+
+                    <div class="field-error">
+                      Enter a valid email address.
+                    </div>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               LOCATION
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+
+              <div>
+
+                <h5>Shop Location</h5>
+
+                <p>
+                  Physical location and delivery information.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <div class="row g-3">
+
+                <div class="col-12">
+
+                  <label class="form-label">
+                    Address
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="address"
+                    placeholder="Street or building address">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    City
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="city"
+                    placeholder="Buea">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    Region
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="region"
+                    placeholder="South-West">
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                  <label class="form-label">
+                    Landmark
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="landmark"
+                    placeholder="Near...">
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+          <!-- ===============================================
+               APPEARANCE
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-palette"></i>
+              </div>
+
+              <div>
+
+                <h5>Shop Appearance</h5>
+
+                <p>
+                  Customize the storefront colors.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <div class="color-setting">
+
+                <label class="form-label">
+                  Primary Color
+                </label>
+
+                <div class="color-input">
+
+                  <input
+                    type="color"
+                    formControlName="themeColor">
+
+                  <span>
+                    {{ shopForm.controls.themeColor.value }}
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="color-setting">
+
+                <label class="form-label">
+                  Secondary Color
+                </label>
+
+                <div class="color-input">
+
+                  <input
+                    type="color"
+                    formControlName="accentColor">
+
+                  <span>
+                    {{ shopForm.controls.accentColor.value }}
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="theme-preview mt-3">
+
+                <div
+                  class="theme-preview-header"
+                  [style.background]="shopForm.controls.themeColor.value">
+
+                  <span>
+                    Shop Preview
+                  </span>
+
+                </div>
+
+                <div class="theme-preview-body">
+
+                  <div
+                    class="preview-button"
+                    [style.background]="shopForm.controls.accentColor.value">
+
+                    Sample Button
+
+                  </div>
+
+                  <div class="preview-line"></div>
+                  <div class="preview-line short"></div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               DELIVERY SETTINGS
+          ================================================ -->
+
+          <div class="form-card mb-4">
+
+            <div class="form-card-header">
+
+              <div class="section-icon">
+                <i class="bi bi-truck"></i>
+              </div>
+
+              <div>
+
+                <h5>Fulfillment</h5>
+
+                <p>
+                  Configure how customers receive orders.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-card-body">
+
+              <!-- Pickup -->
+
+              <div class="setting-row">
+
+                <div>
+
+                  <strong>
+                    Pickup
+                  </strong>
+
+                  <small>
+                    Customers can collect orders.
+                  </small>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="pickupAvailable">
+
+                </div>
+
+              </div>
+
+
+              <!-- Delivery -->
+
+              <div class="setting-row">
+
+                <div>
+
+                  <strong>
+                    Delivery
+                  </strong>
+
+                  <small>
+                    Shop offers customer delivery.
+                  </small>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="deliveryAvailable">
+
+                </div>
+
+              </div>
+
+
+              <!-- Delivery Fee -->
+
+              @if (shopForm.controls.deliveryAvailable.value) {
+
+                <div class="mt-3">
+
+                  <label class="form-label">
+                    Delivery Fee
+                  </label>
+
+                  <div class="input-group">
+
+                    <input
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      formControlName="deliveryFee">
+
+                    <span class="input-group-text">
+                      FCFA
+                    </span>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               ACTIONS
+          ================================================ -->
+
+          <div class="action-card">
+
+            <div class="action-info">
+
+              <i class="bi bi-shield-check"></i>
+
+              <div>
+
+                <strong>
+                  Ready to create this shop?
+                </strong>
+
+                <small>
+                  The selected administrator will become the shop owner.
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div class="action-buttons">
+
+              <a
+                routerLink="/super-admin/shops"
+                class="btn btn-light border">
+
+                Cancel
+
+              </a>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="submitting() || loadingAdmins()">
+
+                @if (submitting()) {
+
+                  <span
+                    class="spinner-border spinner-border-sm me-2">
+                  </span>
+
+                  Creating...
+
+                } @else {
+
+                  <i class="bi bi-check-lg me-2"></i>
+
+                  Create Shop
+
+                }
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

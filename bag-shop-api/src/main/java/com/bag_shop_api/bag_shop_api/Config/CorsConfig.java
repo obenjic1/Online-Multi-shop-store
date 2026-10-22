@@ -25,7 +25,8 @@ public class CorsConfig {
                 "POST",
                 "PUT",
                 "DELETE",
-                "OPTIONS"
+                "OPTIONS",
+                "PATCH"
         ));
 
         configuration.setAllowedHeaders(List.of("*"));

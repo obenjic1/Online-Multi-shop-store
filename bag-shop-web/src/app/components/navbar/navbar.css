@@ -1,20 +1,59 @@
 /* ========================================================= */
+/* SHOP THEME                                                */
+/* ========================================================= */
+
+.navbar-theme-wrapper {
+  --shop-primary: #6e3b5e;
+  --shop-accent: #d96c86;
+}
+
+/* ========================================================= */
+/* ANNOUNCEMENT BAR                                          */
+/* ========================================================= */
+
+.announcement-bar {
+  background: var(--shop-primary);
+  color: #ffffff;
+
+  text-align: center;
+
+  font-size: 0.72rem;
+  letter-spacing: 0.7px;
+
+  padding: 0.45rem 1rem;
+
+  transition: background 0.3s ease;
+}
+
+.announcement-divider {
+  opacity: 0.5;
+}
+
+/* ========================================================= */
 /* PREMIUM NAVBAR                                            */
 /* ========================================================= */
 
 .premium-navbar {
   background: #ffffff;
+
   border-bottom: 1px solid #ede6eb;
+
   min-height: 72px;
+
   z-index: 1030;
-  transition: box-shadow 0.3s ease;
+
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .premium-navbar:hover {
   box-shadow: 0 5px 25px rgba(46, 36, 48, 0.06);
 }
 
-/* BRAND */
+/* ========================================================= */
+/* BRAND                                                      */
+/* ========================================================= */
 
 .navbar-brand {
   text-decoration: none;
@@ -23,20 +62,23 @@
 .brand-icon {
   width: 38px;
   height: 38px;
+
   border-radius: 12px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #6e3b5e;
+  background: var(--shop-primary);
   color: #ffffff;
 
   font-size: 1rem;
 
-  box-shadow: 0 5px 14px rgba(110, 59, 94, 0.2);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--shop-primary) 20%, transparent);
 
-  transition: transform 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
 }
 
 .navbar-brand:hover .brand-icon {
@@ -45,12 +87,16 @@
 
 .brand-name {
   color: #2e2430;
+
   font-size: 1.2rem;
   font-weight: 650;
+
   letter-spacing: -0.2px;
 }
 
-/* NAV LINKS */
+/* ========================================================= */
+/* NAV LINKS                                                  */
+/* ========================================================= */
 
 .premium-nav-link {
   position: relative;
@@ -68,12 +114,13 @@
 }
 
 .premium-nav-link:hover {
-  color: #6e3b5e !important;
+  color: var(--shop-primary) !important;
+
   transform: translateY(-1px);
 }
 
 .nav-active {
-  color: #6e3b5e !important;
+  color: var(--shop-primary) !important;
 }
 
 .nav-active::after {
@@ -89,14 +136,18 @@
 
   border-radius: 10px;
 
-  background: #6e3b5e;
+  background: var(--shop-primary);
 }
 
-/* NEW */
+/* ========================================================= */
+/* NEW ARRIVALS                                               */
+/* ========================================================= */
 
 .new-link {
   display: flex;
+
   align-items: center;
+
   gap: 6px;
 }
 
@@ -104,7 +155,7 @@
   width: 6px;
   height: 6px;
 
-  background: #d96c86;
+  background: var(--shop-accent);
 
   border-radius: 50%;
 
@@ -124,10 +175,13 @@
   }
 }
 
-/* DROPDOWN */
+/* ========================================================= */
+/* DROPDOWN                                                   */
+/* ========================================================= */
 
 .premium-dropdown {
   border: 1px solid #ede6eb;
+
   border-radius: 14px;
 
   padding: 0.5rem;
@@ -135,6 +189,8 @@
   min-width: 270px;
 
   margin-top: 8px !important;
+
+  background: #ffffff;
 
   box-shadow: 0 15px 40px rgba(46, 36, 48, 0.1);
 
@@ -155,7 +211,9 @@
 
 .premium-dropdown .dropdown-item {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 
   padding: 0.75rem;
@@ -166,21 +224,27 @@
 
   transition:
     background 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
 }
 
 .premium-dropdown .dropdown-item:hover {
-  background: #faf6f9;
+  background: color-mix(in srgb, var(--shop-primary) 7%, white);
+
+  color: var(--shop-primary);
+
   transform: translateX(3px);
 }
 
 .premium-dropdown strong {
   display: block;
+
   font-size: 0.82rem;
 }
 
 .premium-dropdown small {
   display: block;
+
   margin-top: 2px;
 
   color: #83758a;
@@ -188,7 +252,9 @@
   font-size: 0.7rem;
 }
 
-/* CATEGORY ICONS */
+/* ========================================================= */
+/* CATEGORY ICON                                              */
+/* ========================================================= */
 
 .category-icon {
   width: 40px;
@@ -200,26 +266,33 @@
 
   border-radius: 10px;
 
+  background: color-mix(in srgb, var(--shop-primary) 10%, white);
+
+  color: var(--shop-primary);
+
   font-size: 1rem;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
-.handbag-icon {
-  background: rgba(110, 59, 94, 0.1);
-  color: #6e3b5e;
+.premium-dropdown .dropdown-item:hover .category-icon {
+  background: var(--shop-primary);
+
+  color: #ffffff;
 }
 
-.baby-icon {
-  background: rgba(140, 90, 151, 0.12);
-  color: #8c5a97;
-}
-
-/* RIGHT ACTIONS */
+/* ========================================================= */
+/* RIGHT ACTIONS                                              */
+/* ========================================================= */
 
 .nav-action {
   width: 40px;
   height: 40px;
 
   border: 0;
+
   background: transparent;
 
   border-radius: 50%;
@@ -237,16 +310,22 @@
 }
 
 .nav-action:hover {
-  background: #f8f2f6;
-  color: #6e3b5e;
+  background: color-mix(in srgb, var(--shop-primary) 8%, white);
+
+  color: var(--shop-primary);
+
   transform: translateY(-2px);
 }
 
-/* CART */
+/* ========================================================= */
+/* CART                                                       */
+/* ========================================================= */
 
 .cart-button {
   display: flex;
+
   align-items: center;
+
   gap: 7px;
 
   position: relative;
@@ -255,28 +334,32 @@
 
   border-radius: 10px;
 
-  background: #2e2430;
+  background: var(--shop-primary);
 
   color: #ffffff;
 
   font-size: 0.8rem;
+
   font-weight: 600;
 
   text-decoration: none;
 
-  box-shadow: 0 5px 15px rgba(110, 59, 94, 0.18);
+  box-shadow: 0 5px 15px color-mix(in srgb, var(--shop-primary) 18%, transparent);
 
   transition:
+    background 0.25s ease,
     transform 0.25s ease,
     box-shadow 0.25s ease;
 }
 
 .cart-button:hover {
+  background: color-mix(in srgb, var(--shop-primary) 85%, black);
+
   color: #ffffff;
 
   transform: translateY(-2px);
 
-  box-shadow: 0 8px 20px rgba(110, 59, 94, 0.25);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--shop-primary) 25%, transparent);
 }
 
 .cart-count {
@@ -296,7 +379,7 @@
 
   border-radius: 50%;
 
-  background: #d96c86;
+  background: var(--shop-accent);
 
   color: #ffffff;
 
@@ -305,7 +388,9 @@
   font-size: 0.62rem;
 }
 
-/* MOBILE BOTTOM */
+/* ========================================================= */
+/* MOBILE BOTTOM NAVIGATION                                  */
+/* ========================================================= */
 
 .mobile-bottom-nav {
   position: fixed;
@@ -358,7 +443,8 @@
 
 .mobile-bottom-nav a:hover,
 .mobile-bottom-nav .mobile-active {
-  color: #2e2430;
+  color: var(--shop-primary);
+
   transform: translateY(-2px);
 }
 
@@ -375,16 +461,18 @@
   align-items: center;
   justify-content: center;
 
-  background: #d96c86;
+  background: var(--shop-accent);
 
-  color: white;
+  color: #ffffff;
 
   border-radius: 50%;
 
   font-size: 0.55rem;
 }
 
-/* TABLET */
+/* ========================================================= */
+/* TABLET                                                     */
+/* ========================================================= */
 
 @media (max-width: 991.98px) {
   .premium-navbar {
@@ -397,11 +485,14 @@
 
   .navbar-actions {
     padding-top: 0.8rem;
+
     border-top: 1px solid #ede6eb;
   }
 }
 
-/* MOBILE */
+/* ========================================================= */
+/* MOBILE                                                     */
+/* ========================================================= */
 
 @media (max-width: 575.98px) {
   .brand-name {

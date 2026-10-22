@@ -16,4 +16,31 @@ export class OrderService {
       request
     );
   }
+
+  getMyShopOrders(): Observable<OrderResponse[]> {
+    return this.http.get<OrderResponse[]>(
+      `${this.API_URL}/shop`
+    );
+  }
+
+  getMyShopOrder(id: number): Observable<OrderResponse> {
+    return this.http.get<OrderResponse>(
+      `${this.API_URL}/shop/${id}`
+    );
+  }
+
+  updateOrderStatus(
+    id: number,
+    status: string
+  ): Observable<OrderResponse> {
+    return this.http.patch<OrderResponse>(
+      `${this.API_URL}/shop/${id}/status`,
+      null,
+      {
+        params: {
+          status
+        }
+      }
+    );
+  }
 }

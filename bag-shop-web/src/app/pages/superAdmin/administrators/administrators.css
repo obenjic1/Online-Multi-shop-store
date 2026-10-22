@@ -1,0 +1,250 @@
+.administrators-page {
+  min-height: 100%;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.summary-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+}
+
+.summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: rgba(110, 59, 94, .08);
+  color: #6E3B5E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.summary-label {
+  color: #83758A;
+  font-size: .8rem;
+}
+
+.summary-value {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #2E2430;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-box {
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+  left: .9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #83758A;
+}
+
+.search-box input {
+  padding-left: 2.4rem;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table thead th {
+  background: #faf9fb;
+  color: #83758A;
+  font-size: .78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   USER AVATAR
+========================================================= */
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(110, 59, 94, .1);
+  color: #6E3B5E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: .7rem;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem .6rem;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 500;
+}
+
+.status-badge span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: #eaf7ef;
+  color: #287a46;
+}
+
+.status-badge.active span {
+  background: #35a85c;
+}
+
+.status-badge.disabled {
+  background: #f3f3f3;
+  color: #777;
+}
+
+.status-badge.disabled span {
+  background: #999;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.empty-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: #f6f2f5;
+  color: #6E3B5E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(46, 36, 48, .45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, .15);
+  overflow: hidden;
+}
+
+.modal-header-custom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.25rem 1.35rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-body-custom {
+  padding: 1.35rem;
+}
+
+.modal-footer-custom {
+  padding: 1rem 1.35rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+
+
+/* =========================================================
+   ROLE INFO
+========================================================= */
+
+.role-info {
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+  padding: .85rem;
+  border-radius: 8px;
+  background: #faf9fb;
+}
+
+.role-info > i {
+  color: #6E3B5E;
+  font-size: 1.1rem;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+  .table {
+    min-width: 720px;
+  }
+
+  .modal-backdrop-custom {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+}
