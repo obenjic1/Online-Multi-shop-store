@@ -79,7 +79,7 @@ public class SecurityConfig {
                 HttpMethod.GET,
                 "/api/v1/payments/order/**"
         ).permitAll()
-
+        .requestMatchers("/error").permitAll()
         // Public product and category endpoints
         .requestMatchers(
                 "/api/v1/products/**",
