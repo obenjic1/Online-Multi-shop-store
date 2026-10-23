@@ -20,7 +20,7 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-  private readonly API_URL = `'https://online-multi-shop-store.onrender.com/api/v1/auth'`;
+  private readonly API_URL = `https://online-multi-shop-store.onrender.com/api/v1/auth`;
 
   private readonly TOKEN_KEY = 'access_token';
   private readonly USERNAME_KEY = 'username';
