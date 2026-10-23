@@ -10,7 +10,7 @@ import com.bag_shop_api.bag_shop_api.Service.SuperAdminDashboardService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/super-admin/dashboard")
+@RequestMapping("/api/v1/super-admin/dashboard")
 @RequiredArgsConstructor
 public class SuperAdminDashboardController {
 
