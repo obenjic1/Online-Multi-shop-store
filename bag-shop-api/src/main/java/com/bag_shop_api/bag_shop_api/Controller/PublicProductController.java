@@ -11,7 +11,7 @@ import com.bag_shop_api.bag_shop_api.Service.PublicProductService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/public/products")
+@RequestMapping("/api/v1/public/products")
 @RequiredArgsConstructor
 public class PublicProductController {
 
