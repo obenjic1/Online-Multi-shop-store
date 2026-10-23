@@ -11,7 +11,7 @@ import com.bag_shop_api.bag_shop_api.Service.PublicCategoryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/public/categories")
+@RequestMapping("/api/v1/public/categories")
 @RequiredArgsConstructor
 public class PublicCategoryController {
 
