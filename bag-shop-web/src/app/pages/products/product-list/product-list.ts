@@ -107,7 +107,7 @@ export class ProductList implements OnInit {
     signal(1);
 
   pageSize =
-    signal(8);
+    signal(24);
 
 
   ngOnInit(): void {
