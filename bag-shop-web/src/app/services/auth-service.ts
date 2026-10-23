@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   username: string;
@@ -21,7 +20,7 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-  private readonly API_URL = `${environment.apiUrl}/auth`;
+  private readonly API_URL = `'https://online-multi-shop-store.onrender.com/api/v1/auth'`;
 
   private readonly TOKEN_KEY = 'access_token';
   private readonly USERNAME_KEY = 'username';
